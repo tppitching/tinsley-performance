@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tinsley Performance — Athlete Evaluation System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#060a0e;color:#e8f0fe;font-family:'DM Sans',sans-serif;min-height:100vh;}
+input,select,textarea,button{font-family:'DM Sans',sans-serif;}
+select option,select optgroup{background:#0d1117;color:#e8f0fe;}
+
+.header{background:#080c10;border-bottom:1px solid #1e2730;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+.logo-img{height:38px;width:auto;display:block;}
+.main{max-width:1100px;margin:0 auto;padding:24px 20px;}
+
+.btn-green{padding:9px 16px;border-radius:10px;border:none;background:linear-gradient(135deg,#00ff88,#00cc66);color:#080c10;font-weight:800;font-size:13px;cursor:pointer;letter-spacing:0.04em;white-space:nowrap;}
+.btn-ghost{padding:9px 16px;border-radius:10px;border:1px solid #1e2730;background:transparent;color:#778899;cursor:pointer;font-size:13px;white-space:nowrap;}
+.btn-danger{padding:7px 13px;border-radius:8px;border:1px solid #ff445540;background:#ff445510;color:#ff4455;font-size:12px;font-weight:700;cursor:pointer;}
+.btn-blue{padding:7px 13px;border-radius:8px;border:1px solid #4488ff40;background:#4488ff10;color:#4488ff;font-size:12px;font-weight:700;cursor:pointer;}
+.btn-orange{padding:7px 13px;border-radius:8px;border:1px solid #ffaa0040;background:#ffaa0010;color:#ffaa00;font-size:12px;font-weight:700;cursor:pointer;}
+.btn-add{padding:7px 13px;border-radius:8px;border:1px solid #00ff8840;background:#00ff8810;color:#00ff88;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.04em;white-space:nowrap;}
+.btn-xs-blue{background:none;border:none;color:#4488ff;font-size:11px;cursor:pointer;padding:2px 5px;}
+.btn-xs-red{background:none;border:none;color:#ff4455;font-size:11px;cursor:pointer;padding:2px 5px;}
+
+.card{background:#0d1117;border:1px solid #1e2730;border-radius:14px;padding:20px;}
+.inset{background:#080c10;border:1px solid #1e2730;border-radius:12px;padding:18px;}
+.slabel{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;}
+.flabel{font-size:11px;color:#556677;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px;display:block;}
+.finput{background:#0d1117;border:1px solid #1e2730;border-radius:8px;color:#e8f0fe;padding:9px 12px;font-size:13px;width:100%;outline:none;}
+.finput:focus{border-color:#00ff8860;}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+
+.ecard{background:#0d1117;border:1px solid #1e2730;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;}
+.ecard.hi{background:#00ff8808;border-color:#00ff8830;}
+.ecard-lbl{font-size:10px;color:#556677;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;}
+.ecard-val{font-size:22px;font-weight:700;color:#e8f0fe;font-family:'Space Mono',monospace;}
+.ecard.hi .ecard-val{color:#00ff88;}
+
+.pbadge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.08em;}
+.pbadge.pass{background:#00ff8820;color:#00cc66;border:1px solid #00cc6640;}
+.pbadge.fail{background:#ff445520;color:#ff4455;border:1px solid #ff445540;}
+
+.hist-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;cursor:pointer;background:#080c10;border:1px solid #1e2730;transition:all 0.15s;}
+.hist-item.sel{background:#00ff8812;border-color:#00ff8840;}
+.hist-item .dot{width:8px;height:8px;border-radius:50%;background:#2a3540;flex-shrink:0;}
+.hist-item.sel .dot{background:#00ff88;}
+
+.dial-rank{width:20px;height:20px;border-radius:50%;background:#00ff8822;border:1px solid #00ff8855;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#00ff88;flex-shrink:0;}
+.ctable{width:100%;border-collapse:collapse;font-size:12px;}
+.ctable th{padding:8px 12px;text-align:left;color:#556677;font-weight:600;border-bottom:1px solid #1e2730;white-space:nowrap;}
+.ctable td{padding:8px 12px;color:#aabbcc;border-bottom:1px solid #0d1117;}
+.ctable tr:nth-child(even){background:#080c1050;}
+
+.hidden{display:none!important;}
+.frow{display:flex;gap:10px;align-items:center;}
+.fcol{display:flex;flex-direction:column;gap:6px;}
+.ov-x{overflow-x:auto;}
+.ov-y{overflow-y:auto;max-height:190px;}
+.sgap{display:flex;flex-direction:column;gap:16px;}
+
+.overlay{position:fixed;inset:0;background:#000c;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mbox{background:#0d1117;border:1px solid #1e2730;border-radius:16px;padding:28px;width:100%;max-width:480px;}
+
+.pdf-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#080c10;border:1px solid #1e2730;border-radius:8px;}
+.pdf-icon{width:32px;height:32px;background:#ff664420;border:1px solid #ff664440;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.pdf-name{font-size:13px;font-weight:600;color:#e8f0fe;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;}
+.pdf-meta{font-size:10px;color:#556677;white-space:nowrap;font-family:'Space Mono',monospace;}
+.upload-zone{border:2px dashed #1e2730;border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.upload-zone:hover,.upload-zone.drag{border-color:#00ff8860;background:#00ff8808;}
+
+/* Home screen */
+#homeScreen{min-height:calc(100vh - 64px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;}
+.home-logo{width:120px;height:auto;margin-bottom:32px;filter:drop-shadow(0 0 40px #00ff8840);}
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;width:100%;max-width:700px;margin-top:32px;}
+.staff-card{background:#0d1117;border:1px solid #1e2730;border-radius:12px;padding:18px 14px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.staff-card:hover{border-color:#00ff8860;background:#00ff8808;transform:translateY(-2px);}
+.staff-card.add-card{border-style:dashed;border-color:#2a3540;}
+.staff-card.add-card:hover{border-color:#00ff8860;}
+.staff-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#00ff8840,#004422);border:2px solid #00ff8840;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#00ff88;margin:0 auto 10px;font-family:'Space Mono',monospace;}
+.staff-name{font-size:14px;font-weight:700;color:#e8f0fe;}
+.staff-role{font-size:11px;color:#556677;margin-top:3px;}
+
+/* Team roster panels */
+.team-panel{border:1px solid #1e2730;border-radius:12px;overflow:hidden;margin-bottom:10px;}
+.team-panel-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#0d1117;cursor:pointer;user-select:none;transition:background 0.15s;}
+.team-panel-header:hover{background:#111820;}
+.team-panel-header.open{border-bottom:1px solid #1e2730;background:#0d1117;}
+.team-panel-name{font-size:13px;font-weight:700;color:#e8f0fe;letter-spacing:0.04em;}
+.team-panel-meta{font-size:11px;color:#556677;}
+.team-panel-arrow{font-size:11px;color:#556677;transition:transform 0.2s;}
+.team-panel-header.open .team-panel-arrow{transform:rotate(90deg);}
+.team-roster{display:none;background:#080c10;}
+.team-roster.open{display:block;}
+.roster-group-label{font-size:10px;color:#334455;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:10px 16px 4px;}
+.roster-athlete{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;cursor:pointer;border-bottom:1px solid #0d111750;transition:background 0.12s;}
+.roster-athlete:hover{background:#0d1117;}
+.roster-athlete.active{background:#00ff8810;border-left:2px solid #00ff88;}
+.roster-athlete-name{font-size:13px;font-weight:600;color:#ccdde8;}
+.roster-athlete-sub{font-size:11px;color:#445566;margin-top:1px;}
+.roster-empty{padding:14px 16px;font-size:12px;color:#334455;font-style:italic;}
+
+/* Sync indicator */
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#2a3540;flex-shrink:0;transition:background 0.3s;}
+.sync-dot.syncing{background:#ffaa00;animation:pulse 1s infinite;}
+.sync-dot.synced{background:#00ff88;}
+.sync-dot.error{background:#ff4455;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+.nav-item{padding:8px 12px;border-radius:8px;font-size:13px;color:#aabbcc;cursor:pointer;font-weight:600;transition:all .12s;}
+.nav-item:hover{background:#1e2730;color:#e8f0fe;}
+.nav-item.active{background:#00ff8812;color:#00ff88;}
+/* Profile tabs */
+.ptab{padding:7px 16px;border-radius:8px;border:none;background:transparent;color:#556677;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .15s;}
+.ptab.active{background:#1e2730;color:#e8f0fe;}
+/* Athletes grid view */
+.athlete-card{background:#0d1117;border:1px solid #1e2730;border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;}
+.athlete-card:hover{border-color:#00ff8840;background:#00ff8806;transform:translateY(-1px);}
+/* Teams view */
+.team-card{background:#0d1117;border:1px solid #1e2730;border-radius:12px;padding:18px;margin-bottom:10px;}
+
+/* ===== PRINT STYLES — white/light theme ===== */
+@media print {
+  @page { size: letter portrait; margin: 0.4in; }
+  body { background: #fff !important; color: #111 !important; }
+  .header, .no-print, .overlay, #homeScreen { display: none !important; }
+  .main { padding: 0 !important; max-width: 100% !important; }
+  #athleteFormPanel, #evalFormPanel, #docsCard, #evalHistoryPanel,
+  #emptyState, #selectorRow, #teamFilterRow, #teamRosterPanels { display: none !important; }
+  #dashboard { display: block !important; }
+  .card  { background: #f8f9fa !important; border: 1px solid #ccc !important; border-radius: 6px !important; page-break-inside: avoid; margin-bottom: 6px !important; padding: 10px 12px !important; }
+  .inset { background: #fff !important; border: 1px solid #ccc !important; padding: 8px 10px !important; }
+  .ecard { background: #f8f9fa !important; border: 1px solid #ccc !important; padding: 7px 10px !important; }
+  .ecard.hi { background: #e8f9f0 !important; border-color: #a8e6c8 !important; }
+  .ecard-lbl { color: #555 !important; font-size: 9px !important; }
+  .ecard-val { color: #111 !important; font-size: 13px !important; }
+  .ecard.hi .ecard-val { color: #007a3d !important; }
+  .slabel { color: #555 !important; margin-bottom: 7px !important; font-size: 9px !important; }
+  .pbadge.pass { background: #e8f9f0 !important; color: #007a3d !important; border-color: #a8e6c8 !important; }
+  .pbadge.fail { background: #fde8eb !important; color: #c0392b !important; border-color: #f5a0aa !important; }
+  .print-header { display: flex !important; }
+  #evalDisplay { display: flex !important; }
+  .ctable th { color: #555 !important; border-bottom-color: #ccc !important; padding: 4px 6px !important; font-size: 9px !important; }
+  .ctable td { color: #333 !important; border-bottom-color: #eee !important; padding: 4px 6px !important; font-size: 9px !important; }
+  .ctable tr:nth-child(even) { background: #f2f4f6 !important; }
+  .dial-rank { background: #e8f9f0 !important; border-color: #a8e6c8 !important; color: #007a3d !important; }
+  .g2, .g3, .sgap { gap: 5px !important; }
+  * { color: #111 !important; }
+  .ecard.hi .ecard-val { color: #007a3d !important; }
+  .pbadge.pass { color: #007a3d !important; }
+  .pbadge.fail { color: #c0392b !important; }
+}
+
+/* Nav dropdown */
+.nav-opt { display:block; padding:9px 14px; border-radius:8px; font-size:13px; color:#aabbcc; cursor:pointer; font-weight:600; transition:background .12s; white-space:nowrap; }
+.nav-opt:hover { background:#1e2730; color:#e8f0fe; }
+.nav-opt.active { background:#00ff8812; color:#00ff88; }
+.nav-section-label { font-size:9px; font-weight:700; letter-spacing:.15em; color:#334455; text-transform:uppercase; padding:8px 14px 4px; }
+/* Profile page tabs */
+.ptab-bar { display:flex; gap:4px; padding:4px; background:#080c10; border:1px solid #1e2730; border-radius:10px; margin-bottom:20px; }
+.ptab { flex:1; padding:8px; border:none; background:transparent; color:#556677; font-size:12px; font-weight:700; cursor:pointer; border-radius:7px; letter-spacing:.06em; text-transform:uppercase; transition:all .15s; }
+.ptab.active { background:#0d1117; color:#e8f0fe; border:1px solid #1e2730; }
+/* View: athletes grid */
+.ath-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:12px; }
+.ath-card { background:#0d1117; border:1px solid #1e2730; border-radius:12px; padding:16px; cursor:pointer; transition:all .15s; }
+.ath-card:hover { border-color:#00ff8860; transform:translateY(-1px); }
+.lb-table { width:100%; border-collapse:collapse; }
+@media(max-width:700px){
+  #viewHome > div:nth-child(3) > div { grid-template-columns:1fr !important; }
+}
+/* View: teams */
+.team-view-card { background:#0d1117; border:1px solid #1e2730; border-radius:12px; padding:20px; margin-bottom:12px; }
+.team-view-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.print-header{display:none;}
+</style>
+</head>
+<body>
+
+<!-- HOME SCREEN -->
+<div id="homeScreen">
+  <img class="home-logo" src="data:image/png;base64,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" alt="Tinsley Performance"/>
+  <div style="font-size:11px;color:#556677;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px">Athlete Evaluation System</div>
+  <div style="font-size:28px;font-weight:800;color:#fff;margin-bottom:6px">Who's using this?</div>
+  <div style="font-size:14px;color:#556677;margin-bottom:8px">Select your profile to access your personalized dashboard</div>
+  <div class="staff-grid" id="staffGrid"></div>
+  <button class="btn-ghost" style="margin-top:20px;font-size:12px" onclick="showAddStaffModal()">+ Add Staff Member</button>
+
+  <!-- Master athlete lookup -->
+  <div style="width:100%;max-width:700px;margin-top:36px;padding-top:28px;border-top:1px solid #1e2730;text-align:left">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#556677;margin-bottom:10px">▸ QUICK ATHLETE LOOKUP</div>
+    <select id="homeAthleteSelect" onchange="homeSelectAthlete(this.value)"
+      style="width:100%;background:#0d1117;border:1px solid #1e2730;border-radius:10px;color:#e8f0fe;padding:12px 16px;font-size:14px;font-weight:600;cursor:pointer;outline:none;">
+      <option value="">— Find an athlete —</option>
+    </select>
+  </div>
+</div>
+
+<!-- ADD STAFF MODAL -->
+<div id="addStaffModal" class="overlay hidden">
+  <div class="mbox">
+    <div style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:18px">ADD STAFF MEMBER</div>
+    <div class="fcol" style="gap:12px;margin-bottom:20px">
+      <div><label class="flabel">Name</label><input class="finput" id="sm_name" placeholder="Coach Name"/></div>
+      <div><label class="flabel">Role / Title</label><input class="finput" id="sm_role" placeholder="Pitching Coach, Director..."/></div>
+    </div>
+    <div class="frow">
+      <button class="btn-green" onclick="saveStaffMember()">ADD</button>
+      <button class="btn-ghost" onclick="document.getElementById('addStaffModal').classList.add('hidden')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TEAM MODAL -->
+<div id="editTeamModal" class="overlay hidden">
+  <div class="mbox">
+    <div style="font-size:15px;font-weight:800;color:#4488ff;margin-bottom:18px">✏️ EDIT TEAM</div>
+    <div class="fcol" style="gap:12px;margin-bottom:20px">
+      <div><label class="flabel">Team Name</label><input class="finput" id="et_name" placeholder="Team name"/></div>
+    </div>
+    <div class="frow" style="justify-content:space-between">
+      <div class="frow">
+        <button class="btn-green" onclick="saveEditTeam()">SAVE</button>
+        <button class="btn-ghost" onclick="document.getElementById('editTeamModal').classList.add('hidden')">Cancel</button>
+      </div>
+      <button class="btn-danger" onclick="deleteTeam()">🗑 Delete Team</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div id="delModal" class="overlay hidden">
+  <div class="mbox">
+    <div style="font-size:15px;font-weight:800;color:#ff4455;margin-bottom:8px">⚠️ Delete Athlete</div>
+    <div id="delModalText" style="font-size:13px;color:#778899;margin-bottom:22px;line-height:1.6"></div>
+    <div class="frow">
+      <button class="btn-danger" style="flex:1;padding:12px;font-size:13px" onclick="confirmDeleteAthlete()">YES, DELETE PERMANENTLY</button>
+      <button class="btn-ghost" onclick="document.getElementById('delModal').classList.add('hidden')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF VIEWER MODAL -->
+<div id="pdfModal" class="overlay hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div style="background:#0d1117;border:1px solid #1e2730;border-radius:16px;width:100%;max-width:900px;height:90vh;display:flex;flex-direction:column;">
+    <div class="frow" style="padding:16px 20px;border-bottom:1px solid #1e2730;justify-content:space-between">
+      <div id="pdfModalName" style="font-size:14px;font-weight:700;color:#e8f0fe"></div>
+      <button onclick="document.getElementById('pdfModal').classList.add('hidden')" style="background:#ff445520;border:1px solid #ff445540;color:#ff4455;border-radius:8px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:12px">✕ CLOSE</button>
+    </div>
+    <iframe id="pdfFrame" style="flex:1;border:none;border-radius:0 0 16px 16px;background:#fff"></iframe>
+  </div>
+</div>
+
+<!-- Athlete Add/Edit Form — MODAL -->
+<div id="athleteFormPanel" class="overlay hidden">
+  <div class="mbox" style="max-width:560px">
+  <div id="afTitle" style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:20px;letter-spacing:0.05em">NEW ATHLETE</div>
+  <div class="g2" style="margin-bottom:14px;gap:12px">
+    <div><label class="flabel">First Name</label><input class="finput" id="af_first"/></div>
+    <div><label class="flabel">Last Name</label><input class="finput" id="af_last"/></div>
+    <div><label class="flabel">Team / Org</label>
+    <select class="finput" id="af_team">
+      <option value="">— Select Team —</option>
+    </select>
+    <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
+      <input class="finput" id="af_newTeam" placeholder="Or type a new team name..." style="flex:1"/>
+      <button class="btn-add" onclick="addTeamFromInput()" style="padding:8px 12px;font-size:11px;white-space:nowrap">+ Add</button>
+    </div>
+    </div>
+    <div><label class="flabel">Level</label><input class="finput" id="af_level" placeholder="High School, College, Pro..."/></div>
+    <div><label class="flabel">Height</label><input class="finput" id="af_height" placeholder="6'2&quot;"/></div>
+    <div><label class="flabel">Weight (lbs)</label><input class="finput" id="af_weight" type="number" placeholder="185"/></div>
+    <div><label class="flabel">Age</label><input class="finput" id="af_age" type="number" placeholder="18"/></div>
+    <div>
+    <label class="flabel">Throws</label>
+    <select class="finput" id="af_throws"><option value="R">Right</option><option value="L">Left</option></select>
+    </div>
+    <div>
+    <label class="flabel">Bats</label>
+    <select class="finput" id="af_bats"><option value="R">Right</option><option value="L">Left</option></select>
+    </div>
+    <div>
+    <label class="flabel">Athlete Type</label>
+    <select class="finput" id="af_type"><option value="position">Position Player</option><option value="pitcher">Pitcher</option></select>
+    </div>
+    <div><label class="flabel">Grad Year</label><input class="finput" id="af_gradYear" placeholder="2026"/></div>
+  </div>
+  <div class="frow">
+    <button class="btn-green" onclick="saveAthleteForm()">SAVE ATHLETE</button>
+    <button class="btn-ghost" onclick="hideAthleteForm()">Cancel</button>
+  </div>
+  </div>
+</div>
+
+<!-- HEADER (hidden until logged in) -->
+<div class="header no-print hidden" id="appHeader">
+  <div class="frow">
+    <img class="logo-img" src="data:image/png;base64,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" alt="TP"/>
+    <div style="width:1px;height:32px;background:#1e2730;margin:0 4px"></div>
+    <div style="font-size:10px;color:#556677;letter-spacing:0.15em;text-transform:uppercase">Athlete Evaluation System</div>
+  </div>
+  <div class="frow" style="gap:8px">
+    <!-- NAV DROPDOWN -->
+    <div style="position:relative">
+      <button id="navBtn" onclick="toggleNav()" style="padding:7px 14px;border-radius:10px;border:1px solid #1e2730;background:#0d1117;color:#e8f0fe;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px">
+        <span id="navLabel">☰ View</span><span style="font-size:9px;color:#556677">▾</span>
+      </button>
+      <div id="navMenu" class="hidden" style="position:absolute;right:0;top:calc(100% + 6px);background:#0d1117;border:1px solid #1e2730;border-radius:12px;min-width:190px;z-index:400;box-shadow:0 8px 24px #000a;padding:6px;">
+        <div class="nav-section-label">Browse</div>
+        <div class="nav-opt" id="navOpt-home"     onclick="setView('home')">🏠 Home</div>
+        <div class="nav-opt" id="navOpt-teams"    onclick="setView('teams')">🏷 Teams</div>
+        <div class="nav-opt" id="navOpt-athletes" onclick="setView('athletes')">👤 Athletes</div>
+        <div class="nav-opt" id="navOpt-evals"    onclick="setView('evals')">📋 Evaluations</div>
+        <div style="border-top:1px solid #1e2730;margin:6px 0"></div>
+        <div class="nav-section-label">Actions</div>
+        <div class="nav-opt" onclick="showAthleteForm(null);closeNav()">+ Add Athlete</div>
+        <div class="nav-opt" onclick="promptNewTeam();closeNav()">+ New Team</div>
+      </div>
+    </div>
+    <div id="activeUserBadge" style="font-size:12px;color:#00ff88;font-weight:700;letter-spacing:0.05em;padding:4px 12px;border:1px solid #00ff8830;border-radius:20px;background:#00ff8808"></div>
+    <div class="frow" style="gap:6px">
+      <div id="syncDot" class="sync-dot synced"></div>
+      <div id="syncLabel" style="font-size:11px;color:#556677;letter-spacing:0.05em">Connecting...</div>
+    </div>
+    <button class="btn-ghost" style="font-size:11px;padding:6px 12px" onclick="goHome()">← Switch User</button>
+  </div>
+</div>
+
+<!-- Eval Form Modal -->
+<div id="evalFormPanel" class="overlay hidden" style="align-items:flex-start;padding:20px;overflow-y:auto">
+  <div class="mbox" style="max-width:680px;width:100%;margin:auto">
+
+    <div id="evalFormTitle" style="font-size:14px;font-weight:700;color:#00ff88;margin-bottom:20px;letter-spacing:0.05em">🧪 NEW EVALUATION</div>
+    <div class="fcol" style="gap:20px">
+      <div><label class="flabel">Evaluation Date</label><input type="date" class="finput" id="ef_date"/></div>
+
+      <!-- MOTOR & MOVEMENT -->
+      <div class="inset">
+        <div class="slabel" style="color:#00ff88">⚡ Motor & Movement</div>
+        <div class="g2" style="margin-bottom:14px">
+        <div>
+          <label class="flabel">Motor Preference</label>
+          <select class="finput" id="ef_motorPref"><option value="">Select...</option><option>Aerial</option><option>Terrestrial</option></select>
+        </div>
+        <div>
+          <label class="flabel">Associated or Dissociated</label>
+          <select class="finput" id="ef_assocDissoc"><option value="">Select...</option><option>Associated</option><option>Dissociated</option></select>
+        </div>
+        <div>
+          <label class="flabel">Motor Shoulder</label>
+          <select class="finput" id="ef_motorShoulder"><option value="">Select...</option><option>Right</option><option>Left</option></select>
+        </div>
+        <div>
+          <label class="flabel">Axial or Large</label>
+          <select class="finput" id="ef_axialLarge"><option value="">Select...</option><option>Axial</option><option>Large</option></select>
+        </div>
+        <div>
+          <label class="flabel">Extension Leg</label>
+          <select class="finput" id="ef_extLeg"><option value="">Select...</option><option>Right</option><option>Left</option></select>
+        </div>
+        </div>
+        <label class="flabel">Move Dial — Rank 1 (strongest) to 4 (weakest)</label>
+        <div class="g2" style="gap:10px">
+        <div class="frow"><span class="dial-rank">1</span><select class="finput" id="ef_d0" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
+        <div class="frow"><span class="dial-rank">2</span><select class="finput" id="ef_d1" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
+        <div class="frow"><span class="dial-rank">3</span><select class="finput" id="ef_d2" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
+        <div class="frow"><span class="dial-rank">4</span><select class="finput" id="ef_d3" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
+        </div>
+      </div>
+
+      <!-- RANGE OF MOTION -->
+      <div class="inset">
+        <div class="slabel" style="color:#4488ff">🔵 Range of Motion</div>
+        <div class="g2">
+        <div><label class="flabel">Shoulder ER (°)</label><input type="number" class="finput" id="ef_sER" placeholder="0" oninput="calcROM()"/></div>
+        <div><label class="flabel">Shoulder IR (°)</label><input type="number" class="finput" id="ef_sIR" placeholder="0" oninput="calcROM()"/></div>
+        <div><label class="flabel">Hip ER (°)</label><input type="number" class="finput" id="ef_hER" placeholder="0"/></div>
+        <div><label class="flabel">Hip IR (°)</label><input type="number" class="finput" id="ef_hIR" placeholder="0"/></div>
+        </div>
+        <div id="romPrev" class="hidden" style="margin-top:12px;padding:10px 14px;background:#4488ff10;border:1px solid #4488ff30;border-radius:8px;font-size:13px;color:#aabbcc">
+        Total Shoulder ROM: <span id="romVal" style="color:#4488ff;font-weight:700;font-family:'Space Mono',monospace"></span>
+        </div>
+      </div>
+
+      <!-- STRENGTH & SPEED -->
+      <div class="inset">
+        <div class="slabel" style="color:#ffaa00">💪 Strength & Speed</div>
+        <div class="g2">
+        <div>
+          <label class="flabel">Shoulder Strength Score <span style="color:#ffaa00">(≥25 pass)</span></label>
+          <input type="number" class="finput" id="ef_str" placeholder="0" oninput="calcStr()"/>
+          <div id="strPrev" style="margin-top:6px"></div>
+        </div>
+        <div><label class="flabel">Sled Sprint (sec)</label><input type="number" step="0.01" class="finput" id="ef_sled" placeholder="0.00"/></div>
+        </div>
+      </div>
+
+      <!-- VELOCITY (pitchers only) -->
+      <div id="veloSection" class="inset hidden">
+        <div class="slabel" style="color:#ff6644">🔥 Velocity</div>
+        <div class="g3">
+        <div><label class="flabel">Eval Bullpen Velo (mph)</label><input type="number" class="finput" id="ef_vEval" placeholder="0"/></div>
+        <div><label class="flabel">Current Top Game Velo (mph)</label><input type="number" class="finput" id="ef_vGame" placeholder="0"/></div>
+        <div><label class="flabel">Top Pulldown Velo (mph)</label><input type="number" class="finput" id="ef_vPdTop" placeholder="0"/></div>
+        </div>
+      </div>
+
+      <div>
+        <label class="flabel">Coach Notes</label>
+        <textarea class="finput" id="ef_notes" placeholder="Session notes, observations, cues..." style="min-height:80px;resize:vertical"></textarea>
+      </div>
+      <div class="frow">
+        <button class="btn-green" onclick="saveEval()">SAVE EVALUATION</button>
+        <button class="btn-ghost" onclick="hideEvalForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="main hidden" id="appMain">
+
+
+  <!-- ── VIEW PANELS ── -->
+  <div id="viewHome"     class="hidden no-print" style="margin-bottom:24px"></div>
+  <div id="viewTeams"    class="hidden no-print" style="margin-bottom:24px"></div>
+  <div id="viewAthletes" class="hidden no-print" style="margin-bottom:24px"></div>
+  <div id="viewEvals"    class="hidden no-print" style="margin-bottom:24px"></div>
+
+  <!-- Team Roster Panels (default roster accordion) -->
+  <div id="teamRosterPanels" class="no-print" style="margin-bottom:24px"></div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden">
+
+    <div class="print-header" style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #1e2730;align-items:center;gap:16px">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCADhAOEDASIAAhEBAxEB/8QAHAABAAMBAAMBAAAAAAAAAAAAAAYICQUBBAcC/8QAQxAAAQMDAgAJCQUGBgMBAAAAAAECAwQFBgcRCBITFyExV2GVCRQVGCJBUdHSVoGRkpMWUnFygtMjMjNCc4MlU2Nk/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAbEQEAAgMBAQAAAAAAAAAAAAAAARESIVFBMf/aAAwDAQACEQMRAD8ApkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB7Fuoqu419Pb6CmmqquplbFBBExXPke5dmtaidKqqqibAeuCeczWrHZzlPhkvyHM1qx2c5T4ZL8iWuM8QME85mtWOznKfDJfkOZrVjs5ynwyX5CzGeIGCeczWrHZzlPhkvyHM1qx2c5T4ZL8hZjPEDBPOZrVjs5ynwyX5BNGdWVXbm4ynwyX5CzGeIGCfcy+rfZxlHhsnyHMvq12cZR4bJ8hZjPEBBPuZfVrs4yjw2T5DmX1a7OMo8Nk+QsxniAgn3Mvq12cZR4bJ8hzL6tdnGUeGyfIWYzxAQT7mX1b7OMo8Nk+Q5l9W+zjKPDZPkWzGUBBPuZfVrs4yjw2T5DmX1a7OMo8Nk+RLMZ4gIJ9zL6tdnGUeGyfIcy+rfZxlHhsnyFmM8QEErvmm2oVjp31F3wfI6GBjeM+aa2ytY1PiruLsn4kUKTEwAAIAAAAABZDyf+D/tFq3PlFVDx6LHKflWqvUtTLuyNPuakju5WtK3ml3AuwdMM0Ntc08SsuF8X0nU7p0okiJyTe7aNGrt8VULHX2oABAAAAAAAAAAAAAAAAAAAAAAAAAr3woeDtYM7x+uyHFrXBb8vp43TM82YjGXFUTdY5GpsnHXqa/oXfZFXbqsIAsTTGmRjo3uY9qte1VRzVTZUVPcp+SVawxxw6uZjDE1Gxsv1c1jU6kRKh6IhFQkgAAAADt4HQ2m5ZrZqG/V0VBaZq2JtdUyuVrY4OMnKLunTvxd9u/Y0tg160WghZDDn9kjjjajGNa5yI1ETZET2TLcBbal8/wDo12hWb87vpHP/AKNdoVm/O76TLQA01L5/9Gu0Kzfnd9JKsGznEs4p6moxO+0l3ipXtZO+nVVRjnIqoi7onuQyKNQOCZgi4DohZaCpg5K5XBvpKvRW7OSWVEVrVT3K2NGMXvavxBp9YAAQOFmuY4xhVsjuWVXujtFJLKkMctQ/ZHvVFXip71XZFX7jumeHDzz9+UaurjNJMrrZjcfm/FRfZfUuRHSu+72WdysX4hYhcLn/ANGu0Kzfnd9I5/8ARrtCs353fSZaAGmpfP8A6NdoVm/O76TwvCA0aTr1Cs/5nfSZagGmpXrA6M9oNo/F/wBI9YHRntBtH4v+ky1ANNSvWB0Z7QbR+L/pHrA6M9oNo/F/0mWoBpqV6wOjPaDZ/wAz/pJ9jt8s2R2mK7WC6Ud0oJt+TqaWZskblRdlTdF23RehU9xjuXo8m3abjBg2UXmeon8wrLhFBTU7lXk0fFGqySNTq3dyjGqqf+vb3dAWwAAQONnWQUuKYZeclrf9C2UUtU9P3uI1VRqd6qiInep2Sr/lD829D6a27C6WXapv9TylQn/5oVRyp3byLHt8Ua4LCiF0rqm53OquVbKstVVzPnmevW573K5y/eqqesAEAAAAAAAAAAB9L4MmC84Ws9isU8HLW6KXz24oqIrfN4tnOa5F9z3cWP8ArNTSqvk7MF9F4LdM8q4dqm9TebUblROimhVUcqL1pxpOMip/8mlqgs8AAER3U3KaXCdP75ldXssdso3ztYq7co9E2Yz+LnK1v3mSV1rqq6XOquVdM6arq5nzzyO63ve5XOcv8VVVLqeUWz/zOx2jTmhlTla9UuFxRF6UhY7aJq9zno53/WnxKRBZ+AL/AHBq4OuDLpBZ7lnOLUtzvd0Z59I6pV+8McmyxRoiKm2zOKqoqbo5zkPpPq9aMdn9q/GT6iLUMuAaj+r1ox2f2r8ZPqHq9aMdn9q/GT6htNMuAaj+r1ox2f2r8ZPqHq9aMdn9q/GT6hs0y4BqP6vWjHZ/avxk+o/UfB90ZY9HJp9aFVP3keqfgrgaZlYrj95ym/0lhsFvnr7jVyJHDDExVVVVetfg1OtXL0Im6r0Gq+j2FUmnmm1lxCke2XzCnRJ5mpsk0zlV0j/4K9zlRPcmye46OJ4dimJQvhxjHLVZ2Sf6nmdKyJX/AMytTdfvO4UvgAAgZgcLTOv291vvVfTy8pbrc70bQqnUscSqiuT4o56yOTuchfDhR55zeaL3q8U9QkNzqWeY25UXZ3LyoqI5vexvHf8A0GWwXwAAQAAAAAAAAOnilkrslya2Y/bWcesuVVHSwpsqpxnuRqKvcm+69yHMLQ+TzwVbzqNX5tVw8aksMHJUyub0LUyoqbp/LHx/ztCwvDhtgocVxS1Y3bGq2jttJHSw79aoxqJuveu2696nWACB+JpY4YXzTPbHHG1XPe5dkaidKqqn7Ph3DbzpcN0Pr6Oll4lxyB3oyDbrSNyKszv4cmjm7+5XtCwodrlm0uoeqt+ypz3rT1VSraNrt/Yp2exEmy9S8VEVU+KqvvPc4OmCu1E1gsWOSRLJQLOlTcOjoSmj9p6L8ONsjEX4vQ+el6PJ1YGluxG7ag1kKJUXaRaKhcqJulPG721Rfg6RNl/4kBH21r2NaxqNa1GtRNkRE2REPIAQAAAAAAAAAAAEVznUbBsIpnz5VlNstitarkhkmR070T92Ju73fcilOOEVwsLhlVHU4zp3HU2m0TI6OpuMvs1VQ3qVGIi/4TFT3/5lRf8Ab0opacfh26pUebZ7S4vYqtKi0Y9x2Syxu3jnq3bI9U/eRiIjUX48fboXda4AAmQABAAAAAAAAA1H4LOCpp/orZLTPT8jcquPz+4oqbO5eVEXiu72t4jP6ChXBXwb9v8AW2x2maLlLfRyekK9FTdORhVF4q9znqxi/wA5qMF8AAEDOnh4Z1+1Ws77FSzK+343D5mxEVFatQ7Z0zk79+Ixf+MvfqtltLgmnV8yyrczi26kfJG1y7JJKvsxs/qerW/eZLXGsqrjcKm4Vszp6qpldNPK7re9yq5zl71VVUL49jHLRXZBkFvsVsi5WtuFTHTQM+L3uRqb926mt2C47Q4jh1oxm2tRtLbKSOmYvvdxU2Vy96ruq96qUa8nzgvp7VCrzCriV1HjsH+Cqp0OqZkc1vcvFYki9yq1S/4PAABHh7msarnORrUTdVVdkRDMvXfW/L8s1SvNzsGV3q22Vky09ugoq6SGPkI14rX7NVOl/S9d919rbfZELo8MfOf2I0NuzqedYrleP/F0fFVUciyIvKORU6U2jR6ovuXi/FDMsLdQlXORqJ9vcq8XqPrHORqJ9vcq8XqPrIqBRlKVc5Gon29yrxeo+sc5Gon29yrxeo+sioFGUpVzkaifb3KvF6j6z163Os3rY1jrcxyKpYvW2W5zPRfuVxHQKLl5Vd13U8ABAAAAAAAAAAAADq4jYa/KMpteO2uPj1tyqo6WFNlVEc9yJuu3uTfdV9yIqgXg8nhgvofTy45vWRbVV+n5GlVetKaFVTdPhxpOPv3MaWjOZidjocZxe147bGcSittJHSwIvXxWNRqKvxVdt1X3qp0wsgB+JpY4YXzSvayNjVc9zl2RqJ0qqhFQPKN52sFusenlFMiOqXekbgjXdPEaqtiaqfBXcd39DSlJNdcs0k1B1Vv+VK5y09XVK2ka7f2KdnsRJsvUvEair3qp0ODhg66hax2HHpYeVoEnSquG6bp5vF7T0X+bZGfxegX2l9+CJgy4LodZqWoh5O43NvpKtRW7OR8qIrWr3tjRjV70U+uBEREREREROpEAJADjZzkdDiOHXbJ7k7altlJJUyJv0u4qbo1O9y7IneqBFGPKEZul91Uo8RpZuPSY9TbTInV5zMiPd3LsxIk7l4yfErOdHJbzX5FkNxv10l5auuFTJU1D/cr3uVy7fBOnoT3Ic4LIAAgAAAAAAAAAAAAAAAAAABaLyeOC+mNRLhm9XCjqSwwclTK5OupmRU3T+WPj7/ztUq6Wx4OnCP030r0wo8YlxzIqi4LLJU3Cogig4ksz1603kRdkYjG9KJ/lCwvOCr3rsadfZjKv0qf+6PXY06+zGVfpU/8AdBS0J8R4a+cfsbobcqamlRlwvzvRlOnvRj0VZnfpo5N/crmkM9djTr7MZV+lT/3St3Cu1lptYMrtdVaaStorPbKRY4IKtGpJyr3byvXiqqbKjY06/wDZ3gjW3xkvJ5OfBUocWvOoNZBtUXOXzChc5E3SCNUWRyL8HSbIvfEUbLs6c8LDSzC8EsuK0GM5WsFso46fj8hTpyjkT23r/i9bncZy96qCFvwVf9djTf7M5Z+jT/3R67Gm/wBmcs/Rp/7oKWgKk+UVz5tFjdp06op9qi4yJX3BrV6oGKqRtVPg6RFd/wBXedb12NN/szln6NP/AHSnOtOdVWo+pl5y6pbJHHWTbUsL13WGnanFjZ1qiKjURV26Fcrl94PiGgAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/2Q==" alt="TP" style="height:40px;width:auto;"/>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#556677;margin-bottom:3px">TINSLEY PERFORMANCE — EVALUATION REPORT</div>
+        <h2 id="printName" style="font-size:22px;font-weight:800;color:#e8f0fe"></h2>
+        <div id="printMeta" style="font-size:12px;color:#778899;margin-top:2px"></div>
+      </div>
+    </div>
+
+    <!-- Profile + History -->
+    <div class="g2 no-print" style="margin-bottom:20px">
+      <div class="card">
+        <div class="frow" style="justify-content:space-between;margin-bottom:14px">
+          <div class="slabel" style="color:#556677;margin-bottom:0">📋 Profile</div>
+          <div class="frow" style="gap:8px">
+            <button class="btn-blue" onclick="showAthleteForm(selectedAthleteId)">✏️ Edit</button>
+            <button class="btn-danger" onclick="promptDeleteAthlete()">🗑 Delete</button>
+          </div>
+        </div>
+        <div id="profileName" style="font-size:22px;font-weight:800;margin-bottom:12px;color:#fff"></div>
+        <div class="g2" id="profileGrid" style="gap:8px"></div>
+      </div>
+
+      <div class="card" id="evalHistoryPanel">
+        <div class="frow" style="justify-content:space-between;margin-bottom:14px">
+          <div class="slabel" style="color:#556677;margin-bottom:0" id="evalCountLabel">📅 Evaluations (0)</div>
+          <button class="btn-add" onclick="showNewEval()">+ NEW EVAL</button>
+        </div>
+        <div class="ov-y fcol" id="evalHistoryList" style="gap:6px"></div>
+      </div>
+    </div>
+
+    <!-- Documents -->
+    <div class="card no-print" id="docsCard" style="margin-bottom:20px">
+      <div class="frow" style="justify-content:space-between;margin-bottom:14px">
+        <div class="slabel" style="color:#ff6644;margin-bottom:0">📄 Documents</div>
+        <label class="btn-add" style="cursor:pointer">+ UPLOAD PDF<input type="file" accept="application/pdf" style="display:none" onchange="handlePdfUpload(event)"></label>
+      </div>
+      <div id="uploadZone" class="upload-zone" onclick="this.querySelector('input').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleDrop(event)">
+        <input type="file" accept="application/pdf" onchange="handlePdfUpload(event)">
+        <div style="font-size:28px;margin-bottom:8px">📎</div>
+        <div style="font-size:13px;color:#556677;font-weight:600">Drop a PDF here or click to browse</div>
+        <div style="font-size:11px;color:#2a3540;margin-top:4px">Scouting reports, medical records, contracts...</div>
+      </div>
+      <div id="docsList" class="fcol hidden" style="gap:8px"></div>
+    </div>
+
+    <!-- Eval Display -->
+    <div id="evalDisplay" class="sgap hidden"></div>
+  </div>
+
+  <!-- Empty State -->
+  <div id="emptyState" style="text-align:center;padding:80px 20px">
+    <div style="font-size:48px;margin-bottom:16px">⚡</div>
+    <div style="font-size:18px;font-weight:700;color:#3a4550">Select an athlete to view their dashboard</div>
+    <div style="font-size:13px;color:#2a3540;margin-top:8px">All changes save automatically to your browser</div>
+  </div>
+</div>
+
+<script type="module">
+/* ======== FIREBASE SETUP ======== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot, getDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC7SpV3ExWtnbIigJ8VeVmt69DerqY6k3Y",
+  authDomain: "tinsley-performance-3c7e7.firebaseapp.com",
+  projectId: "tinsley-performance-3c7e7",
+  storageBucket: "tinsley-performance-3c7e7.firebasestorage.app",
+  messagingSenderId: "1024311899105",
+  appId: "1:1024311899105:web:a48a52396333dfaa0198a0"
+};
+const _fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(_fbApp);
+
+/* ======== LOGO DATA URI ======== */
+const LOGO_SRC = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCADhAOEDASIAAhEBAxEB/8QAHAABAAMBAAMBAAAAAAAAAAAAAAYICQUBBAcC/8QAQxAAAQMDAgAJCQUGBgMBAAAAAAECAwQFBgcRCBITFyExV2GVCRQVGCJBUdHSVoGRkpMWUnFygtMjMjNCc4MlU2Nk/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAbEQEAAgMBAQAAAAAAAAAAAAAAARESIVFBMf/aAAwDAQACEQMRAD8ApkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB7Fuoqu419Pb6CmmqquplbFBBExXPke5dmtaidKqqqibAeuCeczWrHZzlPhkvyHM1qx2c5T4ZL8iWuM8QME85mtWOznKfDJfkOZrVjs5ynwyX5CzGeIGCeczWrHZzlPhkvyHM1qx2c5T4ZL8hZjPEDBPOZrVjs5ynwyX5BNGdWVXbm4ynwyX5CzGeIGCfcy+rfZxlHhsnyHMvq12cZR4bJ8hZjPEBBPuZfVrs4yjw2T5DmX1a7OMo8Nk+QsxniAgn3Mvq12cZR4bJ8hzL6tdnGUeGyfIWYzxAQT7mX1b7OMo8Nk+Q5l9W+zjKPDZPkWzGUBBPuZfVrs4yjw2T5DmX1a7OMo8Nk+RLMZ4gIJ9zL6tdnGUeGyfIcy+rfZxlHhsnyFmM8QEErvmm2oVjp31F3wfI6GBjeM+aa2ytY1PiruLsn4kUKTEwAAIAAAAABZDyf+D/tFq3PlFVDx6LHKflWqvUtTLuyNPuakju5WtK3ml3AuwdMM0Ntc08SsuF8X0nU7p0okiJyTe7aNGrt8VULHX2oABAAAAAAAAAAAAAAAAAAAAAAAAAr3woeDtYM7x+uyHFrXBb8vp43TM82YjGXFUTdY5GpsnHXqa/oXfZFXbqsIAsTTGmRjo3uY9qte1VRzVTZUVPcp+SVawxxw6uZjDE1Gxsv1c1jU6kRKh6IhFQkgAAAADt4HQ2m5ZrZqG/V0VBaZq2JtdUyuVrY4OMnKLunTvxd9u/Y0tg160WghZDDn9kjjjajGNa5yI1ETZET2TLcBbal8/wDo12hWb87vpHP/AKNdoVm/O76TLQA01L5/9Gu0Kzfnd9JKsGznEs4p6moxO+0l3ipXtZO+nVVRjnIqoi7onuQyKNQOCZgi4DohZaCpg5K5XBvpKvRW7OSWVEVrVT3K2NGMXvavxBp9YAAQOFmuY4xhVsjuWVXujtFJLKkMctQ/ZHvVFXip71XZFX7jumeHDzz9+UaurjNJMrrZjcfm/FRfZfUuRHSu+72WdysX4hYhcLn/ANGu0Kzfnd9I5/8ARrtCs353fSZaAGmpfP8A6NdoVm/O76TwvCA0aTr1Cs/5nfSZagGmpXrA6M9oNo/F/wBI9YHRntBtH4v+ky1ANNSvWB0Z7QbR+L/pHrA6M9oNo/F/0mWoBpqV6wOjPaDZ/wAz/pJ9jt8s2R2mK7WC6Ud0oJt+TqaWZskblRdlTdF23RehU9xjuXo8m3abjBg2UXmeon8wrLhFBTU7lXk0fFGqySNTq3dyjGqqf+vb3dAWwAAQONnWQUuKYZeclrf9C2UUtU9P3uI1VRqd6qiInep2Sr/lD829D6a27C6WXapv9TylQn/5oVRyp3byLHt8Ua4LCiF0rqm53OquVbKstVVzPnmevW573K5y/eqqesAEAAAAAAAAAAB9L4MmC84Ws9isU8HLW6KXz24oqIrfN4tnOa5F9z3cWP8ArNTSqvk7MF9F4LdM8q4dqm9TebUblROimhVUcqL1pxpOMip/8mlqgs8AAER3U3KaXCdP75ldXssdso3ztYq7co9E2Yz+LnK1v3mSV1rqq6XOquVdM6arq5nzzyO63ve5XOcv8VVVLqeUWz/zOx2jTmhlTla9UuFxRF6UhY7aJq9zno53/WnxKRBZ+AL/AHBq4OuDLpBZ7lnOLUtzvd0Z59I6pV+8McmyxRoiKm2zOKqoqbo5zkPpPq9aMdn9q/GT6iLUMuAaj+r1ox2f2r8ZPqHq9aMdn9q/GT6htNMuAaj+r1ox2f2r8ZPqHq9aMdn9q/GT6hs0y4BqP6vWjHZ/avxk+o/UfB90ZY9HJp9aFVP3keqfgrgaZlYrj95ym/0lhsFvnr7jVyJHDDExVVVVetfg1OtXL0Im6r0Gq+j2FUmnmm1lxCke2XzCnRJ5mpsk0zlV0j/4K9zlRPcmye46OJ4dimJQvhxjHLVZ2Sf6nmdKyJX/AMytTdfvO4UvgAAgZgcLTOv291vvVfTy8pbrc70bQqnUscSqiuT4o56yOTuchfDhR55zeaL3q8U9QkNzqWeY25UXZ3LyoqI5vexvHf8A0GWwXwAAQAAAAAAAAOnilkrslya2Y/bWcesuVVHSwpsqpxnuRqKvcm+69yHMLQ+TzwVbzqNX5tVw8aksMHJUyub0LUyoqbp/LHx/ztCwvDhtgocVxS1Y3bGq2jttJHSw79aoxqJuveu2696nWACB+JpY4YXzTPbHHG1XPe5dkaidKqqn7Ph3DbzpcN0Pr6Oll4lxyB3oyDbrSNyKszv4cmjm7+5XtCwodrlm0uoeqt+ypz3rT1VSraNrt/Yp2exEmy9S8VEVU+KqvvPc4OmCu1E1gsWOSRLJQLOlTcOjoSmj9p6L8ONsjEX4vQ+el6PJ1YGluxG7ag1kKJUXaRaKhcqJulPG721Rfg6RNl/4kBH21r2NaxqNa1GtRNkRE2REPIAQAAAAAAAAAAAEVznUbBsIpnz5VlNstitarkhkmR070T92Ju73fcilOOEVwsLhlVHU4zp3HU2m0TI6OpuMvs1VQ3qVGIi/4TFT3/5lRf8Ab0opacfh26pUebZ7S4vYqtKi0Y9x2Syxu3jnq3bI9U/eRiIjUX48fboXda4AAmQABAAAAAAAAA1H4LOCpp/orZLTPT8jcquPz+4oqbO5eVEXiu72t4jP6ChXBXwb9v8AW2x2maLlLfRyekK9FTdORhVF4q9znqxi/wA5qMF8AAEDOnh4Z1+1Ws77FSzK+343D5mxEVFatQ7Z0zk79+Ixf+MvfqtltLgmnV8yyrczi26kfJG1y7JJKvsxs/qerW/eZLXGsqrjcKm4Vszp6qpldNPK7re9yq5zl71VVUL49jHLRXZBkFvsVsi5WtuFTHTQM+L3uRqb926mt2C47Q4jh1oxm2tRtLbKSOmYvvdxU2Vy96ruq96qUa8nzgvp7VCrzCriV1HjsH+Cqp0OqZkc1vcvFYki9yq1S/4PAABHh7msarnORrUTdVVdkRDMvXfW/L8s1SvNzsGV3q22Vky09ugoq6SGPkI14rX7NVOl/S9d919rbfZELo8MfOf2I0NuzqedYrleP/F0fFVUciyIvKORU6U2jR6ovuXi/FDMsLdQlXORqJ9vcq8XqPrHORqJ9vcq8XqPrIqBRlKVc5Gon29yrxeo+sc5Gon29yrxeo+sioFGUpVzkaifb3KvF6j6z163Os3rY1jrcxyKpYvW2W5zPRfuVxHQKLl5Vd13U8ABAAAAAAAAAAAADq4jYa/KMpteO2uPj1tyqo6WFNlVEc9yJuu3uTfdV9yIqgXg8nhgvofTy45vWRbVV+n5GlVetKaFVTdPhxpOPv3MaWjOZidjocZxe147bGcSittJHSwIvXxWNRqKvxVdt1X3qp0wsgB+JpY4YXzSvayNjVc9zl2RqJ0qqhFQPKN52sFusenlFMiOqXekbgjXdPEaqtiaqfBXcd39DSlJNdcs0k1B1Vv+VK5y09XVK2ka7f2KdnsRJsvUvEair3qp0ODhg66hax2HHpYeVoEnSquG6bp5vF7T0X+bZGfxegX2l9+CJgy4LodZqWoh5O43NvpKtRW7OR8qIrWr3tjRjV70U+uBEREREREROpEAJADjZzkdDiOHXbJ7k7altlJJUyJv0u4qbo1O9y7IneqBFGPKEZul91Uo8RpZuPSY9TbTInV5zMiPd3LsxIk7l4yfErOdHJbzX5FkNxv10l5auuFTJU1D/cr3uVy7fBOnoT3Ic4LIAAgAAAAAAAAAAAAAAAAAABaLyeOC+mNRLhm9XCjqSwwclTK5OupmRU3T+WPj7/ztUq6Wx4OnCP030r0wo8YlxzIqi4LLJU3Cogig4ksz1603kRdkYjG9KJ/lCwvOCr3rsadfZjKv0qf+6PXY06+zGVfpU/8AdBS0J8R4a+cfsbobcqamlRlwvzvRlOnvRj0VZnfpo5N/crmkM9djTr7MZV+lT/3St3Cu1lptYMrtdVaaStorPbKRY4IKtGpJyr3byvXiqqbKjY06/wDZ3gjW3xkvJ5OfBUocWvOoNZBtUXOXzChc5E3SCNUWRyL8HSbIvfEUbLs6c8LDSzC8EsuK0GM5WsFso46fj8hTpyjkT23r/i9bncZy96qCFvwVf9djTf7M5Z+jT/3R67Gm/wBmcs/Rp/7oKWgKk+UVz5tFjdp06op9qi4yJX3BrV6oGKqRtVPg6RFd/wBXedb12NN/szln6NP/AHSnOtOdVWo+pl5y6pbJHHWTbUsL13WGnanFjZ1qiKjURV26Fcrl94PiGgAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/2Q==";
+document.querySelectorAll('img[src="data:image/png;base64,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"]').forEach(el=>el.src=LOGO_SRC);
+
+/* ======== TOAST ======== */
+function showToast(msg,isError=false){
+  let t=document.getElementById("saveToast");
+  if(!t){t=document.createElement("div");t.id="saveToast";t.style.cssText="position:fixed;bottom:24px;right:24px;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;letter-spacing:0.05em;z-index:999;transition:opacity 0.4s;pointer-events:none;";document.body.appendChild(t);}
+  t.textContent=msg;
+  t.style.background=isError?"#ff445520":"#00ff8820";
+  t.style.border=isError?"1px solid #ff445560":"1px solid #00ff8860";
+  t.style.color=isError?"#ff4455":"#00ff88";
+  t.style.opacity="1";
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>{t.style.opacity="0";},2500);
+}
+
+/* ======== STATE ======== */
+const DIAL_OPTS = ["Left Ball of Foot","Left Heel","Right Ball of Foot","Right Heel"];
+let athletes = [];
+let evals = {};
+let docs = {};
+let teams = ["Alabama","Auburn","Tennessee","Georgia","LSU"];
+let staffMembers = [];
+let currentUser = null;
+let selectedAthleteId = null;
+let selectedEvalIdx = null;
+let editingEvalIdx = null;
+let editingAthleteId = null;
+let activeTeamFilter = "All";
+let _dbUnsubscribe = null;
+
+/* ======== SYNC UI ======== */
+function setSyncing(){ const d=document.getElementById("syncDot"),l=document.getElementById("syncLabel"); if(d)d.className="sync-dot syncing"; if(l)l.textContent="Syncing..."; }
+function setSynced(){  const d=document.getElementById("syncDot"),l=document.getElementById("syncLabel"); if(d)d.className="sync-dot synced"; if(l)l.textContent="Live sync ✓"; }
+function setSyncErr(){ const d=document.getElementById("syncDot"),l=document.getElementById("syncLabel"); if(d)d.className="sync-dot error"; if(l)l.textContent="Sync error"; }
+
+/* ======== FIREBASE SAVE ======== */
+async function saveToStorage() {
+  setSyncing();
+  try {
+    const workspaceRef = doc(db, "workspace", "main");
+    await setDoc(workspaceRef, { athletes, evals, teams, staffMembers, docs });
+    showToast("✓ Saved & synced to all devices");
+  } catch(e) {
+    console.error(e);
+    setSyncErr();
+    showToast("✗ Save failed — check connection", true);
+  }
+}
+
+/* ======== REAL-TIME LISTENER ======== */
+function startRealtimeSync() {
+  if (_dbUnsubscribe) _dbUnsubscribe();
+  const workspaceRef = doc(db, "workspace", "main");
+  _dbUnsubscribe = onSnapshot(workspaceRef,
+    (snap) => {
+      if (snap.exists()) {
+        const d = snap.data();
+        athletes     = d.athletes     || [];
+        evals        = d.evals        || {};
+        teams        = d.teams        || teams;
+        staffMembers = d.staffMembers || [];
+        docs         = d.docs         || {};
+      }
+      setSynced();
+      if (currentUser) {
+        renderRosterPanels();
+        renderHomeAthleteSelect();
+        if (selectedAthleteId && athletes.find(a=>a.id===selectedAthleteId)) {
+          if (!document.getElementById("dashboard").classList.contains("hidden")) {
+            if (document.getElementById("profileTabBar")) {
+              renderProfileTabs();
+              // If on evals tab, also refresh eval content
+              if(_profileTab==="evals"){ renderEvalHistory(); renderEvalDisplay(); }
+            } else {
+              renderProfile(); renderEvalHistory(); renderEvalDisplay(); renderDocs();
+            }
+          }
+          // Re-render home leaderboard if it's visible
+          if (!document.getElementById("viewHome").classList.contains("hidden")) {
+            renderViewHome();
+          }
+        } else if (selectedAthleteId) {
+          selectedAthleteId = null;
+          document.getElementById("dashboard").classList.add("hidden");
+          document.getElementById("emptyState").classList.remove("hidden");
+        }
+      } else {
+        renderHomeScreen();
+      }
+    },
+    (err) => { console.error(err); setSyncErr(); showToast("⚠ Sync error", true); }
+  );
+}
+
+/* ======== INIT ======== */
+async function init() {
+  // Show a subtle loading bar without destroying the home screen HTML
+  const loadingBanner = document.createElement("div");
+  loadingBanner.id = "loadingBanner";
+  loadingBanner.style.cssText = "position:fixed;top:0;left:0;right:0;background:#00ff8818;border-bottom:1px solid #00ff8840;padding:8px;text-align:center;font-size:11px;color:#00ff88;font-weight:700;letter-spacing:0.1em;z-index:9999;";
+  loadingBanner.textContent = "Connecting to shared database...";
+  document.body.appendChild(loadingBanner);
+
+  try {
+    const timeoutPromise = new Promise((_,reject) => setTimeout(()=>reject(new Error("timeout")), 8000));
+    const workspaceRef = doc(db, "workspace", "main");
+    const snap = await Promise.race([getDoc(workspaceRef), timeoutPromise]);
+    if (snap.exists()) {
+      const d = snap.data();
+      athletes     = d.athletes     || [];
+      evals        = d.evals        || {};
+      teams        = d.teams        || teams;
+      staffMembers = d.staffMembers || [];
+      docs         = d.docs         || {};
+    }
+    loadingBanner.remove();
+  } catch(e) {
+    console.error("Load error:", e);
+    loadingBanner.style.cssText += "background:#ff445518;color:#ff4455;border-color:#ff445540;";
+    loadingBanner.textContent = "Could not reach database — changes may not sync until reconnected.";
+    setTimeout(()=>loadingBanner.remove(), 6000);
+  }
+
+  // Always show home screen regardless of Firebase status
+  renderHomeScreen();
+  // Start real-time listener (retries automatically)
+  startRealtimeSync();
+}
+
+/* ======== HOME SCREEN / STAFF ======== */
+function renderHomeScreen() {
+  document.getElementById("homeScreen").classList.remove("hidden");
+  document.getElementById("appHeader").classList.add("hidden");
+  document.getElementById("appMain").classList.add("hidden");
+  const grid = document.getElementById("staffGrid");
+  grid.innerHTML = staffMembers.map((s,i) => `
+    <div class="staff-card" onclick="loginAs(${i})">
+      <div class="staff-avatar">${s.name.charAt(0).toUpperCase()}</div>
+      <div class="staff-name">${s.name}</div>
+      <div class="staff-role">${s.role||"Staff"}</div>
+    </div>`).join("") +
+    `<div class="staff-card add-card" onclick="showAddStaffModal()">
+      <div class="staff-avatar" style="background:transparent;border-color:#2a3540;color:#2a3540;font-size:28px">+</div>
+      <div class="staff-name" style="color:#556677">Add Profile</div>
+    </div>`;
+  renderHomeAthleteSelect();
+}
+
+function showAddStaffModal() {
+  document.getElementById("sm_name").value="";
+  document.getElementById("sm_role").value="";
+  document.getElementById("addStaffModal").classList.remove("hidden");
+  setTimeout(()=>document.getElementById("sm_name").focus(),100);
+}
+function saveStaffMember() {
+  const name=document.getElementById("sm_name").value.trim();
+  if(!name){alert("Name required.");return;}
+  staffMembers.push({name, role:document.getElementById("sm_role").value.trim()});
+  saveToStorage();
+  document.getElementById("addStaffModal").classList.add("hidden");
+  renderHomeScreen();
+}
+function loginAs(idx) {
+  currentUser = staffMembers[idx];
+  document.getElementById("homeScreen").classList.add("hidden");
+  document.getElementById("appHeader").classList.remove("hidden");
+  document.getElementById("appMain").classList.remove("hidden");
+  document.getElementById("activeUserBadge").textContent = "👤 " + currentUser.name;
+  renderRosterPanels();
+  selectAthlete("");
+  setView("home");
+}
+function goHome() {
+  currentUser = null;
+  selectedAthleteId = null;
+  renderHomeScreen();
+}
+
+/* ======== TEAM ROSTER PANELS ======== */
+let openTeams = new Set(); // which team panels are expanded
+
+function renderRosterPanels() {
+  const container = document.getElementById("teamRosterPanels");
+  if (!container) return;
+
+  // Also keep af_team select in sync
+  const sel = document.getElementById("af_team");
+  if (sel) {
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">— Select Team —</option>' + teams.map(t => `<option${t===prev?" selected":""}>${t}</option>`).join("");
+  }
+
+  // Build panels: one per team, plus "Unassigned" if any athlete has no team
+  const allTeamsWithAthletes = [...teams];
+  const unassigned = athletes.filter(a => !a.team || !teams.includes(a.team));
+  if (unassigned.length) allTeamsWithAthletes.push("__unassigned__");
+
+  if (!allTeamsWithAthletes.length && !athletes.length) {
+    container.innerHTML = `<div style="font-size:13px;color:#2a3540;padding:20px 0">No athletes yet — click + ADD ATHLETE to get started</div>`;
+    return;
+  }
+
+  container.innerHTML = allTeamsWithAthletes.map(team => {
+    const isUnassigned = team === "__unassigned__";
+    const label = isUnassigned ? "Unassigned" : team;
+    const teamAthletes = isUnassigned
+      ? unassigned
+      : athletes.filter(a => a.team === team);
+    const isOpen = openTeams.has(team);
+    const pitchers = teamAthletes.filter(a => a.type === "pitcher").sort((a,b) => a.lastName.localeCompare(b.lastName));
+    const positions = teamAthletes.filter(a => a.type !== "pitcher").sort((a,b) => a.lastName.localeCompare(b.lastName));
+    const count = teamAthletes.length;
+
+    const rosterRows = (group, groupLabel) => {
+      if (!group.length) return "";
+      return `<div class="roster-group-label">${groupLabel} (${group.length})</div>` +
+        group.map(a => {
+          const isActive = selectedAthleteId === a.id;
+          const evalCount = (evals[a.id] || []).length;
+          return `<div class="roster-athlete${isActive?" active":""}" onclick="selectAthleteFromRoster('${a.id}','${team}')">
+            <div>
+              <div class="roster-athlete-name">${a.lastName}, ${a.firstName}</div>
+              <div class="roster-athlete-sub">${[a.level, a.throws ? "Throws "+a.throws : ""].filter(Boolean).join(" · ")} ${evalCount ? `· ${evalCount} eval${evalCount!==1?"s":""}` : ""}</div>
+            </div>
+            <div style="font-size:10px;color:#334455">▶</div>
+          </div>`;
+        }).join("");
+    };
+
+    return `<div class="team-panel" id="panel_${team.replace(/[^a-zA-Z0-9]/g,'_')}">
+      <div class="team-panel-header${isOpen?" open":""}" onclick="toggleTeamPanel('${team}')">
+        <div class="frow" style="gap:10px">
+          <span class="team-panel-name">${label}</span>
+          <span class="team-panel-meta">${count} athlete${count!==1?"s":""}</span>
+        </div>
+        <div class="frow" style="gap:8px">
+          ${!isUnassigned?`<button class="btn-xs-blue" onclick="event.stopPropagation();showEditTeamModal('${team}')" style="font-size:10px;padding:2px 8px;border:1px solid #4488ff30;border-radius:6px;background:#4488ff08">✏️</button>`:""}
+          <span class="team-panel-arrow">▶</span>
+        </div>
+      </div>
+      <div class="team-roster${isOpen?" open":""}" id="roster_${team.replace(/\s/g,'_')}">
+        ${count === 0
+          ? `<div class="roster-empty">No athletes on this team yet</div>`
+          : rosterRows(pitchers, "⚾ Pitchers") + rosterRows(positions, "🏃 Position Players")
+        }
+      </div>
+    </div>`;
+  }).join("") +
+  `<button class="team-btn" style="border:1px dashed #2a3540;background:transparent;color:#2a3540;padding:7px 16px;border-radius:20px;font-size:12px;cursor:pointer;margin-top:4px" onclick="promptNewTeam()">+ New Team</button>`;
+}
+
+function toggleTeamPanel(team) {
+  if (openTeams.has(team)) {
+    openTeams.delete(team);
+  } else {
+    openTeams.add(team);
+  }
+  renderRosterPanels();
+}
+
+let editingTeamName = null;
+function showEditTeamModal(team) {
+  editingTeamName = team;
+  document.getElementById("et_name").value = team;
+  document.getElementById("editTeamModal").classList.remove("hidden");
+  setTimeout(()=>document.getElementById("et_name").focus(),100);
+}
+function saveEditTeam() {
+  const newName = document.getElementById("et_name").value.trim();
+  if (!newName) { alert("Team name cannot be empty."); return; }
+  if (newName !== editingTeamName && teams.includes(newName)) { alert("A team with that name already exists."); return; }
+  // Rename in teams list
+  const idx = teams.indexOf(editingTeamName);
+  if (idx > -1) teams[idx] = newName;
+  // Rename on all athletes
+  athletes.forEach(a => { if (a.team === editingTeamName) a.team = newName; });
+  // Update openTeams set
+  if (openTeams.has(editingTeamName)) { openTeams.delete(editingTeamName); openTeams.add(newName); }
+  saveToStorage();
+  document.getElementById("editTeamModal").classList.add("hidden");
+  editingTeamName = null;
+  renderRosterPanels();
+  renderHomeAthleteSelect();
+}
+function deleteTeam() {
+  const teamAthletes = athletes.filter(a => a.team === editingTeamName);
+  const msg = teamAthletes.length
+    ? `Delete "${editingTeamName}"? The ${teamAthletes.length} athlete(s) on this team will become unassigned.`
+    : `Delete "${editingTeamName}"? This team has no athletes.`;
+  if (!confirm(msg)) return;
+  teams = teams.filter(t => t !== editingTeamName);
+  athletes.forEach(a => { if (a.team === editingTeamName) a.team = ""; });
+  openTeams.delete(editingTeamName);
+  saveToStorage();
+  document.getElementById("editTeamModal").classList.add("hidden");
+  editingTeamName = null;
+  renderRosterPanels();
+  renderHomeAthleteSelect();
+}
+
+/* ======== HOME SCREEN ATHLETE DROPDOWN ======== */
+function renderHomeAthleteSelect() {
+  const sel = document.getElementById("homeAthleteSelect");
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Find an athlete —</option>';
+  // Group by team
+  const grouped = {};
+  athletes.forEach(a => {
+    const key = a.team || "Unassigned";
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(a);
+  });
+  // Sort teams: known teams first in order, then unassigned
+  const orderedTeams = [...teams.filter(t => grouped[t]), ...(grouped["Unassigned"] ? ["Unassigned"] : [])];
+  orderedTeams.forEach(team => {
+    const g = document.createElement("optgroup");
+    g.label = team;
+    const sorted = grouped[team].slice().sort((a,b) => a.lastName.localeCompare(b.lastName));
+    sorted.forEach(a => {
+      const o = document.createElement("option");
+      o.value = a.id;
+      o.textContent = `${a.lastName}, ${a.firstName} (${a.type==="pitcher"?"P":"POS"})`;
+      g.appendChild(o);
+    });
+    sel.appendChild(g);
+  });
+}
+function homeSelectAthlete(id) {
+  if (!id) return;
+  // If no user logged in, pick first staff or create guest session
+  if (!currentUser) {
+    if (staffMembers.length > 0) {
+      currentUser = staffMembers[0];
+    } else {
+      currentUser = { name: "Staff", role: "" };
+    }
+  }
+  document.getElementById("homeScreen").classList.add("hidden");
+  document.getElementById("appHeader").classList.remove("hidden");
+  document.getElementById("appMain").classList.remove("hidden");
+  document.getElementById("activeUserBadge").textContent = "👤 " + currentUser.name;
+  // Open the athlete's team panel
+  const a = athletes.find(x => x.id === id);
+  if (a && a.team) openTeams.add(a.team);
+  selectedAthleteId = id;
+  renderRosterPanels();
+  renderProfile(); renderEvalHistory(); renderEvalDisplay(); renderDocs();
+  document.getElementById("dashboard").classList.remove("hidden");
+  document.getElementById("emptyState").classList.add("hidden");
+  // reset dropdown for next time
+  document.getElementById("homeAthleteSelect").value = "";
+}
+
+function selectAthleteFromRoster(id, team) {
+  // Make sure that team is open
+  openTeams.add(team);
+  selectedAthleteId = id;
+  selectedEvalIdx = null;
+  editingEvalIdx = null;
+  hideEvalForm();
+  document.getElementById("dashboard").classList.remove("hidden");
+  document.getElementById("emptyState").classList.add("hidden");
+  renderProfile();
+  renderEvalHistory();
+  renderEvalDisplay();
+  renderDocs();
+  renderRosterPanels(); // re-render to show active state
+  // Scroll dashboard into view
+  document.getElementById("dashboard").scrollIntoView({behavior:"smooth", block:"start"});
+}
+function promptNewTeam() {
+  const name=prompt("Enter new team name:");
+  if(name&&name.trim()){const t=name.trim();if(!teams.includes(t)){teams.push(t);saveToStorage();renderRosterPanels();}}
+}
+function addTeamFromInput() {
+  const inp=document.getElementById("af_newTeam");const t=inp.value.trim();
+  if(!t)return;
+  if(!teams.includes(t)){teams.push(t);saveToStorage();renderRosterPanels();}
+  document.getElementById("af_team").value=t; inp.value="";
+}
+
+/* ======== ATHLETE SELECT (via roster panels) ======== */
+function selectAthlete(id) {
+  selectedAthleteId = id;
+  selectedEvalIdx = null;
+  editingEvalIdx = null;
+  hideEvalForm();
+  if (!id) {
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("emptyState").classList.remove("hidden");
+    renderRosterPanels();
+    return;
+  }
+  document.getElementById("dashboard").classList.remove("hidden");
+  document.getElementById("emptyState").classList.add("hidden");
+  renderProfile(); renderEvalHistory(); renderEvalDisplay(); renderDocs();
+  renderRosterPanels();
+}
+
+function getAthlete(id){return athletes.find(a=>a.id===(id||selectedAthleteId));}
+function getSortedEvals(){return(evals[selectedAthleteId]||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));}
+
+/* ======== PROFILE ======== */
+function renderProfile() {
+  const a=getAthlete();
+  document.getElementById("profileName").textContent=`${a.firstName} ${a.lastName}`;
+  document.getElementById("printName").textContent=`${a.firstName} ${a.lastName}`;
+  document.getElementById("printMeta").textContent=[a.type==="pitcher"?"Pitcher":"Position Player",a.level,a.team,`Throws: ${a.throws}`].filter(Boolean).join("  ·  ");
+  const evList=(evals[a.id]||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const last=evList[0];
+  // All measurables
+  const fields=[
+    ["Type",     a.type==="pitcher"?"⚾ Pitcher":"🏃 Position Player"],
+    ["Team",     a.team||"—"],
+    ["Level",    a.level||"—"],
+    ["Throws",   a.throws||"—"],
+    ["Bats",     a.bats||"—"],
+    ["Height",   a.height||"—"],
+    ["Weight",   a.weight?a.weight+" lbs":"—"],
+    ["Age",      a.age||"—"],
+    ["Grad Year",a.gradYear||"—"],
+  ];
+  // Last eval snapshot
+  const evalSnap = last ? [
+    ["Last Eval",    last.date],
+    ["Str Score",    last.shoulderStrength?(parseFloat(last.shoulderStrength)>=25?`<span style="color:#00ff88;font-weight:700">${last.shoulderStrength} ✓</span>`:`<span style="color:#ff4455;font-weight:700">${last.shoulderStrength} ✗</span>`):"—"],
+    ["Shoulder ROM", last.shoulderER&&last.shoulderIR?(parseInt(last.shoulderER)+parseInt(last.shoulderIR))+"°":"—"],
+    ["Sled Sprint",  last.sledSprint?last.sledSprint+"s":"—"],
+    ["Motor Pref",   last.motorPref||"—"],
+    ...(a.type==="pitcher"&&last.evalVelo?[["Eval Velo", last.evalVelo+" mph"],["Game Velo",last.gameVelo+" mph"]]:[]),
+  ] : [];
+  document.getElementById("profileGrid").innerHTML=`
+    <div style="grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#556677;margin-bottom:4px;border-bottom:1px solid #1e2730;padding-bottom:6px">Measurables</div>
+    ${fields.map(([k,v])=>`<div class="fcol" style="gap:2px"><span style="font-size:10px;color:#556677;font-weight:600;text-transform:uppercase;letter-spacing:0.08em">${k}</span><span style="font-size:13px;color:#aabbcc">${v}</span></div>`).join("")}
+    ${evalSnap.length?`<div style="grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#556677;margin:12px 0 4px;border-bottom:1px solid #1e2730;padding-bottom:6px">Latest Evaluation — ${last.date}</div>
+    ${evalSnap.map(([k,v])=>`<div class="fcol" style="gap:2px"><span style="font-size:10px;color:#556677;font-weight:600;text-transform:uppercase;letter-spacing:0.08em">${k}</span><span style="font-size:13px;color:#aabbcc">${v}</span></div>`).join("")}`:""}
+  `;
+}
+
+/* ======== ATHLETE FORM ======== */
+function showAthleteForm(id) {
+  editingAthleteId=id;
+  document.getElementById("afTitle").textContent=id?"✏️ EDIT ATHLETE":"➕ NEW ATHLETE";
+  // Always rebuild team dropdown fresh
+  const teamSel=document.getElementById("af_team");
+  teamSel.innerHTML='<option value="">— Select Team —</option>'+teams.map(t=>`<option value="${t}">${t}</option>`).join("");
+  const fields=["af_first","af_last","af_level","af_height","af_weight","af_age","af_gradYear"];
+  if(id){
+    const a=getAthlete(id);
+    document.getElementById("af_first").value=a.firstName||"";
+    document.getElementById("af_last").value=a.lastName||"";
+    document.getElementById("af_level").value=a.level||"";
+    document.getElementById("af_height").value=a.height||"";
+    document.getElementById("af_weight").value=a.weight||"";
+    document.getElementById("af_age").value=a.age||"";
+    document.getElementById("af_gradYear").value=a.gradYear||"";
+    document.getElementById("af_throws").value=a.throws||"R";
+    document.getElementById("af_bats").value=a.bats||"R";
+    document.getElementById("af_type").value=a.type||"position";
+    teamSel.value=a.team||"";
+  } else {
+    fields.forEach(i=>document.getElementById(i).value="");
+    document.getElementById("af_throws").value="R";
+    document.getElementById("af_bats").value="R";
+    document.getElementById("af_type").value="position";
+    teamSel.value="";
+  }
+  // Show as overlay modal — works from any screen
+  document.getElementById("athleteFormPanel").classList.remove("hidden");
+  setTimeout(()=>document.getElementById("af_first").focus(),100);
+}
+function hideAthleteForm(){
+  document.getElementById("athleteFormPanel").classList.add("hidden");
+  editingAthleteId=null;
+}
+function saveAthleteForm() {
+  const fn=document.getElementById("af_first").value.trim();
+  const ln=document.getElementById("af_last").value.trim();
+  if(!fn||!ln){alert("First and last name required.");return;}
+  const data={
+    firstName:fn, lastName:ln,
+    level:document.getElementById("af_level").value,
+    height:document.getElementById("af_height").value,
+    weight:document.getElementById("af_weight").value,
+    age:document.getElementById("af_age").value,
+    gradYear:document.getElementById("af_gradYear").value,
+    throws:document.getElementById("af_throws").value,
+    bats:document.getElementById("af_bats").value,
+    type:document.getElementById("af_type").value,
+    team:document.getElementById("af_team").value
+  };
+  const id=editingAthleteId||Date.now().toString();
+  if(editingAthleteId){
+    const idx=athletes.findIndex(a=>a.id===editingAthleteId);
+    athletes[idx]={id,...data};
+  } else {
+    athletes.push({id,...data});
+    selectedAthleteId=id;
+  }
+  if(data.team) openTeams.add(data.team);
+  saveToStorage(); hideAthleteForm(); renderRosterPanels(); renderHomeAthleteSelect();
+  // Re-render profile tab if the dashboard is open
+  if(document.getElementById("dashboard").classList.contains("hidden")===false){
+    selectedAthleteId = id;
+    renderProfileTabs();
+  }
+}
+
+/* ======== DELETE ATHLETE ======== */
+function promptDeleteAthlete(){const a=getAthlete();document.getElementById("delModalText").textContent=`Are you sure you want to delete ${a.firstName} ${a.lastName}? All evaluations and documents will be permanently removed.`;document.getElementById("delModal").classList.remove("hidden");}
+function confirmDeleteAthlete(){
+  const id=selectedAthleteId;
+  athletes=athletes.filter(a=>a.id!==id);delete evals[id];delete docs[id];
+  saveToStorage();document.getElementById("delModal").classList.add("hidden");
+  selectedAthleteId=null;renderRosterPanels();renderHomeAthleteSelect();
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("emptyState").classList.remove("hidden");
+}
+
+/* ======== EVAL HISTORY ======== */
+function renderEvalHistory(){
+  const evList=getSortedEvals();
+  document.getElementById("evalCountLabel").textContent=`📅 Evaluations (${evList.length})`;
+  const c=document.getElementById("evalHistoryList");
+  if(!evList.length){c.innerHTML='<div style="font-size:13px;color:#2a3540;padding:16px;text-align:center">No evaluations yet</div>';return;}
+  const a=getAthlete();
+  c.innerHTML=evList.map((ev,i)=>{
+    const isSel=(selectedEvalIdx===null&&i===0)||selectedEvalIdx===i;
+    return `<div class="hist-item${isSel?" sel":""}" onclick="pickEval(${i})">
+      <div class="fcol" style="gap:2px;flex:1;min-width:0">
+        <div class="frow" style="gap:6px">
+          <div class="dot"></div>
+          <span style="font-size:13px;font-weight:${isSel?700:600};color:${isSel?"#e8f0fe":"#aabbcc"}">${a?a.lastName+", "+a.firstName:"—"}</span>
+        </div>
+        <span style="font-size:11px;color:#556677;padding-left:16px;font-family:'Space Mono',monospace">${ev.date}</span>
+      </div>
+      <div class="frow" style="gap:4px;flex-shrink:0">
+        ${ev.evalVelo?`<span style="font-size:11px;color:#ff6644;font-weight:700">${ev.evalVelo} mph</span>`:""}
+        <button class="btn-xs-blue" onclick="event.stopPropagation();editEval(${i})">Edit</button>
+        <button class="btn-xs-red" onclick="event.stopPropagation();deleteEval(${i})">✕</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+function pickEval(i){
+  selectedEvalIdx=i;
+  // Make sure evals tab is active so evalDisplay stays visible
+  if(document.getElementById("profileTabBar")){
+    _profileTab="evals";
+    renderProfileTabs();
+  } else {
+    renderEvalHistory();
+    renderEvalDisplay();
+  }
+}
+function deleteEval(i){
+  const sorted=getSortedEvals();const ev=sorted[i];const orig=evals[selectedAthleteId]||[];
+  evals[selectedAthleteId]=orig.filter(e=>e!==ev);
+  if(selectedEvalIdx===i)selectedEvalIdx=null;
+  saveToStorage();renderEvalHistory();renderEvalDisplay();
+  if(!document.getElementById("viewHome").classList.contains("hidden")) renderViewHome();
+  if(!document.getElementById("viewEvals").classList.contains("hidden")) renderViewEvals();
+  if(document.getElementById("profileTabBar") && _profileTab==="profile") renderProfileTabs();
+}
+
+/* ======== EVAL DISPLAY ======== */
+function renderEvalDisplay(){
+  const evList=getSortedEvals();
+  const ev=selectedEvalIdx!==null?evList[selectedEvalIdx]:evList[0];
+  const c=document.getElementById("evalDisplay");
+  if(!ev){c.classList.add("hidden");c.innerHTML="";return;}
+  c.classList.remove("hidden");
+  const a=getAthlete();
+  const totalROM=(parseFloat(ev.shoulderER)||0)+(parseFloat(ev.shoulderIR)||0);
+  const strPass=ev.shoulderStrength!==""&&ev.shoulderStrength!==undefined?parseFloat(ev.shoulderStrength)>=25:null;
+  const badge=p=>p===null?"":`<span class="pbadge ${p?"pass":"fail"}">${p?"✓ PASS":"✗ FAIL"}</span>`;
+  const ec=(lbl,val,unit="",pass=null,hi=false)=>`
+    <div class="ecard${hi?" hi":""}">
+      <div class="ecard-lbl">${lbl}</div>
+      <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
+        <span class="ecard-val">${val||"—"}</span>
+        ${val&&unit?`<span style="font-size:12px;color:#556677">${unit}</span>`:""}
+        ${badge(pass)}
+      </div>
+    </div>`;
+  const dialRanks=(ev.moveDial||[]).filter(Boolean);
+  const dialColors=["#00ff88","#66ffbb","#99ffcc","#ccffee"];
+
+  let veloHTML="";
+  if(a.type==="pitcher"){
+    veloHTML=`<div class="card"><div class="slabel" style="color:#ff6644">🔥 Velocity</div><div class="g3">
+      ${ec("Eval Bullpen Velo",ev.evalVelo,"mph",null,true)}
+      ${ec("Current Top Game Velo",ev.gameVelo,"mph")}
+      ${ec("Top Pulldown Velo",ev.topPulldownVelo,"mph")}
+    </div></div>`;
+  }
+
+  const notesHTML=ev.notes?`<div class="card"><div class="slabel" style="color:#556677">📝 Coach Notes</div><div style="font-size:14px;color:#aabbcc;line-height:1.7;white-space:pre-wrap">${ev.notes}</div></div>`:"";
+  const allEvs=getSortedEvals();
+  let tableHTML="";
+  if(allEvs.length>1){
+    const baseCols=["Date","Motor Pref","Assoc/Dissoc","Motor Shldr","Axial/Large","Ext Leg","Sh.ER","Sh.IR","Total ROM","Hip ER","Hip IR","Strength","Sled"];
+    const veloCols=a.type==="pitcher"?["Eval BP Velo","Game Velo","Pulldown Velo"]:[];
+    const cols=[...baseCols,...veloCols];
+    tableHTML=`<div class="card"><div class="slabel" style="color:#aa88ff">📈 All Evaluations — Overview</div><div class="ov-x"><table class="ctable">
+      <thead><tr>${cols.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>
+      ${allEvs.map(e=>{
+        const tr=(parseFloat(e.shoulderER)||0)+(parseFloat(e.shoulderIR)||0);
+        const base=[e.date,e.motorPref||"—",e.assocDissoc||"—",e.motorShoulder||"—",e.axialLarge||"—",e.extLeg||"—",e.shoulderER?e.shoulderER+"°":"—",e.shoulderIR?e.shoulderIR+"°":"—",(e.shoulderER||e.shoulderIR)?tr+"°":"—",e.hipER?e.hipER+"°":"—",e.hipIR?e.hipIR+"°":"—",e.shoulderStrength||"—",e.sledSprint?e.sledSprint+"s":"—"];
+        const velo=a.type==="pitcher"?[e.evalVelo?e.evalVelo+" mph":"—",e.gameVelo?e.gameVelo+" mph":"—",e.topPulldownVelo?e.topPulldownVelo+" mph":"—"]:[];
+        const cells=[...base,...velo];
+        return `<tr>${cells.map((cv,j)=>`<td style="${j===0?"font-family:'Space Mono',monospace;font-size:11px":""}">${cv}</td>`).join("")}</tr>`;
+      }).join("")}
+      </tbody></table></div></div>`;
+  }
+
+  c.innerHTML=`
+    <div class="frow no-print" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div class="frow">
+        <span style="font-size:12px;color:#556677;font-family:'Space Mono',monospace">Showing eval from</span>
+        <span style="font-size:13px;color:#00ff88;font-weight:700;font-family:'Space Mono',monospace">${ev.date}</span>
+      </div>
+      <button class="btn-orange" onclick="window.print()">🖨 Print / Save as PDF</button>
+    </div>
+    <div class="card">
+      <div class="slabel" style="color:#00ff88">⚡ Motor & Movement</div>
+      <div class="g3" style="gap:12px;margin-bottom:14px">
+        ${ec("Motor Preference",ev.motorPref,"",null,true)}
+        ${ec("Assoc / Dissoc",ev.assocDissoc)}
+        ${ec("Motor Shoulder",ev.motorShoulder)}
+        ${ec("Axial / Large",ev.axialLarge)}
+        ${ec("Extension Leg",ev.extLeg)}
+        <div class="ecard"><div class="ecard-lbl">Move Dial Ranking</div>
+          ${dialRanks.length===0?'<div style="font-size:13px;color:#556677">—</div>'
+            :dialRanks.map((item,i)=>`<div style="display:flex;align-items:center;gap:10px;margin-top:${i>0?5:0}px">
+              <span style="width:20px;height:20px;border-radius:50%;background:${dialColors[i]}22;border:1px solid ${dialColors[i]}55;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${dialColors[i]};flex-shrink:0">${i+1}</span>
+              <span style="font-size:12px;color:#aabbcc">${item}</span></div>`).join("")}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="slabel" style="color:#4488ff">🔵 Range of Motion</div>
+      <div class="g3">
+        ${ec("Shoulder ER",ev.shoulderER,"°")}${ec("Shoulder IR",ev.shoulderIR,"°")}
+        ${ec("Total Shoulder ROM",(ev.shoulderER||ev.shoulderIR)?totalROM:"","°",null,true)}
+        ${ec("Hip ER",ev.hipER,"°")}${ec("Hip IR",ev.hipIR,"°")}
+      </div>
+    </div>
+    <div class="card">
+      <div class="slabel" style="color:#ffaa00">💪 Strength & Speed</div>
+      <div class="g2">
+        ${ec("Shoulder Strength Score",ev.shoulderStrength,"",strPass,true)}
+        ${ec("Sled Sprint",ev.sledSprint,"sec")}
+      </div>
+    </div>
+    ${veloHTML}${notesHTML}${tableHTML}`;
+}
+
+/* ======== EVAL FORM ======== */
+function showNewEval(){
+  editingEvalIdx=null;clearEvalForm();
+  document.getElementById("ef_date").value=new Date().toISOString().split("T")[0];
+  document.getElementById("evalFormTitle").textContent="🧪 NEW EVALUATION — "+getAthlete().firstName+" "+getAthlete().lastName;
+  document.getElementById("veloSection").classList.toggle("hidden",getAthlete().type!=="pitcher");
+  document.getElementById("evalFormPanel").classList.remove("hidden");
+  initDialSelects([]);
+}
+
+function editEval(i){
+  editingEvalIdx=i;const ev=getSortedEvals()[i];
+  document.getElementById("evalFormTitle").textContent="✏️ EDIT EVALUATION — "+getAthlete().firstName+" "+getAthlete().lastName;
+  document.getElementById("veloSection").classList.toggle("hidden",getAthlete().type!=="pitcher");
+  document.getElementById("evalFormPanel").classList.remove("hidden");
+  document.getElementById("ef_date").value=ev.date||"";
+  document.getElementById("ef_motorPref").value=ev.motorPref||"";
+  document.getElementById("ef_assocDissoc").value=ev.assocDissoc||"";
+  document.getElementById("ef_motorShoulder").value=ev.motorShoulder||"";
+  document.getElementById("ef_axialLarge").value=ev.axialLarge||"";
+  document.getElementById("ef_extLeg").value=ev.extLeg||"";
+  document.getElementById("ef_sER").value=ev.shoulderER||"";
+  document.getElementById("ef_sIR").value=ev.shoulderIR||"";
+  document.getElementById("ef_hER").value=ev.hipER||"";
+  document.getElementById("ef_hIR").value=ev.hipIR||"";
+  document.getElementById("ef_str").value=ev.shoulderStrength||"";
+  document.getElementById("ef_sled").value=ev.sledSprint||"";
+  document.getElementById("ef_vEval").value=ev.evalVelo||"";
+  document.getElementById("ef_vGame").value=ev.gameVelo||"";
+  document.getElementById("ef_vPdTop").value=ev.topPulldownVelo||"";
+  document.getElementById("ef_notes").value=ev.notes||"";
+  initDialSelects(ev.moveDial||[]);calcROM();calcStr();
+}
+
+function hideEvalForm(){document.getElementById("evalFormPanel").classList.add("hidden");editingEvalIdx=null;}
+function clearEvalForm(){
+  ["ef_date","ef_motorPref","ef_assocDissoc","ef_motorShoulder","ef_axialLarge","ef_extLeg","ef_sER","ef_sIR","ef_hER","ef_hIR","ef_str","ef_sled","ef_vEval","ef_vGame","ef_vPdTop","ef_notes"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("romPrev").classList.add("hidden");
+  document.getElementById("strPrev").innerHTML="";
+}
+function initDialSelects(cur=[]){
+  for(let i=0;i<4;i++){const s=document.getElementById(`ef_d${i}`);s.innerHTML='<option value="">—</option>'+DIAL_OPTS.map(o=>`<option${o===cur[i]?" selected":""}>${o}</option>`).join("");}
+}
+function syncDial(){
+  const sel=[0,1,2,3].map(i=>document.getElementById(`ef_d${i}`).value);
+  for(let i=0;i<4;i++){const cur=sel[i];const s=document.getElementById(`ef_d${i}`);
+    s.innerHTML='<option value="">—</option>'+DIAL_OPTS.map(o=>{const taken=sel.some((v,j)=>v===o&&j!==i);return `<option${o===cur?" selected":""}${taken&&o!==cur?" disabled":""}>${o}</option>`;}).join("");}
+}
+function calcROM(){
+  const er=parseFloat(document.getElementById("ef_sER").value)||0,ir=parseFloat(document.getElementById("ef_sIR").value)||0;
+  const p=document.getElementById("romPrev");
+  if(er||ir){p.classList.remove("hidden");document.getElementById("romVal").textContent=(er+ir)+"°";}else p.classList.add("hidden");
+}
+function calcStr(){
+  const v=document.getElementById("ef_str").value,d=document.getElementById("strPrev");
+  d.innerHTML=v!==""?`<span class="pbadge ${parseFloat(v)>=25?"pass":"fail"}">${parseFloat(v)>=25?"✓ PASS":"✗ FAIL"}</span>`:"";
+}
+function saveEval(){
+  const dial=[0,1,2,3].map(i=>document.getElementById(`ef_d${i}`).value);
+  const formData={
+    date:document.getElementById("ef_date").value||new Date().toISOString().split("T")[0],
+    motorPref:document.getElementById("ef_motorPref").value,
+    assocDissoc:document.getElementById("ef_assocDissoc").value,
+    motorShoulder:document.getElementById("ef_motorShoulder").value,
+    axialLarge:document.getElementById("ef_axialLarge").value,
+    extLeg:document.getElementById("ef_extLeg").value,
+    moveDial:dial,
+    shoulderER:document.getElementById("ef_sER").value,shoulderIR:document.getElementById("ef_sIR").value,
+    hipER:document.getElementById("ef_hER").value,hipIR:document.getElementById("ef_hIR").value,
+    shoulderStrength:document.getElementById("ef_str").value,sledSprint:document.getElementById("ef_sled").value,
+    evalVelo:document.getElementById("ef_vEval").value,
+    gameVelo:document.getElementById("ef_vGame").value,
+    topPulldownVelo:document.getElementById("ef_vPdTop").value,
+    notes:document.getElementById("ef_notes").value,
+  };
+  const existing=evals[selectedAthleteId]||[];
+  if(editingEvalIdx!==null){
+    const ev=getSortedEvals()[editingEvalIdx];const origIdx=existing.indexOf(ev);
+    existing[origIdx]={...formData};evals[selectedAthleteId]=existing;selectedEvalIdx=editingEvalIdx;
+  } else {
+    evals[selectedAthleteId]=[...existing,{...formData}];selectedEvalIdx=null;
+  }
+  saveToStorage();hideEvalForm();renderEvalHistory();renderEvalDisplay();
+  // Refresh home leaderboard and profile snapshot
+  if(!document.getElementById("viewHome").classList.contains("hidden")) renderViewHome();
+  if(!document.getElementById("viewEvals").classList.contains("hidden")) renderViewEvals();
+  if(document.getElementById("profileTabBar") && _profileTab==="profile") renderProfileTabs();
+}
+
+/* ======== DOCUMENTS ======== */
+function handlePdfUpload(event){
+  const file=event.target.files[0];if(!file)return;
+  if(file.type!=="application/pdf"){alert("Only PDF files are supported.");return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const docId=Date.now().toString();
+    const uploadDate=new Date().toLocaleDateString();
+    if(!docs[selectedAthleteId])docs[selectedAthleteId]=[];
+    docs[selectedAthleteId].push({id:docId,name:file.name,date:uploadDate,dataUrl:e.target.result});
+    saveToStorage();renderDocs();
+  };
+  reader.readAsDataURL(file);event.target.value="";
+}
+function handleDrop(event){
+  event.preventDefault();document.getElementById("uploadZone").classList.remove("drag");
+  const file=event.dataTransfer.files[0];if(!file)return;
+  if(file.type!=="application/pdf"){alert("Only PDF files are supported.");return;}
+  handlePdfUpload({target:{files:[file]}});
+}
+function renderDocs(){
+  const docList=docs[selectedAthleteId]||[];
+  const zone=document.getElementById("uploadZone"),list=document.getElementById("docsList");
+  if(!docList.length){zone.classList.remove("hidden");list.classList.add("hidden");list.innerHTML="";return;}
+  zone.classList.add("hidden");list.classList.remove("hidden");
+  list.innerHTML=docList.map((d,i)=>`
+    <div class="pdf-row">
+      <div class="pdf-icon">📄</div>
+      <div class="fcol" style="flex:1;min-width:0;gap:2px">
+        <div class="pdf-name">${d.name}</div>
+        <div class="pdf-meta">Uploaded ${d.date}</div>
+      </div>
+      <div class="frow" style="gap:6px">
+        <button class="btn-blue" style="font-size:11px;padding:5px 10px" onclick="openPdf(${i})">View</button>
+        <button class="btn-blue" style="font-size:11px;padding:5px 10px" onclick="downloadPdf(${i})">⬇</button>
+        <button class="btn-danger" style="font-size:11px;padding:5px 10px" onclick="deleteDocFile(${i})">✕</button>
+      </div>
+    </div>`).join("")+`
+    <label class="upload-zone" style="padding:12px;margin-top:4px;cursor:pointer">
+      <input type="file" accept="application/pdf" onchange="handlePdfUpload(event)">
+      <span style="font-size:12px;color:#556677;font-weight:600">+ Upload another PDF</span>
+    </label>`;
+}
+function openPdf(i){const d=(docs[selectedAthleteId]||[])[i];if(!d||!d.dataUrl){alert("Not found.");return;}document.getElementById("pdfModalName").textContent=d.name;document.getElementById("pdfFrame").src=d.dataUrl;document.getElementById("pdfModal").classList.remove("hidden");}
+function downloadPdf(i){const d=(docs[selectedAthleteId]||[])[i];if(!d||!d.dataUrl)return;const a=document.createElement("a");a.href=d.dataUrl;a.download=d.name;a.click();}
+function deleteDocFile(i){docs[selectedAthleteId]=docs[selectedAthleteId].filter((_,j)=>j!==i);saveToStorage();renderDocs();}
+
+/* ======== EXPOSE GLOBALS — must run synchronously before any onclick fires ======== */
+
+/* ======== NAV DROPDOWN ======== */
+function toggleNav(){
+  const m=document.getElementById("navMenu");
+  m.classList.toggle("hidden");
+  // close on outside click
+  if(!m.classList.contains("hidden")){
+    setTimeout(()=>document.addEventListener("click",_closeNavOutside,{once:true}),10);
+  }
+}
+function _closeNavOutside(e){
+  const m=document.getElementById("navMenu");
+  if(m&&!m.contains(e.target)&&e.target.id!=="navBtn") m.classList.add("hidden");
+}
+function closeNav(){ document.getElementById("navMenu")?.classList.add("hidden"); }
+
+let _currentView = "roster"; // roster | teams | athletes | evals | profile
+
+function setView(view){
+  closeNav();
+  _currentView = view;
+  // Update active state in menu
+  ["home","teams","athletes","evals"].forEach(v=>{
+    const el=document.getElementById("navOpt-"+v);
+    if(el) el.classList.toggle("active", v===view);
+  });
+  document.getElementById("navLabel").textContent =
+    view==="home"?"🏠 Home":view==="teams"?"🏷 Teams":view==="athletes"?"👤 Athletes":view==="evals"?"📋 Evaluations":"☰ View";
+
+  // Hide all panels
+  document.getElementById("teamRosterPanels").classList.add("hidden");
+  document.getElementById("viewHome").classList.add("hidden");
+  document.getElementById("viewTeams").classList.add("hidden");
+  document.getElementById("viewAthletes").classList.add("hidden");
+  document.getElementById("viewEvals").classList.add("hidden");
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("emptyState").classList.add("hidden");
+  document.getElementById("athleteFormPanel").classList.add("hidden");
+  document.getElementById("evalFormPanel").classList.add("hidden");
+
+  if(view==="home")     { renderViewHome();     document.getElementById("viewHome").classList.remove("hidden"); }
+  if(view==="teams")    { renderViewTeams();    document.getElementById("viewTeams").classList.remove("hidden"); }
+  if(view==="athletes") { renderViewAthletes(); document.getElementById("viewAthletes").classList.remove("hidden"); }
+  if(view==="evals")    { renderViewEvals();    document.getElementById("viewEvals").classList.remove("hidden"); }
+}
+
+function resetToRoster(){
+  _currentView="roster";
+  document.getElementById("navLabel").textContent="☰ View";
+  ["home","teams","athletes","evals"].forEach(v=>{
+    document.getElementById("navOpt-"+v)?.classList.remove("active");
+  });
+  document.getElementById("viewHome").classList.add("hidden");
+  document.getElementById("viewTeams").classList.add("hidden");
+  document.getElementById("viewAthletes").classList.add("hidden");
+  document.getElementById("viewEvals").classList.add("hidden");
+  document.getElementById("teamRosterPanels").classList.remove("hidden");
+}
+
+/* ======== HOME DASHBOARD ======== */
+function renderViewHome(){
+  const c = document.getElementById("viewHome");
+
+  // ── collect all evals across all athletes ──
+  const allEntries = [];
+  athletes.forEach(a => {
+    (evals[a.id]||[]).forEach(ev => {
+      allEntries.push({ athlete: a, ev });
+    });
+  });
+
+  // ── top 5 velocity (evalVelo, pitchers only) ──
+  const veloRows = allEntries
+    .filter(e => e.ev.evalVelo && parseFloat(e.ev.evalVelo) > 0)
+    .sort((a,b) => parseFloat(b.ev.evalVelo) - parseFloat(a.ev.evalVelo))
+    .slice(0,5);
+
+  // ── top 5 sled sprint (lower = faster) ──
+  const sledRows = allEntries
+    .filter(e => e.ev.sledSprint && parseFloat(e.ev.sledSprint) > 0)
+    .sort((a,b) => parseFloat(a.ev.sledSprint) - parseFloat(b.ev.sledSprint))
+    .slice(0,5);
+
+  // ── recent evaluations (last 5) ──
+  const recentRows = allEntries
+    .sort((a,b) => new Date(b.ev.date) - new Date(a.ev.date))
+    .slice(0,5);
+
+  // ── stat totals ──
+  const totalAthletes = athletes.length;
+  const totalEvals = allEntries.length;
+  const totalTeams = teams.length;
+  const avgVelo = veloRows.length
+    ? (veloRows.reduce((s,e)=>s+parseFloat(e.ev.evalVelo),0)/veloRows.length).toFixed(1)
+    : null;
+
+  const medal = (i) => i===0?'🥇':i===1?'🥈':i===2?'🥉':`<span style="font-size:13px;color:#556677;font-weight:700">#${i+1}</span>`;
+
+  const leaderRow = (rank, name, team, val, unit, barPct, color) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #0d1117;">
+      <div style="width:28px;text-align:center;flex-shrink:0">${medal(rank)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:#e8f0fe;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
+        <div style="font-size:10px;color:#556677;margin-top:2px">${team}</div>
+        <div style="height:3px;background:#1e2730;border-radius:2px;margin-top:6px">
+          <div style="height:3px;background:${color};border-radius:2px;width:${barPct}%;transition:width .4s"></div>
+        </div>
+      </div>
+      <div style="font-size:18px;font-weight:800;color:${color};flex-shrink:0">${val}<span style="font-size:11px;color:#556677;font-weight:400"> ${unit}</span></div>
+    </div>`;
+
+  // velo bar: max is first entry
+  const maxVelo = veloRows[0] ? parseFloat(veloRows[0].ev.evalVelo) : 1;
+  const minSled = sledRows[0] ? parseFloat(sledRows[0].ev.sledSprint) : 1;
+  // sled bar: fastest (lowest) = 100%, slowest gets shorter bar
+  const maxSled = sledRows[sledRows.length-1] ? parseFloat(sledRows[sledRows.length-1].ev.sledSprint) : minSled+1;
+
+  c.innerHTML = `
+    <!-- Hero header -->
+    <div style="margin-bottom:28px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#556677;margin-bottom:6px">Tinsley Performance</div>
+      <div style="font-size:28px;font-weight:800;color:#fff;line-height:1.1">Athlete Dashboard</div>
+      <div style="font-size:13px;color:#556677;margin-top:6px">Live leaderboards — updates every time an evaluation is saved</div>
+    </div>
+
+    <!-- Stat strip -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:28px">
+      ${[
+        ['Total Athletes', totalAthletes, '#00ff88'],
+        ['Teams',          totalTeams,   '#4488ff'],
+        ['Evaluations',    totalEvals,   '#ff7a00'],
+        ...(avgVelo ? [['Avg Top Velo', avgVelo+' mph', '#ff6644']] : []),
+      ].map(([label, val, color]) => `
+        <div class="card" style="padding:16px;text-align:center;border-color:${color}22">
+          <div style="font-size:26px;font-weight:800;color:${color}">${val}</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677;margin-top:4px">${label}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- Two leaderboards side by side -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
+
+      <!-- Velocity leaderboard -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div class="slabel" style="color:#ff6644;margin-bottom:2px">🔥 Top Velocity</div>
+            <div style="font-size:11px;color:#334455">Eval bullpen — all teams</div>
+          </div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#334455">MPH</div>
+        </div>
+        ${veloRows.length ? veloRows.map((e,i) =>
+          leaderRow(i,
+            `${e.athlete.lastName}, ${e.athlete.firstName}`,
+            e.athlete.team||'—',
+            e.ev.evalVelo, 'mph',
+            Math.round((parseFloat(e.ev.evalVelo)/maxVelo)*100),
+            i===0?'#ff6644':i===1?'#ff8855':i===2?'#ffaa77':'#cc6644')
+        ).join('') : '<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No velocity data yet</div>'}
+      </div>
+
+      <!-- Sled sprint leaderboard -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div class="slabel" style="color:#4488ff;margin-bottom:2px">⚡ Sled Sprint</div>
+            <div style="font-size:11px;color:#334455">Fastest times — all teams</div>
+          </div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#334455">SEC</div>
+        </div>
+        ${sledRows.length ? sledRows.map((e,i) =>
+          leaderRow(i,
+            `${e.athlete.lastName}, ${e.athlete.firstName}`,
+            e.athlete.team||'—',
+            e.ev.sledSprint, 'sec',
+            Math.round(((maxSled - parseFloat(e.ev.sledSprint)) / (maxSled - minSled + 0.001))*100 + 20),
+            i===0?'#4488ff':i===1?'#5599ff':i===2?'#66aaff':'#3377cc')
+        ).join('') : '<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No sled data yet</div>'}
+      </div>
+    </div>
+
+    <!-- Recent evaluations -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div class="slabel" style="color:#00ff88;margin-bottom:0">📋 Recent Evaluations</div>
+        <div style="font-size:11px;color:#334455">Latest across all teams</div>
+      </div>
+      ${recentRows.length ? `
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="border-bottom:1px solid #1e2730">
+              <th style="text-align:left;padding:8px 12px 8px 0;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Athlete</th>
+              <th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Team</th>
+              <th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Date</th>
+              <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Str Score</th>
+              <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Velo</th>
+              <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Sled</th>
+              <th style="padding:8px 0 8px 12px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${recentRows.map(({athlete:a, ev}) => {
+              const strVal = ev.shoulderStrength;
+              const strPass = strVal !== '' && strVal !== undefined ? parseFloat(strVal) >= 25 : null;
+              return `<tr style="border-bottom:1px solid #0d1117;cursor:pointer;transition:background .1s"
+                onmouseover="this.style.background='#0d1117'" onmouseout="this.style.background=''"
+                onclick="openAthleteProfile('${a.id}')">
+                <td style="padding:10px 12px 10px 0;font-weight:700;color:#e8f0fe">${a.lastName}, ${a.firstName}</td>
+                <td style="padding:10px 12px;color:#778899">${a.team||'—'}</td>
+                <td style="padding:10px 12px;color:#778899;font-family:'Space Mono',monospace">${ev.date}</td>
+                <td style="padding:10px 12px;text-align:right;font-weight:700;color:${strPass===true?'#00ff88':strPass===false?'#ff4455':'#556677'}">${strVal||'—'}</td>
+                <td style="padding:10px 12px;text-align:right;color:#ff6644;font-weight:700">${ev.evalVelo||'—'}</td>
+                <td style="padding:10px 12px;text-align:right;color:#4488ff;font-weight:700">${ev.sledSprint||'—'}</td>
+                <td style="padding:10px 0 10px 12px"><button class="btn-blue" style="font-size:11px;padding:4px 10px" onclick="event.stopPropagation();openAthleteProfile('${a.id}')">View</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>` : '<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No evaluations yet — add athletes and start evaluating</div>'}
+    </div>`;
+}
+
+/* ── TEAMS VIEW ── */
+function renderViewTeams(){
+  const c=document.getElementById("viewTeams");
+  if(!teams.length){c.innerHTML=`<div style="text-align:center;padding:60px 20px;color:#3a4550"><div style="font-size:40px">🏷</div><div style="margin-top:12px;font-size:15px;font-weight:700">No teams yet</div></div>`;return;}
+  c.innerHTML=`<div class="frow" style="justify-content:space-between;margin-bottom:16px">
+    <div class="slabel" style="color:#556677;margin:0">🏷 ALL TEAMS (${teams.length})</div>
+    <button class="btn-add" onclick="promptNewTeam()">+ New Team</button>
+  </div>`+
+  [...teams].sort((a,b)=>a.localeCompare(b)).map(team=>{
+    const members=athletes.filter(a=>a.team===team);
+    const eCount=members.reduce((n,a)=>(evals[a.id]||[]).length+n,0);
+    return `<div class="team-view-card">
+      <div class="team-view-header">
+        <div>
+          <div style="font-size:16px;font-weight:800;color:#e8f0fe">${team}</div>
+          <div style="font-size:12px;color:#556677;margin-top:3px">${members.length} athlete${members.length!==1?"s":""} · ${eCount} eval${eCount!==1?"s":""}</div>
+        </div>
+        <div class="frow" style="gap:6px">
+          <button class="btn-blue" onclick="showEditTeamModal('${team}')">✏️ Edit</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+        ${members.sort((a,b)=>a.lastName.localeCompare(b.lastName)).map(a=>`
+          <div style="padding:10px 12px;background:#080c10;border:1px solid #1e2730;border-radius:8px;cursor:pointer;transition:border-color .12s"
+               onmouseover="this.style.borderColor='#00ff8840'" onmouseout="this.style.borderColor='#1e2730'"
+               onclick="openAthleteProfile('${a.id}')">
+            <div style="font-size:13px;font-weight:700;color:#e8f0fe">${a.lastName}, ${a.firstName}</div>
+            <div style="font-size:11px;color:#556677;margin-top:2px">${a.type==="pitcher"?"⚾ Pitcher":"🏃 Position"} · ${a.throws}HP</div>
+          </div>`).join("")}
+        ${!members.length?`<div style="font-size:12px;color:#334455;padding:8px">No athletes on this team yet</div>`:""}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ── ATHLETES VIEW ── */
+function renderViewAthletes(){
+  const c=document.getElementById("viewAthletes");
+  const pitchers=athletes.filter(a=>a.type==="pitcher").slice().sort((a,b)=>a.lastName.localeCompare(b.lastName));
+  const position=athletes.filter(a=>a.type!=="pitcher").slice().sort((a,b)=>a.lastName.localeCompare(b.lastName));
+
+  const renderGroup=(list,label,icon)=>!list.length?"":`
+    <div style="font-size:10px;font-weight:700;letter-spacing:.15em;color:#334455;text-transform:uppercase;padding:10px 0 6px;border-bottom:1px solid #1e2730;margin-bottom:12px">${icon} ${label} (${list.length})</div>
+    <div class="ath-grid" style="margin-bottom:28px">
+      ${list.map(a=>{
+        const ev=evals[a.id]||[];const last=ev.slice().sort((x,y)=>new Date(y.date)-new Date(x.date))[0];
+        return `<div class="ath-card" onclick="openAthleteProfile('${a.id}')">
+          <div style="font-size:15px;font-weight:800;color:#e8f0fe">${a.lastName}, ${a.firstName}</div>
+          <div style="font-size:11px;color:#556677;margin-top:4px">${a.team||"—"} · ${a.throws}HP · ${a.level||"—"}</div>
+          <div style="font-size:11px;color:#556677;margin-top:2px">${ev.length} eval${ev.length!==1?"s":""} ${last?" · Last: "+last.date:""}</div>
+        </div>`;
+      }).join("")}
+    </div>`;
+
+  c.innerHTML=`<div class="frow" style="justify-content:space-between;margin-bottom:16px">
+    <div class="slabel" style="color:#556677;margin:0">👤 ALL ATHLETES (${athletes.length})</div>
+    <button class="btn-add" onclick="showAthleteForm(null)">+ Add Athlete</button>
+  </div>`+
+  (athletes.length===0?`<div style="text-align:center;padding:60px 20px;color:#3a4550"><div style="font-size:40px">👤</div><div style="margin-top:12px;font-size:15px;font-weight:700">No athletes yet</div></div>`:"")
+  +renderGroup(pitchers,"Pitchers","⚾")
+  +renderGroup(position,"Position Players","🏃");
+}
+
+/* ── EVALS VIEW ── */
+function renderViewEvals(){
+  const c=document.getElementById("viewEvals");
+  const all=[];
+  athletes.forEach(a=>{(evals[a.id]||[]).forEach(ev=>all.push({...ev,_athlete:a}));});
+  all.sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  // Sorted athlete list for dropdown
+  const sortedAthletes=[...athletes].sort((a,b)=>a.lastName.localeCompare(b.lastName));
+
+  c.innerHTML=`
+    <!-- Header + New Eval -->
+    <div class="frow" style="justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div class="slabel" style="color:#556677;margin:0">📋 ALL EVALUATIONS (${all.length})</div>
+      <button class="btn-add" onclick="showNewEvalFromView()">+ New Eval</button>
+    </div>
+
+    <!-- New eval inline selector (hidden by default) -->
+    <div id="newEvalSelector" class="card hidden" style="margin-bottom:16px;padding:16px">
+      <div style="font-size:13px;font-weight:700;color:#00ff88;margin-bottom:12px">Select athlete to evaluate:</div>
+      <div class="frow" style="gap:10px;flex-wrap:wrap">
+        <select id="newEvalAthleteSelect" class="finput" style="flex:1;min-width:200px">
+          <option value="">— Choose athlete —</option>
+          ${sortedAthletes.map(a=>`<option value="${a.id}">${a.lastName}, ${a.firstName} · ${a.team||"—"}</option>`).join("")}
+        </select>
+        <button class="btn-green" onclick="startEvalFromView()">Start Eval →</button>
+        <button class="btn-ghost" onclick="document.getElementById('newEvalSelector').classList.add('hidden')">Cancel</button>
+      </div>
+    </div>
+
+    ${all.length===0
+      ? `<div style="text-align:center;padding:60px 20px;color:#3a4550"><div style="font-size:40px">📋</div><div style="margin-top:12px;font-size:15px;font-weight:700">No evaluations yet</div><div style="font-size:13px;color:#2a3540;margin-top:6px">Add athletes and start evaluating</div></div>`
+      : `<div class="ov-x"><table class="ctable" style="min-width:600px">
+          <thead><tr>
+            <th>Date</th><th>Athlete</th><th>Team</th><th>Type</th>
+            <th>Str Score</th><th>ROM</th><th>Sled</th><th>Velo</th><th></th>
+          </tr></thead>
+          <tbody>
+          ${all.map(ev=>{
+            const a=ev._athlete;
+            const str=ev.shoulderStrength;
+            const strPass=str!==undefined&&str!==''?parseFloat(str)>=25:null;
+            const rom=ev.shoulderER&&ev.shoulderIR?(parseInt(ev.shoulderER)+parseInt(ev.shoulderIR))+'°':'—';
+            return `<tr style="cursor:pointer" onclick="openAthleteProfile('${a.id}')"
+              onmouseover="this.style.background='#0d1117'" onmouseout="this.style.background=''">
+              <td style="font-family:'Space Mono',monospace">${ev.date}</td>
+              <td style="color:#e8f0fe;font-weight:600">${a.lastName}, ${a.firstName}</td>
+              <td style="color:#778899">${a.team||'—'}</td>
+              <td>${a.type==='pitcher'?'⚾ P':'🏃 POS'}</td>
+              <td style="font-weight:700;color:${strPass===true?'#00ff88':strPass===false?'#ff4455':'#556677'}">${str||'—'}</td>
+              <td>${rom}</td>
+              <td style="color:#4488ff">${ev.sledSprint||'—'}</td>
+              <td style="color:#ff6644">${ev.evalVelo||'—'}</td>
+              <td><button class="btn-blue" style="font-size:11px;padding:4px 8px"
+                onclick="event.stopPropagation();openAthleteProfile('${a.id}')">View</button></td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table></div>`
+    }`;
+}
+
+function showNewEvalFromView(){
+  const sel=document.getElementById("newEvalSelector");
+  sel.classList.toggle("hidden");
+  if(!sel.classList.contains("hidden"))
+    document.getElementById("newEvalAthleteSelect").focus();
+}
+
+function startEvalFromView(){
+  const id=document.getElementById("newEvalAthleteSelect").value;
+  if(!id){alert("Please select an athlete first.");return;}
+  // Set selected athlete then open eval form
+  selectedAthleteId=id;
+  selectedEvalIdx=null;
+  editingEvalIdx=null;
+  document.getElementById("newEvalSelector").classList.add("hidden");
+  showNewEval();
+}
+
+/* ── ATHLETE PROFILE (dedicated profile page with tabs) ── */
+let _profileTab = "profile";
+
+function openAthleteProfile(id){
+  selectedAthleteId = id;
+  selectedEvalIdx = null;
+  editingEvalIdx = null;
+  _profileTab = "profile";
+  // Switch to profile view
+  document.getElementById("viewHome").classList.add("hidden");
+  document.getElementById("viewTeams").classList.add("hidden");
+  document.getElementById("viewAthletes").classList.add("hidden");
+  document.getElementById("viewEvals").classList.add("hidden");
+  document.getElementById("teamRosterPanels").classList.add("hidden");
+  document.getElementById("emptyState").classList.add("hidden");
+  document.getElementById("athleteFormPanel").classList.add("hidden");
+  document.getElementById("evalFormPanel").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  // Always remove stale tab content so renderProfileTabs builds fresh
+  document.getElementById("profileTabBar")?.remove();
+  document.getElementById("profileTabContent")?.remove();
+  renderProfileTabs();
+  document.getElementById("dashboard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderProfileTabs(){
+  const a=getAthlete();if(!a)return;
+
+  // ── Tab bar ──
+  let tabBar=document.getElementById("profileTabBar");
+  if(!tabBar){
+    tabBar=document.createElement("div");
+    tabBar.id="profileTabBar";
+    tabBar.className="ptab-bar no-print";
+    document.getElementById("dashboard").insertBefore(tabBar, document.getElementById("dashboard").firstChild);
+  }
+  tabBar.innerHTML=`
+    <button class="ptab${_profileTab==="profile"?" active":""}" onclick="switchProfileTab('profile')">📋 Profile</button>
+    <button class="ptab${_profileTab==="evals"?" active":""}"   onclick="switchProfileTab('evals')">📅 Evaluations</button>
+    <button class="ptab${_profileTab==="docs"?" active":""}"    onclick="switchProfileTab('docs')">📄 Documents</button>
+    <button class="ptab" onclick="goBackToView()" style="margin-left:auto;color:#556677">← Back</button>`;
+
+  // ── Always hide all original dashboard sections first ──
+  const g2       = document.querySelector("#dashboard .g2.no-print");
+  const docsCard = document.getElementById("docsCard");
+  const evalDisp = document.getElementById("evalDisplay");
+  if(g2)       g2.style.display       = "none";
+  if(docsCard) docsCard.style.display = "none";
+  if(evalDisp) evalDisp.style.display = "none";
+
+  // ── Get or create the profile content area ──
+  let profileArea = document.getElementById("profileTabContent");
+  if(!profileArea){
+    profileArea = document.createElement("div");
+    profileArea.id = "profileTabContent";
+    document.getElementById("dashboard").appendChild(profileArea);
+  }
+
+  if(_profileTab==="profile"){
+    const evList=(evals[a.id]||[]).slice().sort((x,y)=>new Date(y.date)-new Date(x.date));
+    const last=evList[0];
+    const fields=[
+      ["Type",      a.type==="pitcher"?"⚾ Pitcher":"🏃 Position Player"],
+      ["Team",      a.team||"—"],
+      ["Level",     a.level||"—"],
+      ["Throws",    a.throws||"—"],
+      ["Bats",      a.bats||"—"],
+      ["Height",    a.height||"—"],
+      ["Weight",    a.weight?a.weight+" lbs":"—"],
+      ["Age",       a.age||"—"],
+      ["Grad Year", a.gradYear||"—"],
+    ];
+    const evalSnap = last ? [
+      ["Last Eval",    last.date],
+      ["Str Score",    last.shoulderStrength?(parseFloat(last.shoulderStrength)>=25
+        ?`<span style="color:#00ff88;font-weight:700">${last.shoulderStrength} ✓</span>`
+        :`<span style="color:#ff4455;font-weight:700">${last.shoulderStrength} ✗</span>`):"—"],
+      ["Shoulder ROM", last.shoulderER&&last.shoulderIR?(parseInt(last.shoulderER)+parseInt(last.shoulderIR))+"°":"—"],
+      ["Sled Sprint",  last.sledSprint?last.sledSprint+"s":"—"],
+      ["Motor Pref",   last.motorPref||"—"],
+      ...(a.type==="pitcher"&&last.evalVelo?[["Eval Velo",last.evalVelo+" mph"],["Game Velo",last.gameVelo+" mph"]]:[]),
+    ] : [];
+
+    profileArea.innerHTML=`
+      <div class="card" style="margin-bottom:20px">
+        <div class="frow" style="justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:24px;font-weight:800;color:#fff">${a.firstName} ${a.lastName}</div>
+            <div style="font-size:12px;color:#556677;margin-top:4px">${a.type==="pitcher"?"⚾ Pitcher":"🏃 Position Player"} · ${a.team||"—"} · ${a.level||"—"}</div>
+          </div>
+          <div class="frow" style="gap:8px">
+            <button class="btn-blue" onclick="showAthleteForm('${a.id}')">✏️ Edit</button>
+            <button class="btn-danger" onclick="promptDeleteAthlete()">🗑 Delete</button>
+          </div>
+        </div>
+        <div class="slabel" style="color:#556677;border-bottom:1px solid #1e2730;padding-bottom:8px;margin-bottom:12px">Measurables</div>
+        <div class="g3" style="gap:10px;margin-bottom:${evalSnap.length?20:0}px">
+          ${fields.map(([k,v])=>`<div class="fcol" style="gap:3px">
+            <span style="font-size:10px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.08em">${k}</span>
+            <span style="font-size:14px;color:#ccdde8">${v}</span>
+          </div>`).join("")}
+        </div>
+        ${evalSnap.length?`
+        <div class="slabel" style="color:#556677;border-bottom:1px solid #1e2730;padding-bottom:8px;margin-bottom:12px">Latest Evaluation — ${last.date}</div>
+        <div class="g3" style="gap:10px">
+          ${evalSnap.map(([k,v])=>`<div class="fcol" style="gap:3px">
+            <span style="font-size:10px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.08em">${k}</span>
+            <span style="font-size:14px;color:#ccdde8">${v}</span>
+          </div>`).join("")}
+        </div>`:""}
+      </div>`;
+    profileArea.style.display="";
+
+  } else if(_profileTab==="evals"){
+    profileArea.innerHTML="";
+    profileArea.style.display="none";
+    if(g2){
+      g2.style.display="";
+      g2.style.gridTemplateColumns="1fr";
+      [...g2.children].forEach(ch=>{ ch.style.display = ch.id==="evalHistoryPanel" ? "" : "none"; });
+    }
+    if(evalDisp){ evalDisp.style.display=""; evalDisp.classList.remove("hidden"); }
+    renderEvalHistory();
+    renderEvalDisplay();
+
+  } else if(_profileTab==="docs"){
+    profileArea.innerHTML="";
+    profileArea.style.display="none";
+    if(docsCard) docsCard.style.display="";
+  }
+}
+
+function switchProfileTab(tab){
+  _profileTab=tab;
+  if(tab!=="evals") hideEvalForm();
+  renderProfileTabs();
+}
+
+function goBackToView(){
+  // Remove injected elements
+  document.getElementById("profileTabBar")?.remove();
+  document.getElementById("profileTabContent")?.remove();
+  // Restore all original dashboard sections
+  const g2=document.querySelector("#dashboard .g2.no-print");
+  if(g2){g2.style.display="";g2.style.gridTemplateColumns="";[...g2.children].forEach(ch=>ch.style.display="");}
+  const docsCard=document.getElementById("docsCard");if(docsCard)docsCard.style.display="";
+  const evalDisplay=document.getElementById("evalDisplay");if(evalDisplay)evalDisplay.style.display="";
+  document.getElementById("dashboard").classList.add("hidden");
+  if(_currentView==="home")          { renderViewHome(); document.getElementById("viewHome").classList.remove("hidden"); }
+  else if(_currentView==="teams")    document.getElementById("viewTeams").classList.remove("hidden");
+  else if(_currentView==="athletes") document.getElementById("viewAthletes").classList.remove("hidden");
+  else if(_currentView==="evals")    document.getElementById("viewEvals").classList.remove("hidden");
+  else { resetToRoster(); document.getElementById("teamRosterPanels").classList.remove("hidden"); }
+}
+
+Object.assign(window, {
+  showAddStaffModal, saveStaffMember, loginAs, goHome,
+  showAthleteForm, hideAthleteForm, saveAthleteForm, promptDeleteAthlete, confirmDeleteAthlete,
+  addTeamFromInput, promptNewTeam, toggleTeamPanel, selectAthleteFromRoster, selectAthlete,
+  showEditTeamModal, saveEditTeam, deleteTeam, homeSelectAthlete,
+  showNewEval, editEval, deleteEval, pickEval, saveEval, hideEvalForm, syncDial, calcROM, calcStr,
+  handlePdfUpload, handleDrop, openPdf, downloadPdf, deleteDocFile,
+  renderRosterPanels, renderHomeAthleteSelect,
+  toggleNav, closeNav, setView, openAthleteProfile, switchProfileTab, goBackToView,
+  renderViewTeams, renderViewAthletes, renderViewEvals,
+  showNewEvalFromView, startEvalFromView
+});
+
+/* ======== INIT ======== */
+init();
+</script>
+</body>
+</html>
