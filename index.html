@@ -112,42 +112,70 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 
 @media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+.nav-item{padding:8px 12px;border-radius:8px;font-size:13px;color:#aabbcc;cursor:pointer;font-weight:600;transition:all .12s;}
+.nav-item:hover{background:#1e2730;color:#e8f0fe;}
+.nav-item.active{background:#00ff8812;color:#00ff88;}
+/* Profile tabs */
+.ptab{padding:7px 16px;border-radius:8px;border:none;background:transparent;color:#556677;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .15s;}
+.ptab.active{background:#1e2730;color:#e8f0fe;}
+/* Athletes grid view */
+.athlete-card{background:#0d1117;border:1px solid #1e2730;border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;}
+.athlete-card:hover{border-color:#00ff8840;background:#00ff8806;transform:translateY(-1px);}
+/* Teams view */
+.team-card{background:#0d1117;border:1px solid #1e2730;border-radius:12px;padding:18px;margin-bottom:10px;}
 
-/* ===== PRINT STYLES — dark theme, single page ===== */
+/* ===== PRINT STYLES — white/light theme ===== */
 @media print {
   @page { size: letter portrait; margin: 0.4in; }
-  body{background:#060a0e!important;color:#e8f0fe!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .header,.no-print,.overlay,#homeScreen{display:none!important;}
-  .main{padding:0!important;max-width:100%!important;}
-  #athleteFormPanel,#evalFormPanel,#docsCard,#evalHistoryPanel,#emptyState,#selectorRow,#teamFilterRow,#teamRosterPanels{display:none!important;}
-  #dashboard{display:block!important;}
-  /* Compact all cards to fit one page */
-  .card{background:#0d1117!important;border:1px solid #1e2730!important;border-radius:6px!important;page-break-inside:avoid;margin-bottom:5px!important;padding:10px 12px!important;}
-  .inset{background:#080c10!important;border:1px solid #1e2730!important;padding:8px 10px!important;}
-  .ecard{background:#0d1117!important;border:1px solid #1e2730!important;padding:7px 10px!important;}
-  .ecard.hi{background:#00ff8810!important;border-color:#00ff8840!important;}
-  .ecard-lbl{color:#556677!important;font-size:9px!important;}
-  .ecard-val{color:#e8f0fe!important;font-size:13px!important;}
-  .ecard.hi .ecard-val{color:#00ff88!important;}
-  .slabel{color:#778899!important;margin-bottom:7px!important;font-size:9px!important;}
-  .pbadge{font-size:9px!important;padding:1px 6px!important;}
-  .pbadge.pass{background:#00ff8820!important;color:#00cc66!important;border-color:#00cc6640!important;}
-  .pbadge.fail{background:#ff445520!important;color:#ff4455!important;border-color:#ff445540!important;}
-  .print-header{display:flex!important;}
-  #evalDisplay{display:flex!important;}
-  .ctable th{color:#556677!important;border-bottom-color:#1e2730!important;padding:4px 6px!important;font-size:9px!important;}
-  .ctable td{color:#aabbcc!important;border-bottom-color:#0d1117!important;padding:4px 6px!important;font-size:9px!important;}
-  .ctable tr:nth-child(even){background:#080c1050!important;}
-  .dial-rank{background:#00ff8822!important;border-color:#00ff8855!important;color:#00ff88!important;}
-  /* Tighter grid for print */
-  .g2{gap:5px!important;}
-  .g3{gap:5px!important;}
-  .sgap{gap:5px!important;}
-  /* Scale down notes */
-  #evalDisplay .card [style*="font-size:14px"]{font-size:11px!important;}
-  /* Hide overview table (too wide for one page) */
-  #evalDisplay .card:last-child[style*="aa88ff"]{display:none!important;}
+  body { background: #fff !important; color: #111 !important; }
+  .header, .no-print, .overlay, #homeScreen { display: none !important; }
+  .main { padding: 0 !important; max-width: 100% !important; }
+  #athleteFormPanel, #evalFormPanel, #docsCard, #evalHistoryPanel,
+  #emptyState, #selectorRow, #teamFilterRow, #teamRosterPanels { display: none !important; }
+  #dashboard { display: block !important; }
+  .card  { background: #f8f9fa !important; border: 1px solid #ccc !important; border-radius: 6px !important; page-break-inside: avoid; margin-bottom: 6px !important; padding: 10px 12px !important; }
+  .inset { background: #fff !important; border: 1px solid #ccc !important; padding: 8px 10px !important; }
+  .ecard { background: #f8f9fa !important; border: 1px solid #ccc !important; padding: 7px 10px !important; }
+  .ecard.hi { background: #e8f9f0 !important; border-color: #a8e6c8 !important; }
+  .ecard-lbl { color: #555 !important; font-size: 9px !important; }
+  .ecard-val { color: #111 !important; font-size: 13px !important; }
+  .ecard.hi .ecard-val { color: #007a3d !important; }
+  .slabel { color: #555 !important; margin-bottom: 7px !important; font-size: 9px !important; }
+  .pbadge.pass { background: #e8f9f0 !important; color: #007a3d !important; border-color: #a8e6c8 !important; }
+  .pbadge.fail { background: #fde8eb !important; color: #c0392b !important; border-color: #f5a0aa !important; }
+  .print-header { display: flex !important; }
+  #evalDisplay { display: flex !important; }
+  .ctable th { color: #555 !important; border-bottom-color: #ccc !important; padding: 4px 6px !important; font-size: 9px !important; }
+  .ctable td { color: #333 !important; border-bottom-color: #eee !important; padding: 4px 6px !important; font-size: 9px !important; }
+  .ctable tr:nth-child(even) { background: #f2f4f6 !important; }
+  .dial-rank { background: #e8f9f0 !important; border-color: #a8e6c8 !important; color: #007a3d !important; }
+  .g2, .g3, .sgap { gap: 5px !important; }
+  * { color: #111 !important; }
+  .ecard.hi .ecard-val { color: #007a3d !important; }
+  .pbadge.pass { color: #007a3d !important; }
+  .pbadge.fail { color: #c0392b !important; }
 }
+
+/* Nav dropdown */
+.nav-opt { display:block; padding:9px 14px; border-radius:8px; font-size:13px; color:#aabbcc; cursor:pointer; font-weight:600; transition:background .12s; white-space:nowrap; }
+.nav-opt:hover { background:#1e2730; color:#e8f0fe; }
+.nav-opt.active { background:#00ff8812; color:#00ff88; }
+.nav-section-label { font-size:9px; font-weight:700; letter-spacing:.15em; color:#334455; text-transform:uppercase; padding:8px 14px 4px; }
+/* Profile page tabs */
+.ptab-bar { display:flex; gap:4px; padding:4px; background:#080c10; border:1px solid #1e2730; border-radius:10px; margin-bottom:20px; }
+.ptab { flex:1; padding:8px; border:none; background:transparent; color:#556677; font-size:12px; font-weight:700; cursor:pointer; border-radius:7px; letter-spacing:.06em; text-transform:uppercase; transition:all .15s; }
+.ptab.active { background:#0d1117; color:#e8f0fe; border:1px solid #1e2730; }
+/* View: athletes grid */
+.ath-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:12px; }
+.ath-card { background:#0d1117; border:1px solid #1e2730; border-radius:12px; padding:16px; cursor:pointer; transition:all .15s; }
+.ath-card:hover { border-color:#00ff8860; transform:translateY(-1px); }
+.lb-table { width:100%; border-collapse:collapse; }
+@media(max-width:700px){
+  #viewHome > div:nth-child(3) > div { grid-template-columns:1fr !important; }
+}
+/* View: teams */
+.team-view-card { background:#0d1117; border:1px solid #1e2730; border-radius:12px; padding:20px; margin-bottom:12px; }
+.team-view-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .print-header{display:none;}
 </style>
 </head>
@@ -227,6 +255,47 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
   </div>
 </div>
 
+<!-- Athlete Add/Edit Form — MODAL -->
+<div id="athleteFormPanel" class="overlay hidden">
+  <div class="mbox" style="max-width:560px">
+  <div id="afTitle" style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:20px;letter-spacing:0.05em">NEW ATHLETE</div>
+  <div class="g2" style="margin-bottom:14px;gap:12px">
+    <div><label class="flabel">First Name</label><input class="finput" id="af_first"/></div>
+    <div><label class="flabel">Last Name</label><input class="finput" id="af_last"/></div>
+    <div><label class="flabel">Team / Org</label>
+    <select class="finput" id="af_team">
+      <option value="">— Select Team —</option>
+    </select>
+    <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
+      <input class="finput" id="af_newTeam" placeholder="Or type a new team name..." style="flex:1"/>
+      <button class="btn-add" onclick="addTeamFromInput()" style="padding:8px 12px;font-size:11px;white-space:nowrap">+ Add</button>
+    </div>
+    </div>
+    <div><label class="flabel">Level</label><input class="finput" id="af_level" placeholder="High School, College, Pro..."/></div>
+    <div><label class="flabel">Height</label><input class="finput" id="af_height" placeholder="6'2&quot;"/></div>
+    <div><label class="flabel">Weight (lbs)</label><input class="finput" id="af_weight" type="number" placeholder="185"/></div>
+    <div><label class="flabel">Age</label><input class="finput" id="af_age" type="number" placeholder="18"/></div>
+    <div>
+    <label class="flabel">Throws</label>
+    <select class="finput" id="af_throws"><option value="R">Right</option><option value="L">Left</option></select>
+    </div>
+    <div>
+    <label class="flabel">Bats</label>
+    <select class="finput" id="af_bats"><option value="R">Right</option><option value="L">Left</option></select>
+    </div>
+    <div>
+    <label class="flabel">Athlete Type</label>
+    <select class="finput" id="af_type"><option value="position">Position Player</option><option value="pitcher">Pitcher</option></select>
+    </div>
+    <div><label class="flabel">Grad Year</label><input class="finput" id="af_gradYear" placeholder="2026"/></div>
+  </div>
+  <div class="frow">
+    <button class="btn-green" onclick="saveAthleteForm()">SAVE ATHLETE</button>
+    <button class="btn-ghost" onclick="hideAthleteForm()">Cancel</button>
+  </div>
+  </div>
+</div>
+
 <!-- HEADER (hidden until logged in) -->
 <div class="header no-print hidden" id="appHeader">
   <div class="frow">
@@ -234,53 +303,135 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
     <div style="width:1px;height:32px;background:#1e2730;margin:0 4px"></div>
     <div style="font-size:10px;color:#556677;letter-spacing:0.15em;text-transform:uppercase">Athlete Evaluation System</div>
   </div>
-  <div class="frow">
+  <div class="frow" style="gap:8px">
+    <!-- NAV DROPDOWN -->
+    <div style="position:relative">
+      <button id="navBtn" onclick="toggleNav()" style="padding:7px 14px;border-radius:10px;border:1px solid #1e2730;background:#0d1117;color:#e8f0fe;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px">
+        <span id="navLabel">☰ View</span><span style="font-size:9px;color:#556677">▾</span>
+      </button>
+      <div id="navMenu" class="hidden" style="position:absolute;right:0;top:calc(100% + 6px);background:#0d1117;border:1px solid #1e2730;border-radius:12px;min-width:190px;z-index:400;box-shadow:0 8px 24px #000a;padding:6px;">
+        <div class="nav-section-label">Browse</div>
+        <div class="nav-opt" id="navOpt-home"     onclick="setView('home')">🏠 Home</div>
+        <div class="nav-opt" id="navOpt-teams"    onclick="setView('teams')">🏷 Teams</div>
+        <div class="nav-opt" id="navOpt-athletes" onclick="setView('athletes')">👤 Athletes</div>
+        <div class="nav-opt" id="navOpt-evals"    onclick="setView('evals')">📋 Evaluations</div>
+        <div style="border-top:1px solid #1e2730;margin:6px 0"></div>
+        <div class="nav-section-label">Actions</div>
+        <div class="nav-opt" onclick="showAthleteForm(null);closeNav()">+ Add Athlete</div>
+        <div class="nav-opt" onclick="promptNewTeam();closeNav()">+ New Team</div>
+      </div>
+    </div>
     <div id="activeUserBadge" style="font-size:12px;color:#00ff88;font-weight:700;letter-spacing:0.05em;padding:4px 12px;border:1px solid #00ff8830;border-radius:20px;background:#00ff8808"></div>
     <div class="frow" style="gap:6px">
       <div id="syncDot" class="sync-dot synced"></div>
       <div id="syncLabel" style="font-size:11px;color:#556677;letter-spacing:0.05em">Connecting...</div>
     </div>
-    <button class="btn-add" onclick="showAthleteForm(null)">+ ADD ATHLETE</button>
     <button class="btn-ghost" style="font-size:11px;padding:6px 12px" onclick="goHome()">← Switch User</button>
   </div>
 </div>
 
-<div class="main hidden" id="appMain">
+<!-- Eval Form Modal -->
+<div id="evalFormPanel" class="overlay hidden" style="align-items:flex-start;padding:20px;overflow-y:auto">
+  <div class="mbox" style="max-width:680px;width:100%;margin:auto">
 
-  <!-- Athlete Add/Edit Form -->
-  <div id="athleteFormPanel" class="card hidden no-print" style="margin-bottom:24px">
-    <div id="afTitle" style="font-size:14px;font-weight:700;color:#00ff88;margin-bottom:20px;letter-spacing:0.05em">NEW ATHLETE</div>
-    <div class="g2" style="margin-bottom:14px">
-      <div><label class="flabel">First Name</label><input class="finput" id="af_first"/></div>
-      <div><label class="flabel">Last Name</label><input class="finput" id="af_last"/></div>
-      <div><label class="flabel">Team / Org</label>
-        <select class="finput" id="af_team">
-          <option value="">— Select Team —</option>
-        </select>
-        <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
-          <input class="finput" id="af_newTeam" placeholder="Or type a new team name..." style="flex:1"/>
-          <button class="btn-add" onclick="addTeamFromInput()" style="padding:8px 12px;font-size:11px;white-space:nowrap">+ Add</button>
+    <div id="evalFormTitle" style="font-size:14px;font-weight:700;color:#00ff88;margin-bottom:20px;letter-spacing:0.05em">🧪 NEW EVALUATION</div>
+    <div class="fcol" style="gap:20px">
+      <div><label class="flabel">Evaluation Date</label><input type="date" class="finput" id="ef_date"/></div>
+
+      <!-- MOTOR & MOVEMENT -->
+      <div class="inset">
+        <div class="slabel" style="color:#00ff88">⚡ Motor & Movement</div>
+        <div class="g2" style="margin-bottom:14px">
+        <div>
+          <label class="flabel">Motor Preference</label>
+          <select class="finput" id="ef_motorPref"><option value="">Select...</option><option>Aerial</option><option>Terrestrial</option></select>
+        </div>
+        <div>
+          <label class="flabel">Associated or Dissociated</label>
+          <select class="finput" id="ef_assocDissoc"><option value="">Select...</option><option>Associated</option><option>Dissociated</option></select>
+        </div>
+        <div>
+          <label class="flabel">Motor Shoulder</label>
+          <select class="finput" id="ef_motorShoulder"><option value="">Select...</option><option>Right</option><option>Left</option></select>
+        </div>
+        <div>
+          <label class="flabel">Axial or Large</label>
+          <select class="finput" id="ef_axialLarge"><option value="">Select...</option><option>Axial</option><option>Large</option></select>
+        </div>
+        <div>
+          <label class="flabel">Extension Leg</label>
+          <select class="finput" id="ef_extLeg"><option value="">Select...</option><option>Right</option><option>Left</option></select>
+        </div>
+        </div>
+        <label class="flabel">Move Dial — Rank 1 (strongest) to 4 (weakest)</label>
+        <div class="g2" style="gap:10px">
+        <div class="frow"><span class="dial-rank">1</span><select class="finput" id="ef_d0" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
+        <div class="frow"><span class="dial-rank">2</span><select class="finput" id="ef_d1" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
+        <div class="frow"><span class="dial-rank">3</span><select class="finput" id="ef_d2" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
+        <div class="frow"><span class="dial-rank">4</span><select class="finput" id="ef_d3" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
         </div>
       </div>
-      <div><label class="flabel">Level</label><input class="finput" id="af_level" placeholder="High School, College, Pro..."/></div>
-      <div><label class="flabel">Height</label><input class="finput" id="af_height" placeholder="6'2"/></div>
-      <div><label class="flabel">Weight (lbs)</label><input class="finput" id="af_weight" type="number"/></div>
-      <div>
-        <label class="flabel">Throws</label>
-        <select class="finput" id="af_throws"><option value="R">Right</option><option value="L">Left</option><option value="S">Switch</option></select>
+
+      <!-- RANGE OF MOTION -->
+      <div class="inset">
+        <div class="slabel" style="color:#4488ff">🔵 Range of Motion</div>
+        <div class="g2">
+        <div><label class="flabel">Shoulder ER (°)</label><input type="number" class="finput" id="ef_sER" placeholder="0" oninput="calcROM()"/></div>
+        <div><label class="flabel">Shoulder IR (°)</label><input type="number" class="finput" id="ef_sIR" placeholder="0" oninput="calcROM()"/></div>
+        <div><label class="flabel">Hip ER (°)</label><input type="number" class="finput" id="ef_hER" placeholder="0"/></div>
+        <div><label class="flabel">Hip IR (°)</label><input type="number" class="finput" id="ef_hIR" placeholder="0"/></div>
+        </div>
+        <div id="romPrev" class="hidden" style="margin-top:12px;padding:10px 14px;background:#4488ff10;border:1px solid #4488ff30;border-radius:8px;font-size:13px;color:#aabbcc">
+        Total Shoulder ROM: <span id="romVal" style="color:#4488ff;font-weight:700;font-family:'Space Mono',monospace"></span>
+        </div>
       </div>
-      <div>
-        <label class="flabel">Athlete Type</label>
-        <select class="finput" id="af_type"><option value="position">Position Player</option><option value="pitcher">Pitcher</option></select>
+
+      <!-- STRENGTH & SPEED -->
+      <div class="inset">
+        <div class="slabel" style="color:#ffaa00">💪 Strength & Speed</div>
+        <div class="g2">
+        <div>
+          <label class="flabel">Shoulder Strength Score <span style="color:#ffaa00">(≥25 pass)</span></label>
+          <input type="number" class="finput" id="ef_str" placeholder="0" oninput="calcStr()"/>
+          <div id="strPrev" style="margin-top:6px"></div>
+        </div>
+        <div><label class="flabel">Sled Sprint (sec)</label><input type="number" step="0.01" class="finput" id="ef_sled" placeholder="0.00"/></div>
+        </div>
       </div>
-    </div>
-    <div class="frow">
-      <button class="btn-green" onclick="saveAthleteForm()">SAVE ATHLETE</button>
-      <button class="btn-ghost" onclick="hideAthleteForm()">Cancel</button>
+
+      <!-- VELOCITY (pitchers only) -->
+      <div id="veloSection" class="inset hidden">
+        <div class="slabel" style="color:#ff6644">🔥 Velocity</div>
+        <div class="g3">
+        <div><label class="flabel">Eval Bullpen Velo (mph)</label><input type="number" class="finput" id="ef_vEval" placeholder="0"/></div>
+        <div><label class="flabel">Current Top Game Velo (mph)</label><input type="number" class="finput" id="ef_vGame" placeholder="0"/></div>
+        <div><label class="flabel">Top Pulldown Velo (mph)</label><input type="number" class="finput" id="ef_vPdTop" placeholder="0"/></div>
+        </div>
+      </div>
+
+      <div>
+        <label class="flabel">Coach Notes</label>
+        <textarea class="finput" id="ef_notes" placeholder="Session notes, observations, cues..." style="min-height:80px;resize:vertical"></textarea>
+      </div>
+      <div class="frow">
+        <button class="btn-green" onclick="saveEval()">SAVE EVALUATION</button>
+        <button class="btn-ghost" onclick="hideEvalForm()">Cancel</button>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- Team Roster Panels -->
+
+<div class="main hidden" id="appMain">
+
+
+  <!-- ── VIEW PANELS ── -->
+  <div id="viewHome"     class="hidden no-print" style="margin-bottom:24px"></div>
+  <div id="viewTeams"    class="hidden no-print" style="margin-bottom:24px"></div>
+  <div id="viewAthletes" class="hidden no-print" style="margin-bottom:24px"></div>
+  <div id="viewEvals"    class="hidden no-print" style="margin-bottom:24px"></div>
+
+  <!-- Team Roster Panels (default roster accordion) -->
   <div id="teamRosterPanels" class="no-print" style="margin-bottom:24px"></div>
 
   <!-- Dashboard -->
@@ -334,94 +485,6 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
         <div style="font-size:11px;color:#2a3540;margin-top:4px">Scouting reports, medical records, contracts...</div>
       </div>
       <div id="docsList" class="fcol hidden" style="gap:8px"></div>
-    </div>
-
-    <!-- Eval Form -->
-    <div id="evalFormPanel" class="card hidden no-print" style="margin-bottom:20px">
-      <div id="evalFormTitle" style="font-size:14px;font-weight:700;color:#00ff88;margin-bottom:20px;letter-spacing:0.05em">🧪 NEW EVALUATION</div>
-      <div class="fcol" style="gap:20px">
-        <div><label class="flabel">Evaluation Date</label><input type="date" class="finput" id="ef_date"/></div>
-
-        <!-- MOTOR & MOVEMENT -->
-        <div class="inset">
-          <div class="slabel" style="color:#00ff88">⚡ Motor & Movement</div>
-          <div class="g2" style="margin-bottom:14px">
-            <div>
-              <label class="flabel">Motor Preference</label>
-              <select class="finput" id="ef_motorPref"><option value="">Select...</option><option>Aerial</option><option>Terrestrial</option></select>
-            </div>
-            <div>
-              <label class="flabel">Associated or Dissociated</label>
-              <select class="finput" id="ef_assocDissoc"><option value="">Select...</option><option>Associated</option><option>Dissociated</option></select>
-            </div>
-            <div>
-              <label class="flabel">Motor Shoulder</label>
-              <select class="finput" id="ef_motorShoulder"><option value="">Select...</option><option>Right</option><option>Left</option></select>
-            </div>
-            <div>
-              <label class="flabel">Axial or Large</label>
-              <select class="finput" id="ef_axialLarge"><option value="">Select...</option><option>Axial</option><option>Large</option></select>
-            </div>
-            <div>
-              <label class="flabel">Extension Leg</label>
-              <select class="finput" id="ef_extLeg"><option value="">Select...</option><option>Right</option><option>Left</option></select>
-            </div>
-          </div>
-          <label class="flabel">Move Dial — Rank 1 (strongest) to 4 (weakest)</label>
-          <div class="g2" style="gap:10px">
-            <div class="frow"><span class="dial-rank">1</span><select class="finput" id="ef_d0" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
-            <div class="frow"><span class="dial-rank">2</span><select class="finput" id="ef_d1" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
-            <div class="frow"><span class="dial-rank">3</span><select class="finput" id="ef_d2" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
-            <div class="frow"><span class="dial-rank">4</span><select class="finput" id="ef_d3" onchange="syncDial()" style="flex:1"><option value="">—</option></select></div>
-          </div>
-        </div>
-
-        <!-- RANGE OF MOTION -->
-        <div class="inset">
-          <div class="slabel" style="color:#4488ff">🔵 Range of Motion</div>
-          <div class="g2">
-            <div><label class="flabel">Shoulder ER (°)</label><input type="number" class="finput" id="ef_sER" placeholder="0" oninput="calcROM()"/></div>
-            <div><label class="flabel">Shoulder IR (°)</label><input type="number" class="finput" id="ef_sIR" placeholder="0" oninput="calcROM()"/></div>
-            <div><label class="flabel">Hip ER (°)</label><input type="number" class="finput" id="ef_hER" placeholder="0"/></div>
-            <div><label class="flabel">Hip IR (°)</label><input type="number" class="finput" id="ef_hIR" placeholder="0"/></div>
-          </div>
-          <div id="romPrev" class="hidden" style="margin-top:12px;padding:10px 14px;background:#4488ff10;border:1px solid #4488ff30;border-radius:8px;font-size:13px;color:#aabbcc">
-            Total Shoulder ROM: <span id="romVal" style="color:#4488ff;font-weight:700;font-family:'Space Mono',monospace"></span>
-          </div>
-        </div>
-
-        <!-- STRENGTH & SPEED -->
-        <div class="inset">
-          <div class="slabel" style="color:#ffaa00">💪 Strength & Speed</div>
-          <div class="g2">
-            <div>
-              <label class="flabel">Shoulder Strength Score <span style="color:#ffaa00">(≥25 pass)</span></label>
-              <input type="number" class="finput" id="ef_str" placeholder="0" oninput="calcStr()"/>
-              <div id="strPrev" style="margin-top:6px"></div>
-            </div>
-            <div><label class="flabel">Sled Sprint (sec)</label><input type="number" step="0.01" class="finput" id="ef_sled" placeholder="0.00"/></div>
-          </div>
-        </div>
-
-        <!-- VELOCITY (pitchers only) -->
-        <div id="veloSection" class="inset hidden">
-          <div class="slabel" style="color:#ff6644">🔥 Velocity</div>
-          <div class="g3">
-            <div><label class="flabel">Eval Bullpen Velo (mph)</label><input type="number" class="finput" id="ef_vEval" placeholder="0"/></div>
-            <div><label class="flabel">Current Top Game Velo (mph)</label><input type="number" class="finput" id="ef_vGame" placeholder="0"/></div>
-            <div><label class="flabel">Top Pulldown Velo (mph)</label><input type="number" class="finput" id="ef_vPdTop" placeholder="0"/></div>
-          </div>
-        </div>
-
-        <div>
-          <label class="flabel">Coach Notes</label>
-          <textarea class="finput" id="ef_notes" placeholder="Session notes, observations, cues..." style="min-height:80px;resize:vertical"></textarea>
-        </div>
-        <div class="frow">
-          <button class="btn-green" onclick="saveEval()">SAVE EVALUATION</button>
-          <button class="btn-ghost" onclick="hideEvalForm()">Cancel</button>
-        </div>
-      </div>
     </div>
 
     <!-- Eval Display -->
@@ -523,7 +586,19 @@ function startRealtimeSync() {
         renderRosterPanels();
         renderHomeAthleteSelect();
         if (selectedAthleteId && athletes.find(a=>a.id===selectedAthleteId)) {
-          renderProfile(); renderEvalHistory(); renderEvalDisplay(); renderDocs();
+          if (!document.getElementById("dashboard").classList.contains("hidden")) {
+            if (document.getElementById("profileTabBar")) {
+              renderProfileTabs();
+              // If on evals tab, also refresh eval content
+              if(_profileTab==="evals"){ renderEvalHistory(); renderEvalDisplay(); }
+            } else {
+              renderProfile(); renderEvalHistory(); renderEvalDisplay(); renderDocs();
+            }
+          }
+          // Re-render home leaderboard if it's visible
+          if (!document.getElementById("viewHome").classList.contains("hidden")) {
+            renderViewHome();
+          }
         } else if (selectedAthleteId) {
           selectedAthleteId = null;
           document.getElementById("dashboard").classList.add("hidden");
@@ -613,6 +688,7 @@ function loginAs(idx) {
   document.getElementById("activeUserBadge").textContent = "👤 " + currentUser.name;
   renderRosterPanels();
   selectAthlete("");
+  setView("home");
 }
 function goHome() {
   currentUser = null;
@@ -850,43 +926,104 @@ function renderProfile() {
   document.getElementById("profileName").textContent=`${a.firstName} ${a.lastName}`;
   document.getElementById("printName").textContent=`${a.firstName} ${a.lastName}`;
   document.getElementById("printMeta").textContent=[a.type==="pitcher"?"Pitcher":"Position Player",a.level,a.team,`Throws: ${a.throws}`].filter(Boolean).join("  ·  ");
-  const fields=[["Type",a.type==="pitcher"?"⚾ Pitcher":"🏃 Position"],["Team",a.team||"—"],["Level",a.level||"—"],["Throws",a.throws],["Height",a.height||"—"],["Weight",a.weight?a.weight+" lbs":"—"]];
-  document.getElementById("profileGrid").innerHTML=fields.map(([k,v])=>`<div class="fcol" style="gap:2px"><span style="font-size:10px;color:#556677;font-weight:600;text-transform:uppercase;letter-spacing:0.08em">${k}</span><span style="font-size:13px;color:#aabbcc">${v}</span></div>`).join("");
+  const evList=(evals[a.id]||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const last=evList[0];
+  // All measurables
+  const fields=[
+    ["Type",     a.type==="pitcher"?"⚾ Pitcher":"🏃 Position Player"],
+    ["Team",     a.team||"—"],
+    ["Level",    a.level||"—"],
+    ["Throws",   a.throws||"—"],
+    ["Bats",     a.bats||"—"],
+    ["Height",   a.height||"—"],
+    ["Weight",   a.weight?a.weight+" lbs":"—"],
+    ["Age",      a.age||"—"],
+    ["Grad Year",a.gradYear||"—"],
+  ];
+  // Last eval snapshot
+  const evalSnap = last ? [
+    ["Last Eval",    last.date],
+    ["Str Score",    last.shoulderStrength?(parseFloat(last.shoulderStrength)>=25?`<span style="color:#00ff88;font-weight:700">${last.shoulderStrength} ✓</span>`:`<span style="color:#ff4455;font-weight:700">${last.shoulderStrength} ✗</span>`):"—"],
+    ["Shoulder ROM", last.shoulderER&&last.shoulderIR?(parseInt(last.shoulderER)+parseInt(last.shoulderIR))+"°":"—"],
+    ["Sled Sprint",  last.sledSprint?last.sledSprint+"s":"—"],
+    ["Motor Pref",   last.motorPref||"—"],
+    ...(a.type==="pitcher"&&last.evalVelo?[["Eval Velo", last.evalVelo+" mph"],["Game Velo",last.gameVelo+" mph"]]:[]),
+  ] : [];
+  document.getElementById("profileGrid").innerHTML=`
+    <div style="grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#556677;margin-bottom:4px;border-bottom:1px solid #1e2730;padding-bottom:6px">Measurables</div>
+    ${fields.map(([k,v])=>`<div class="fcol" style="gap:2px"><span style="font-size:10px;color:#556677;font-weight:600;text-transform:uppercase;letter-spacing:0.08em">${k}</span><span style="font-size:13px;color:#aabbcc">${v}</span></div>`).join("")}
+    ${evalSnap.length?`<div style="grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#556677;margin:12px 0 4px;border-bottom:1px solid #1e2730;padding-bottom:6px">Latest Evaluation — ${last.date}</div>
+    ${evalSnap.map(([k,v])=>`<div class="fcol" style="gap:2px"><span style="font-size:10px;color:#556677;font-weight:600;text-transform:uppercase;letter-spacing:0.08em">${k}</span><span style="font-size:13px;color:#aabbcc">${v}</span></div>`).join("")}`:""}
+  `;
 }
 
 /* ======== ATHLETE FORM ======== */
 function showAthleteForm(id) {
   editingAthleteId=id;
-  document.getElementById("afTitle").textContent=id?"✏️ EDIT ATHLETE":"NEW ATHLETE";
-  if(id){const a=getAthlete(id);
+  document.getElementById("afTitle").textContent=id?"✏️ EDIT ATHLETE":"➕ NEW ATHLETE";
+  // Always rebuild team dropdown fresh
+  const teamSel=document.getElementById("af_team");
+  teamSel.innerHTML='<option value="">— Select Team —</option>'+teams.map(t=>`<option value="${t}">${t}</option>`).join("");
+  const fields=["af_first","af_last","af_level","af_height","af_weight","af_age","af_gradYear"];
+  if(id){
+    const a=getAthlete(id);
     document.getElementById("af_first").value=a.firstName||"";
     document.getElementById("af_last").value=a.lastName||"";
     document.getElementById("af_level").value=a.level||"";
     document.getElementById("af_height").value=a.height||"";
     document.getElementById("af_weight").value=a.weight||"";
+    document.getElementById("af_age").value=a.age||"";
+    document.getElementById("af_gradYear").value=a.gradYear||"";
     document.getElementById("af_throws").value=a.throws||"R";
+    document.getElementById("af_bats").value=a.bats||"R";
     document.getElementById("af_type").value=a.type||"position";
-    document.getElementById("af_team").value=a.team||"";
+    teamSel.value=a.team||"";
   } else {
-    ["af_first","af_last","af_level","af_height","af_weight"].forEach(i=>document.getElementById(i).value="");
-    document.getElementById("af_throws").value="R";document.getElementById("af_type").value="position";document.getElementById("af_team").value="";
+    fields.forEach(i=>document.getElementById(i).value="");
+    document.getElementById("af_throws").value="R";
+    document.getElementById("af_bats").value="R";
+    document.getElementById("af_type").value="position";
+    teamSel.value="";
   }
+  // Show as overlay modal — works from any screen
   document.getElementById("athleteFormPanel").classList.remove("hidden");
-  document.getElementById("athleteFormPanel").scrollIntoView({behavior:"smooth"});
+  setTimeout(()=>document.getElementById("af_first").focus(),100);
 }
-function hideAthleteForm(){document.getElementById("athleteFormPanel").classList.add("hidden");editingAthleteId=null;}
+function hideAthleteForm(){
+  document.getElementById("athleteFormPanel").classList.add("hidden");
+  editingAthleteId=null;
+}
 function saveAthleteForm() {
   const fn=document.getElementById("af_first").value.trim();
   const ln=document.getElementById("af_last").value.trim();
   if(!fn||!ln){alert("First and last name required.");return;}
-  const data={firstName:fn,lastName:ln,level:document.getElementById("af_level").value,height:document.getElementById("af_height").value,weight:document.getElementById("af_weight").value,throws:document.getElementById("af_throws").value,type:document.getElementById("af_type").value,team:document.getElementById("af_team").value};
+  const data={
+    firstName:fn, lastName:ln,
+    level:document.getElementById("af_level").value,
+    height:document.getElementById("af_height").value,
+    weight:document.getElementById("af_weight").value,
+    age:document.getElementById("af_age").value,
+    gradYear:document.getElementById("af_gradYear").value,
+    throws:document.getElementById("af_throws").value,
+    bats:document.getElementById("af_bats").value,
+    type:document.getElementById("af_type").value,
+    team:document.getElementById("af_team").value
+  };
   const id=editingAthleteId||Date.now().toString();
-  if(editingAthleteId){const idx=athletes.findIndex(a=>a.id===editingAthleteId);athletes[idx]={id,...data};}
-  else{athletes.push({id,...data});selectedAthleteId=id;}
-  // Auto-open that team's panel
+  if(editingAthleteId){
+    const idx=athletes.findIndex(a=>a.id===editingAthleteId);
+    athletes[idx]={id,...data};
+  } else {
+    athletes.push({id,...data});
+    selectedAthleteId=id;
+  }
   if(data.team) openTeams.add(data.team);
   saveToStorage(); hideAthleteForm(); renderRosterPanels(); renderHomeAthleteSelect();
-  if(selectedAthleteId){ selectAthlete(selectedAthleteId); }
+  // Re-render profile tab if the dashboard is open
+  if(document.getElementById("dashboard").classList.contains("hidden")===false){
+    selectedAthleteId = id;
+    renderProfileTabs();
+  }
 }
 
 /* ======== DELETE ATHLETE ======== */
@@ -906,13 +1043,18 @@ function renderEvalHistory(){
   document.getElementById("evalCountLabel").textContent=`📅 Evaluations (${evList.length})`;
   const c=document.getElementById("evalHistoryList");
   if(!evList.length){c.innerHTML='<div style="font-size:13px;color:#2a3540;padding:16px;text-align:center">No evaluations yet</div>';return;}
+  const a=getAthlete();
   c.innerHTML=evList.map((ev,i)=>{
     const isSel=(selectedEvalIdx===null&&i===0)||selectedEvalIdx===i;
     return `<div class="hist-item${isSel?" sel":""}" onclick="pickEval(${i})">
-      <div class="frow"><div class="dot"></div>
-        <span style="font-size:13px;font-weight:${isSel?700:400};color:${isSel?"#e8f0fe":"#778899"};font-family:'Space Mono',monospace">${ev.date}</span>
+      <div class="fcol" style="gap:2px;flex:1;min-width:0">
+        <div class="frow" style="gap:6px">
+          <div class="dot"></div>
+          <span style="font-size:13px;font-weight:${isSel?700:600};color:${isSel?"#e8f0fe":"#aabbcc"}">${a?a.lastName+", "+a.firstName:"—"}</span>
+        </div>
+        <span style="font-size:11px;color:#556677;padding-left:16px;font-family:'Space Mono',monospace">${ev.date}</span>
       </div>
-      <div class="frow" style="gap:4px">
+      <div class="frow" style="gap:4px;flex-shrink:0">
         ${ev.evalVelo?`<span style="font-size:11px;color:#ff6644;font-weight:700">${ev.evalVelo} mph</span>`:""}
         <button class="btn-xs-blue" onclick="event.stopPropagation();editEval(${i})">Edit</button>
         <button class="btn-xs-red" onclick="event.stopPropagation();deleteEval(${i})">✕</button>
@@ -920,12 +1062,25 @@ function renderEvalHistory(){
     </div>`;
   }).join("");
 }
-function pickEval(i){selectedEvalIdx=i;renderEvalHistory();renderEvalDisplay();}
+function pickEval(i){
+  selectedEvalIdx=i;
+  // Make sure evals tab is active so evalDisplay stays visible
+  if(document.getElementById("profileTabBar")){
+    _profileTab="evals";
+    renderProfileTabs();
+  } else {
+    renderEvalHistory();
+    renderEvalDisplay();
+  }
+}
 function deleteEval(i){
   const sorted=getSortedEvals();const ev=sorted[i];const orig=evals[selectedAthleteId]||[];
   evals[selectedAthleteId]=orig.filter(e=>e!==ev);
   if(selectedEvalIdx===i)selectedEvalIdx=null;
   saveToStorage();renderEvalHistory();renderEvalDisplay();
+  if(!document.getElementById("viewHome").classList.contains("hidden")) renderViewHome();
+  if(!document.getElementById("viewEvals").classList.contains("hidden")) renderViewEvals();
+  if(document.getElementById("profileTabBar") && _profileTab==="profile") renderProfileTabs();
 }
 
 /* ======== EVAL DISPLAY ======== */
@@ -1029,8 +1184,8 @@ function showNewEval(){
   document.getElementById("veloSection").classList.toggle("hidden",getAthlete().type!=="pitcher");
   document.getElementById("evalFormPanel").classList.remove("hidden");
   initDialSelects([]);
-  document.getElementById("evalFormPanel").scrollIntoView({behavior:"smooth"});
 }
+
 function editEval(i){
   editingEvalIdx=i;const ev=getSortedEvals()[i];
   document.getElementById("evalFormTitle").textContent="✏️ EDIT EVALUATION — "+getAthlete().firstName+" "+getAthlete().lastName;
@@ -1053,8 +1208,8 @@ function editEval(i){
   document.getElementById("ef_vPdTop").value=ev.topPulldownVelo||"";
   document.getElementById("ef_notes").value=ev.notes||"";
   initDialSelects(ev.moveDial||[]);calcROM();calcStr();
-  document.getElementById("evalFormPanel").scrollIntoView({behavior:"smooth"});
 }
+
 function hideEvalForm(){document.getElementById("evalFormPanel").classList.add("hidden");editingEvalIdx=null;}
 function clearEvalForm(){
   ["ef_date","ef_motorPref","ef_assocDissoc","ef_motorShoulder","ef_axialLarge","ef_extLeg","ef_sER","ef_sIR","ef_hER","ef_hIR","ef_str","ef_sled","ef_vEval","ef_vGame","ef_vPdTop","ef_notes"].forEach(id=>document.getElementById(id).value="");
@@ -1104,6 +1259,10 @@ function saveEval(){
     evals[selectedAthleteId]=[...existing,{...formData}];selectedEvalIdx=null;
   }
   saveToStorage();hideEvalForm();renderEvalHistory();renderEvalDisplay();
+  // Refresh home leaderboard and profile snapshot
+  if(!document.getElementById("viewHome").classList.contains("hidden")) renderViewHome();
+  if(!document.getElementById("viewEvals").classList.contains("hidden")) renderViewEvals();
+  if(document.getElementById("profileTabBar") && _profileTab==="profile") renderProfileTabs();
 }
 
 /* ======== DOCUMENTS ======== */
@@ -1154,6 +1313,527 @@ function downloadPdf(i){const d=(docs[selectedAthleteId]||[])[i];if(!d||!d.dataU
 function deleteDocFile(i){docs[selectedAthleteId]=docs[selectedAthleteId].filter((_,j)=>j!==i);saveToStorage();renderDocs();}
 
 /* ======== EXPOSE GLOBALS — must run synchronously before any onclick fires ======== */
+
+/* ======== NAV DROPDOWN ======== */
+function toggleNav(){
+  const m=document.getElementById("navMenu");
+  m.classList.toggle("hidden");
+  // close on outside click
+  if(!m.classList.contains("hidden")){
+    setTimeout(()=>document.addEventListener("click",_closeNavOutside,{once:true}),10);
+  }
+}
+function _closeNavOutside(e){
+  const m=document.getElementById("navMenu");
+  if(m&&!m.contains(e.target)&&e.target.id!=="navBtn") m.classList.add("hidden");
+}
+function closeNav(){ document.getElementById("navMenu")?.classList.add("hidden"); }
+
+let _currentView = "roster"; // roster | teams | athletes | evals | profile
+
+function setView(view){
+  closeNav();
+  _currentView = view;
+  // Update active state in menu
+  ["home","teams","athletes","evals"].forEach(v=>{
+    const el=document.getElementById("navOpt-"+v);
+    if(el) el.classList.toggle("active", v===view);
+  });
+  document.getElementById("navLabel").textContent =
+    view==="home"?"🏠 Home":view==="teams"?"🏷 Teams":view==="athletes"?"👤 Athletes":view==="evals"?"📋 Evaluations":"☰ View";
+
+  // Hide all panels
+  document.getElementById("teamRosterPanels").classList.add("hidden");
+  document.getElementById("viewHome").classList.add("hidden");
+  document.getElementById("viewTeams").classList.add("hidden");
+  document.getElementById("viewAthletes").classList.add("hidden");
+  document.getElementById("viewEvals").classList.add("hidden");
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("emptyState").classList.add("hidden");
+  document.getElementById("athleteFormPanel").classList.add("hidden");
+  document.getElementById("evalFormPanel").classList.add("hidden");
+
+  if(view==="home")     { renderViewHome();     document.getElementById("viewHome").classList.remove("hidden"); }
+  if(view==="teams")    { renderViewTeams();    document.getElementById("viewTeams").classList.remove("hidden"); }
+  if(view==="athletes") { renderViewAthletes(); document.getElementById("viewAthletes").classList.remove("hidden"); }
+  if(view==="evals")    { renderViewEvals();    document.getElementById("viewEvals").classList.remove("hidden"); }
+}
+
+function resetToRoster(){
+  _currentView="roster";
+  document.getElementById("navLabel").textContent="☰ View";
+  ["home","teams","athletes","evals"].forEach(v=>{
+    document.getElementById("navOpt-"+v)?.classList.remove("active");
+  });
+  document.getElementById("viewHome").classList.add("hidden");
+  document.getElementById("viewTeams").classList.add("hidden");
+  document.getElementById("viewAthletes").classList.add("hidden");
+  document.getElementById("viewEvals").classList.add("hidden");
+  document.getElementById("teamRosterPanels").classList.remove("hidden");
+}
+
+/* ======== HOME DASHBOARD ======== */
+function renderViewHome(){
+  const c = document.getElementById("viewHome");
+
+  // ── collect all evals across all athletes ──
+  const allEntries = [];
+  athletes.forEach(a => {
+    (evals[a.id]||[]).forEach(ev => {
+      allEntries.push({ athlete: a, ev });
+    });
+  });
+
+  // ── top 5 velocity (evalVelo, pitchers only) ──
+  const veloRows = allEntries
+    .filter(e => e.ev.evalVelo && parseFloat(e.ev.evalVelo) > 0)
+    .sort((a,b) => parseFloat(b.ev.evalVelo) - parseFloat(a.ev.evalVelo))
+    .slice(0,5);
+
+  // ── top 5 sled sprint (lower = faster) ──
+  const sledRows = allEntries
+    .filter(e => e.ev.sledSprint && parseFloat(e.ev.sledSprint) > 0)
+    .sort((a,b) => parseFloat(a.ev.sledSprint) - parseFloat(b.ev.sledSprint))
+    .slice(0,5);
+
+  // ── recent evaluations (last 5) ──
+  const recentRows = allEntries
+    .sort((a,b) => new Date(b.ev.date) - new Date(a.ev.date))
+    .slice(0,5);
+
+  // ── stat totals ──
+  const totalAthletes = athletes.length;
+  const totalEvals = allEntries.length;
+  const totalTeams = teams.length;
+  const avgVelo = veloRows.length
+    ? (veloRows.reduce((s,e)=>s+parseFloat(e.ev.evalVelo),0)/veloRows.length).toFixed(1)
+    : null;
+
+  const medal = (i) => i===0?'🥇':i===1?'🥈':i===2?'🥉':`<span style="font-size:13px;color:#556677;font-weight:700">#${i+1}</span>`;
+
+  const leaderRow = (rank, name, team, val, unit, barPct, color) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #0d1117;">
+      <div style="width:28px;text-align:center;flex-shrink:0">${medal(rank)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:#e8f0fe;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
+        <div style="font-size:10px;color:#556677;margin-top:2px">${team}</div>
+        <div style="height:3px;background:#1e2730;border-radius:2px;margin-top:6px">
+          <div style="height:3px;background:${color};border-radius:2px;width:${barPct}%;transition:width .4s"></div>
+        </div>
+      </div>
+      <div style="font-size:18px;font-weight:800;color:${color};flex-shrink:0">${val}<span style="font-size:11px;color:#556677;font-weight:400"> ${unit}</span></div>
+    </div>`;
+
+  // velo bar: max is first entry
+  const maxVelo = veloRows[0] ? parseFloat(veloRows[0].ev.evalVelo) : 1;
+  const minSled = sledRows[0] ? parseFloat(sledRows[0].ev.sledSprint) : 1;
+  // sled bar: fastest (lowest) = 100%, slowest gets shorter bar
+  const maxSled = sledRows[sledRows.length-1] ? parseFloat(sledRows[sledRows.length-1].ev.sledSprint) : minSled+1;
+
+  c.innerHTML = `
+    <!-- Hero header -->
+    <div style="margin-bottom:28px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#556677;margin-bottom:6px">Tinsley Performance</div>
+      <div style="font-size:28px;font-weight:800;color:#fff;line-height:1.1">Athlete Dashboard</div>
+      <div style="font-size:13px;color:#556677;margin-top:6px">Live leaderboards — updates every time an evaluation is saved</div>
+    </div>
+
+    <!-- Stat strip -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:28px">
+      ${[
+        ['Total Athletes', totalAthletes, '#00ff88'],
+        ['Teams',          totalTeams,   '#4488ff'],
+        ['Evaluations',    totalEvals,   '#ff7a00'],
+        ...(avgVelo ? [['Avg Top Velo', avgVelo+' mph', '#ff6644']] : []),
+      ].map(([label, val, color]) => `
+        <div class="card" style="padding:16px;text-align:center;border-color:${color}22">
+          <div style="font-size:26px;font-weight:800;color:${color}">${val}</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677;margin-top:4px">${label}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- Two leaderboards side by side -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
+
+      <!-- Velocity leaderboard -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div class="slabel" style="color:#ff6644;margin-bottom:2px">🔥 Top Velocity</div>
+            <div style="font-size:11px;color:#334455">Eval bullpen — all teams</div>
+          </div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#334455">MPH</div>
+        </div>
+        ${veloRows.length ? veloRows.map((e,i) =>
+          leaderRow(i,
+            `${e.athlete.lastName}, ${e.athlete.firstName}`,
+            e.athlete.team||'—',
+            e.ev.evalVelo, 'mph',
+            Math.round((parseFloat(e.ev.evalVelo)/maxVelo)*100),
+            i===0?'#ff6644':i===1?'#ff8855':i===2?'#ffaa77':'#cc6644')
+        ).join('') : '<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No velocity data yet</div>'}
+      </div>
+
+      <!-- Sled sprint leaderboard -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div class="slabel" style="color:#4488ff;margin-bottom:2px">⚡ Sled Sprint</div>
+            <div style="font-size:11px;color:#334455">Fastest times — all teams</div>
+          </div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#334455">SEC</div>
+        </div>
+        ${sledRows.length ? sledRows.map((e,i) =>
+          leaderRow(i,
+            `${e.athlete.lastName}, ${e.athlete.firstName}`,
+            e.athlete.team||'—',
+            e.ev.sledSprint, 'sec',
+            Math.round(((maxSled - parseFloat(e.ev.sledSprint)) / (maxSled - minSled + 0.001))*100 + 20),
+            i===0?'#4488ff':i===1?'#5599ff':i===2?'#66aaff':'#3377cc')
+        ).join('') : '<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No sled data yet</div>'}
+      </div>
+    </div>
+
+    <!-- Recent evaluations -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div class="slabel" style="color:#00ff88;margin-bottom:0">📋 Recent Evaluations</div>
+        <div style="font-size:11px;color:#334455">Latest across all teams</div>
+      </div>
+      ${recentRows.length ? `
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="border-bottom:1px solid #1e2730">
+              <th style="text-align:left;padding:8px 12px 8px 0;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Athlete</th>
+              <th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Team</th>
+              <th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Date</th>
+              <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Str Score</th>
+              <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Velo</th>
+              <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Sled</th>
+              <th style="padding:8px 0 8px 12px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${recentRows.map(({athlete:a, ev}) => {
+              const strVal = ev.shoulderStrength;
+              const strPass = strVal !== '' && strVal !== undefined ? parseFloat(strVal) >= 25 : null;
+              return `<tr style="border-bottom:1px solid #0d1117;cursor:pointer;transition:background .1s"
+                onmouseover="this.style.background='#0d1117'" onmouseout="this.style.background=''"
+                onclick="openAthleteProfile('${a.id}')">
+                <td style="padding:10px 12px 10px 0;font-weight:700;color:#e8f0fe">${a.lastName}, ${a.firstName}</td>
+                <td style="padding:10px 12px;color:#778899">${a.team||'—'}</td>
+                <td style="padding:10px 12px;color:#778899;font-family:'Space Mono',monospace">${ev.date}</td>
+                <td style="padding:10px 12px;text-align:right;font-weight:700;color:${strPass===true?'#00ff88':strPass===false?'#ff4455':'#556677'}">${strVal||'—'}</td>
+                <td style="padding:10px 12px;text-align:right;color:#ff6644;font-weight:700">${ev.evalVelo||'—'}</td>
+                <td style="padding:10px 12px;text-align:right;color:#4488ff;font-weight:700">${ev.sledSprint||'—'}</td>
+                <td style="padding:10px 0 10px 12px"><button class="btn-blue" style="font-size:11px;padding:4px 10px" onclick="event.stopPropagation();openAthleteProfile('${a.id}')">View</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>` : '<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No evaluations yet — add athletes and start evaluating</div>'}
+    </div>`;
+}
+
+/* ── TEAMS VIEW ── */
+function renderViewTeams(){
+  const c=document.getElementById("viewTeams");
+  if(!teams.length){c.innerHTML=`<div style="text-align:center;padding:60px 20px;color:#3a4550"><div style="font-size:40px">🏷</div><div style="margin-top:12px;font-size:15px;font-weight:700">No teams yet</div></div>`;return;}
+  c.innerHTML=`<div class="frow" style="justify-content:space-between;margin-bottom:16px">
+    <div class="slabel" style="color:#556677;margin:0">🏷 ALL TEAMS (${teams.length})</div>
+    <button class="btn-add" onclick="promptNewTeam()">+ New Team</button>
+  </div>`+
+  [...teams].sort((a,b)=>a.localeCompare(b)).map(team=>{
+    const members=athletes.filter(a=>a.team===team);
+    const eCount=members.reduce((n,a)=>(evals[a.id]||[]).length+n,0);
+    return `<div class="team-view-card">
+      <div class="team-view-header">
+        <div>
+          <div style="font-size:16px;font-weight:800;color:#e8f0fe">${team}</div>
+          <div style="font-size:12px;color:#556677;margin-top:3px">${members.length} athlete${members.length!==1?"s":""} · ${eCount} eval${eCount!==1?"s":""}</div>
+        </div>
+        <div class="frow" style="gap:6px">
+          <button class="btn-blue" onclick="showEditTeamModal('${team}')">✏️ Edit</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+        ${members.sort((a,b)=>a.lastName.localeCompare(b.lastName)).map(a=>`
+          <div style="padding:10px 12px;background:#080c10;border:1px solid #1e2730;border-radius:8px;cursor:pointer;transition:border-color .12s"
+               onmouseover="this.style.borderColor='#00ff8840'" onmouseout="this.style.borderColor='#1e2730'"
+               onclick="openAthleteProfile('${a.id}')">
+            <div style="font-size:13px;font-weight:700;color:#e8f0fe">${a.lastName}, ${a.firstName}</div>
+            <div style="font-size:11px;color:#556677;margin-top:2px">${a.type==="pitcher"?"⚾ Pitcher":"🏃 Position"} · ${a.throws}HP</div>
+          </div>`).join("")}
+        ${!members.length?`<div style="font-size:12px;color:#334455;padding:8px">No athletes on this team yet</div>`:""}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ── ATHLETES VIEW ── */
+function renderViewAthletes(){
+  const c=document.getElementById("viewAthletes");
+  const pitchers=athletes.filter(a=>a.type==="pitcher").slice().sort((a,b)=>a.lastName.localeCompare(b.lastName));
+  const position=athletes.filter(a=>a.type!=="pitcher").slice().sort((a,b)=>a.lastName.localeCompare(b.lastName));
+
+  const renderGroup=(list,label,icon)=>!list.length?"":`
+    <div style="font-size:10px;font-weight:700;letter-spacing:.15em;color:#334455;text-transform:uppercase;padding:10px 0 6px;border-bottom:1px solid #1e2730;margin-bottom:12px">${icon} ${label} (${list.length})</div>
+    <div class="ath-grid" style="margin-bottom:28px">
+      ${list.map(a=>{
+        const ev=evals[a.id]||[];const last=ev.slice().sort((x,y)=>new Date(y.date)-new Date(x.date))[0];
+        return `<div class="ath-card" onclick="openAthleteProfile('${a.id}')">
+          <div style="font-size:15px;font-weight:800;color:#e8f0fe">${a.lastName}, ${a.firstName}</div>
+          <div style="font-size:11px;color:#556677;margin-top:4px">${a.team||"—"} · ${a.throws}HP · ${a.level||"—"}</div>
+          <div style="font-size:11px;color:#556677;margin-top:2px">${ev.length} eval${ev.length!==1?"s":""} ${last?" · Last: "+last.date:""}</div>
+        </div>`;
+      }).join("")}
+    </div>`;
+
+  c.innerHTML=`<div class="frow" style="justify-content:space-between;margin-bottom:16px">
+    <div class="slabel" style="color:#556677;margin:0">👤 ALL ATHLETES (${athletes.length})</div>
+    <button class="btn-add" onclick="showAthleteForm(null)">+ Add Athlete</button>
+  </div>`+
+  (athletes.length===0?`<div style="text-align:center;padding:60px 20px;color:#3a4550"><div style="font-size:40px">👤</div><div style="margin-top:12px;font-size:15px;font-weight:700">No athletes yet</div></div>`:"")
+  +renderGroup(pitchers,"Pitchers","⚾")
+  +renderGroup(position,"Position Players","🏃");
+}
+
+/* ── EVALS VIEW ── */
+function renderViewEvals(){
+  const c=document.getElementById("viewEvals");
+  const all=[];
+  athletes.forEach(a=>{(evals[a.id]||[]).forEach(ev=>all.push({...ev,_athlete:a}));});
+  all.sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  // Sorted athlete list for dropdown
+  const sortedAthletes=[...athletes].sort((a,b)=>a.lastName.localeCompare(b.lastName));
+
+  c.innerHTML=`
+    <!-- Header + New Eval -->
+    <div class="frow" style="justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div class="slabel" style="color:#556677;margin:0">📋 ALL EVALUATIONS (${all.length})</div>
+      <button class="btn-add" onclick="showNewEvalFromView()">+ New Eval</button>
+    </div>
+
+    <!-- New eval inline selector (hidden by default) -->
+    <div id="newEvalSelector" class="card hidden" style="margin-bottom:16px;padding:16px">
+      <div style="font-size:13px;font-weight:700;color:#00ff88;margin-bottom:12px">Select athlete to evaluate:</div>
+      <div class="frow" style="gap:10px;flex-wrap:wrap">
+        <select id="newEvalAthleteSelect" class="finput" style="flex:1;min-width:200px">
+          <option value="">— Choose athlete —</option>
+          ${sortedAthletes.map(a=>`<option value="${a.id}">${a.lastName}, ${a.firstName} · ${a.team||"—"}</option>`).join("")}
+        </select>
+        <button class="btn-green" onclick="startEvalFromView()">Start Eval →</button>
+        <button class="btn-ghost" onclick="document.getElementById('newEvalSelector').classList.add('hidden')">Cancel</button>
+      </div>
+    </div>
+
+    ${all.length===0
+      ? `<div style="text-align:center;padding:60px 20px;color:#3a4550"><div style="font-size:40px">📋</div><div style="margin-top:12px;font-size:15px;font-weight:700">No evaluations yet</div><div style="font-size:13px;color:#2a3540;margin-top:6px">Add athletes and start evaluating</div></div>`
+      : `<div class="ov-x"><table class="ctable" style="min-width:600px">
+          <thead><tr>
+            <th>Date</th><th>Athlete</th><th>Team</th><th>Type</th>
+            <th>Str Score</th><th>ROM</th><th>Sled</th><th>Velo</th><th></th>
+          </tr></thead>
+          <tbody>
+          ${all.map(ev=>{
+            const a=ev._athlete;
+            const str=ev.shoulderStrength;
+            const strPass=str!==undefined&&str!==''?parseFloat(str)>=25:null;
+            const rom=ev.shoulderER&&ev.shoulderIR?(parseInt(ev.shoulderER)+parseInt(ev.shoulderIR))+'°':'—';
+            return `<tr style="cursor:pointer" onclick="openAthleteProfile('${a.id}')"
+              onmouseover="this.style.background='#0d1117'" onmouseout="this.style.background=''">
+              <td style="font-family:'Space Mono',monospace">${ev.date}</td>
+              <td style="color:#e8f0fe;font-weight:600">${a.lastName}, ${a.firstName}</td>
+              <td style="color:#778899">${a.team||'—'}</td>
+              <td>${a.type==='pitcher'?'⚾ P':'🏃 POS'}</td>
+              <td style="font-weight:700;color:${strPass===true?'#00ff88':strPass===false?'#ff4455':'#556677'}">${str||'—'}</td>
+              <td>${rom}</td>
+              <td style="color:#4488ff">${ev.sledSprint||'—'}</td>
+              <td style="color:#ff6644">${ev.evalVelo||'—'}</td>
+              <td><button class="btn-blue" style="font-size:11px;padding:4px 8px"
+                onclick="event.stopPropagation();openAthleteProfile('${a.id}')">View</button></td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table></div>`
+    }`;
+}
+
+function showNewEvalFromView(){
+  const sel=document.getElementById("newEvalSelector");
+  sel.classList.toggle("hidden");
+  if(!sel.classList.contains("hidden"))
+    document.getElementById("newEvalAthleteSelect").focus();
+}
+
+function startEvalFromView(){
+  const id=document.getElementById("newEvalAthleteSelect").value;
+  if(!id){alert("Please select an athlete first.");return;}
+  // Set selected athlete then open eval form
+  selectedAthleteId=id;
+  selectedEvalIdx=null;
+  editingEvalIdx=null;
+  document.getElementById("newEvalSelector").classList.add("hidden");
+  showNewEval();
+}
+
+/* ── ATHLETE PROFILE (dedicated profile page with tabs) ── */
+let _profileTab = "profile";
+
+function openAthleteProfile(id){
+  selectedAthleteId = id;
+  selectedEvalIdx = null;
+  editingEvalIdx = null;
+  _profileTab = "profile";
+  // Switch to profile view
+  document.getElementById("viewHome").classList.add("hidden");
+  document.getElementById("viewTeams").classList.add("hidden");
+  document.getElementById("viewAthletes").classList.add("hidden");
+  document.getElementById("viewEvals").classList.add("hidden");
+  document.getElementById("teamRosterPanels").classList.add("hidden");
+  document.getElementById("emptyState").classList.add("hidden");
+  document.getElementById("athleteFormPanel").classList.add("hidden");
+  document.getElementById("evalFormPanel").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  // Always remove stale tab content so renderProfileTabs builds fresh
+  document.getElementById("profileTabBar")?.remove();
+  document.getElementById("profileTabContent")?.remove();
+  renderProfileTabs();
+  document.getElementById("dashboard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderProfileTabs(){
+  const a=getAthlete();if(!a)return;
+
+  // ── Tab bar ──
+  let tabBar=document.getElementById("profileTabBar");
+  if(!tabBar){
+    tabBar=document.createElement("div");
+    tabBar.id="profileTabBar";
+    tabBar.className="ptab-bar no-print";
+    document.getElementById("dashboard").insertBefore(tabBar, document.getElementById("dashboard").firstChild);
+  }
+  tabBar.innerHTML=`
+    <button class="ptab${_profileTab==="profile"?" active":""}" onclick="switchProfileTab('profile')">📋 Profile</button>
+    <button class="ptab${_profileTab==="evals"?" active":""}"   onclick="switchProfileTab('evals')">📅 Evaluations</button>
+    <button class="ptab${_profileTab==="docs"?" active":""}"    onclick="switchProfileTab('docs')">📄 Documents</button>
+    <button class="ptab" onclick="goBackToView()" style="margin-left:auto;color:#556677">← Back</button>`;
+
+  // ── Always hide all original dashboard sections first ──
+  const g2       = document.querySelector("#dashboard .g2.no-print");
+  const docsCard = document.getElementById("docsCard");
+  const evalDisp = document.getElementById("evalDisplay");
+  if(g2)       g2.style.display       = "none";
+  if(docsCard) docsCard.style.display = "none";
+  if(evalDisp) evalDisp.style.display = "none";
+
+  // ── Get or create the profile content area ──
+  let profileArea = document.getElementById("profileTabContent");
+  if(!profileArea){
+    profileArea = document.createElement("div");
+    profileArea.id = "profileTabContent";
+    document.getElementById("dashboard").appendChild(profileArea);
+  }
+
+  if(_profileTab==="profile"){
+    const evList=(evals[a.id]||[]).slice().sort((x,y)=>new Date(y.date)-new Date(x.date));
+    const last=evList[0];
+    const fields=[
+      ["Type",      a.type==="pitcher"?"⚾ Pitcher":"🏃 Position Player"],
+      ["Team",      a.team||"—"],
+      ["Level",     a.level||"—"],
+      ["Throws",    a.throws||"—"],
+      ["Bats",      a.bats||"—"],
+      ["Height",    a.height||"—"],
+      ["Weight",    a.weight?a.weight+" lbs":"—"],
+      ["Age",       a.age||"—"],
+      ["Grad Year", a.gradYear||"—"],
+    ];
+    const evalSnap = last ? [
+      ["Last Eval",    last.date],
+      ["Str Score",    last.shoulderStrength?(parseFloat(last.shoulderStrength)>=25
+        ?`<span style="color:#00ff88;font-weight:700">${last.shoulderStrength} ✓</span>`
+        :`<span style="color:#ff4455;font-weight:700">${last.shoulderStrength} ✗</span>`):"—"],
+      ["Shoulder ROM", last.shoulderER&&last.shoulderIR?(parseInt(last.shoulderER)+parseInt(last.shoulderIR))+"°":"—"],
+      ["Sled Sprint",  last.sledSprint?last.sledSprint+"s":"—"],
+      ["Motor Pref",   last.motorPref||"—"],
+      ...(a.type==="pitcher"&&last.evalVelo?[["Eval Velo",last.evalVelo+" mph"],["Game Velo",last.gameVelo+" mph"]]:[]),
+    ] : [];
+
+    profileArea.innerHTML=`
+      <div class="card" style="margin-bottom:20px">
+        <div class="frow" style="justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:24px;font-weight:800;color:#fff">${a.firstName} ${a.lastName}</div>
+            <div style="font-size:12px;color:#556677;margin-top:4px">${a.type==="pitcher"?"⚾ Pitcher":"🏃 Position Player"} · ${a.team||"—"} · ${a.level||"—"}</div>
+          </div>
+          <div class="frow" style="gap:8px">
+            <button class="btn-blue" onclick="showAthleteForm('${a.id}')">✏️ Edit</button>
+            <button class="btn-danger" onclick="promptDeleteAthlete()">🗑 Delete</button>
+          </div>
+        </div>
+        <div class="slabel" style="color:#556677;border-bottom:1px solid #1e2730;padding-bottom:8px;margin-bottom:12px">Measurables</div>
+        <div class="g3" style="gap:10px;margin-bottom:${evalSnap.length?20:0}px">
+          ${fields.map(([k,v])=>`<div class="fcol" style="gap:3px">
+            <span style="font-size:10px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.08em">${k}</span>
+            <span style="font-size:14px;color:#ccdde8">${v}</span>
+          </div>`).join("")}
+        </div>
+        ${evalSnap.length?`
+        <div class="slabel" style="color:#556677;border-bottom:1px solid #1e2730;padding-bottom:8px;margin-bottom:12px">Latest Evaluation — ${last.date}</div>
+        <div class="g3" style="gap:10px">
+          ${evalSnap.map(([k,v])=>`<div class="fcol" style="gap:3px">
+            <span style="font-size:10px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.08em">${k}</span>
+            <span style="font-size:14px;color:#ccdde8">${v}</span>
+          </div>`).join("")}
+        </div>`:""}
+      </div>`;
+    profileArea.style.display="";
+
+  } else if(_profileTab==="evals"){
+    profileArea.innerHTML="";
+    profileArea.style.display="none";
+    if(g2){
+      g2.style.display="";
+      g2.style.gridTemplateColumns="1fr";
+      [...g2.children].forEach(ch=>{ ch.style.display = ch.id==="evalHistoryPanel" ? "" : "none"; });
+    }
+    if(evalDisp){ evalDisp.style.display=""; evalDisp.classList.remove("hidden"); }
+    renderEvalHistory();
+    renderEvalDisplay();
+
+  } else if(_profileTab==="docs"){
+    profileArea.innerHTML="";
+    profileArea.style.display="none";
+    if(docsCard) docsCard.style.display="";
+  }
+}
+
+function switchProfileTab(tab){
+  _profileTab=tab;
+  if(tab!=="evals") hideEvalForm();
+  renderProfileTabs();
+}
+
+function goBackToView(){
+  // Remove injected elements
+  document.getElementById("profileTabBar")?.remove();
+  document.getElementById("profileTabContent")?.remove();
+  // Restore all original dashboard sections
+  const g2=document.querySelector("#dashboard .g2.no-print");
+  if(g2){g2.style.display="";g2.style.gridTemplateColumns="";[...g2.children].forEach(ch=>ch.style.display="");}
+  const docsCard=document.getElementById("docsCard");if(docsCard)docsCard.style.display="";
+  const evalDisplay=document.getElementById("evalDisplay");if(evalDisplay)evalDisplay.style.display="";
+  document.getElementById("dashboard").classList.add("hidden");
+  if(_currentView==="home")          { renderViewHome(); document.getElementById("viewHome").classList.remove("hidden"); }
+  else if(_currentView==="teams")    document.getElementById("viewTeams").classList.remove("hidden");
+  else if(_currentView==="athletes") document.getElementById("viewAthletes").classList.remove("hidden");
+  else if(_currentView==="evals")    document.getElementById("viewEvals").classList.remove("hidden");
+  else { resetToRoster(); document.getElementById("teamRosterPanels").classList.remove("hidden"); }
+}
+
 Object.assign(window, {
   showAddStaffModal, saveStaffMember, loginAs, goHome,
   showAthleteForm, hideAthleteForm, saveAthleteForm, promptDeleteAthlete, confirmDeleteAthlete,
@@ -1161,7 +1841,10 @@ Object.assign(window, {
   showEditTeamModal, saveEditTeam, deleteTeam, homeSelectAthlete,
   showNewEval, editEval, deleteEval, pickEval, saveEval, hideEvalForm, syncDial, calcROM, calcStr,
   handlePdfUpload, handleDrop, openPdf, downloadPdf, deleteDocFile,
-  renderRosterPanels, renderHomeAthleteSelect
+  renderRosterPanels, renderHomeAthleteSelect,
+  toggleNav, closeNav, setView, openAthleteProfile, switchProfileTab, goBackToView,
+  renderViewTeams, renderViewAthletes, renderViewEvals,
+  showNewEvalFromView, startEvalFromView
 });
 
 /* ======== INIT ======== */
