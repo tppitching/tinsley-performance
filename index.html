@@ -188,7 +188,10 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
   <div style="font-size:28px;font-weight:800;color:#fff;margin-bottom:6px">Who's using this?</div>
   <div style="font-size:14px;color:#556677;margin-bottom:8px">Select your profile to access your personalized dashboard</div>
   <div class="staff-grid" id="staffGrid"></div>
-  <button class="btn-ghost" style="margin-top:20px;font-size:12px" onclick="showAddStaffModal()">+ Add Staff Member</button>
+  <div class="frow" style="margin-top:20px;gap:10px">
+    <button class="btn-ghost" style="font-size:12px" onclick="showAddStaffModal()">+ Add Staff Member</button>
+    <button class="btn-ghost" style="font-size:12px" onclick="showStaffManage()">✏️ Manage Staff</button>
+  </div>
 
   <!-- Master athlete lookup -->
   <div style="width:100%;max-width:700px;margin-top:36px;padding-top:28px;border-top:1px solid #1e2730;text-align:left">
@@ -200,17 +203,108 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
   </div>
 </div>
 
-<!-- ADD STAFF MODAL -->
+<!-- ADD/EDIT STAFF MODAL -->
 <div id="addStaffModal" class="overlay hidden">
-  <div class="mbox">
-    <div style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:18px">ADD STAFF MEMBER</div>
+  <div class="mbox" style="max-width:500px">
+    <div id="staffModalTitle" style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:18px">ADD STAFF MEMBER</div>
     <div class="fcol" style="gap:12px;margin-bottom:20px">
-      <div><label class="flabel">Name</label><input class="finput" id="sm_name" placeholder="Coach Name"/></div>
-      <div><label class="flabel">Role / Title</label><input class="finput" id="sm_role" placeholder="Pitching Coach, Director..."/></div>
+      <div class="g2">
+        <div><label class="flabel">Name</label><input class="finput" id="sm_name" placeholder="Coach Name"/></div>
+        <div><label class="flabel">Role / Title</label><input class="finput" id="sm_role" placeholder="Pitching Coach, Director..."/></div>
+      </div>
+      <div class="g2">
+        <div><label class="flabel">Phone (optional)</label><input class="finput" id="sm_phone" placeholder="555-000-0000"/></div>
+        <div><label class="flabel">Email (optional)</label><input class="finput" id="sm_email" placeholder="coach@team.com"/></div>
+      </div>
+      <div>
+        <label class="flabel">Assigned Teams</label>
+        <div id="sm_teamsWrap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:4px"></div>
+      </div>
+      <input type="hidden" id="sm_editIdx" value=""/>
     </div>
-    <div class="frow">
-      <button class="btn-green" onclick="saveStaffMember()">ADD</button>
-      <button class="btn-ghost" onclick="document.getElementById('addStaffModal').classList.add('hidden')">Cancel</button>
+    <div class="frow" style="justify-content:space-between">
+      <div class="frow">
+        <button class="btn-green" onclick="saveStaffMember()">SAVE</button>
+        <button class="btn-ghost" onclick="document.getElementById('addStaffModal').classList.add('hidden')">Cancel</button>
+      </div>
+      <button id="sm_deleteBtn" class="btn-danger hidden" onclick="deleteStaffMember()">🗑 Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD VISIT MODAL -->
+<div id="addVisitModal" class="overlay hidden">
+  <div class="mbox" style="max-width:520px">
+    <div id="visitModalTitle" style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:18px">📅 SCHEDULE VISIT</div>
+    <div class="fcol" style="gap:12px;margin-bottom:20px">
+      <div class="g2">
+        <div>
+          <label class="flabel">Date</label>
+          <div class="frow" style="gap:6px">
+            <select class="finput" id="av_date_m" style="flex:2">
+              <option value="">Month</option><option value="01">January</option><option value="02">February</option><option value="03">March</option><option value="04">April</option><option value="05">May</option><option value="06">June</option><option value="07">July</option><option value="08">August</option><option value="09">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option>
+            </select>
+            <select class="finput" id="av_date_d" style="flex:1">
+              <option value="">Day</option><option value="01">1</option><option value="02">2</option><option value="03">3</option><option value="04">4</option><option value="05">5</option><option value="06">6</option><option value="07">7</option><option value="08">8</option><option value="09">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option>
+            </select>
+            <select class="finput" id="av_date_y" style="flex:1">
+              <option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="flabel">Time (optional)</label>
+          <div class="frow" style="gap:6px">
+            <select class="finput" id="av_time_hr" style="flex:1">
+              <option value="">hr</option><option value="01">1</option><option value="02">2</option><option value="03">3</option><option value="04">4</option><option value="05">5</option><option value="06">6</option><option value="07">7</option><option value="08">8</option><option value="09">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+            </select>
+            <select class="finput" id="av_time_min" style="flex:1">
+              <option value="">min</option><option value="00">00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>
+            </select>
+            <select class="finput" id="av_time_ampm" style="flex:1">
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="flabel">Location</label>
+          <select class="finput" id="av_location">
+            <option value="tinsley">🏢 Tinsley Performance</option>
+            <option value="onsite">📍 On-Site (Team Location)</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2">
+        <div>
+          <label class="flabel">Team</label>
+          <select class="finput" id="av_team">
+            <option value="">— Select Team —</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel">Staff Member</label>
+          <select class="finput" id="av_staff">
+            <option value="">— Select Staff —</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="flabel">Notes</label>
+        <textarea class="finput" id="av_notes" placeholder="Eval type, what to bring, address..." style="min-height:60px;resize:vertical"></textarea>
+      </div>
+      <div class="frow" style="gap:8px;align-items:center">
+        <input type="checkbox" id="av_confirmed" style="width:16px;height:16px;cursor:pointer"/>
+        <label for="av_confirmed" class="flabel" style="margin:0;cursor:pointer">Mark as Confirmed</label>
+      </div>
+      <input type="hidden" id="av_editId" value=""/>
+    </div>
+    <div class="frow" style="justify-content:space-between">
+      <div class="frow">
+        <button class="btn-green" onclick="saveVisit()">SAVE</button>
+        <button class="btn-ghost" onclick="document.getElementById('addVisitModal').classList.add('hidden')">Cancel</button>
+      </div>
+      <button id="av_deleteBtn" class="btn-danger hidden" onclick="deleteVisit()">🗑 Delete</button>
     </div>
   </div>
 </div>
@@ -271,7 +365,16 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
       <button class="btn-add" onclick="addTeamFromInput()" style="padding:8px 12px;font-size:11px;white-space:nowrap">+ Add</button>
     </div>
     </div>
-    <div><label class="flabel">Level</label><input class="finput" id="af_level" placeholder="High School, College, Pro..."/></div>
+    <div>
+      <label class="flabel">Level</label>
+      <select class="finput" id="af_level" onchange="toggleGradYear()">
+        <option value="">— Select Level —</option>
+        <option value="Youth">Youth</option>
+        <option value="High School">High School</option>
+        <option value="College">College</option>
+        <option value="Pro">Pro</option>
+      </select>
+    </div>
     <div><label class="flabel">Height</label><input class="finput" id="af_height" placeholder="6'2&quot;"/></div>
     <div><label class="flabel">Weight (lbs)</label><input class="finput" id="af_weight" type="number" placeholder="185"/></div>
     <div><label class="flabel">Age</label><input class="finput" id="af_age" type="number" placeholder="18"/></div>
@@ -287,12 +390,86 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
     <label class="flabel">Athlete Type</label>
     <select class="finput" id="af_type"><option value="position">Position Player</option><option value="pitcher">Pitcher</option></select>
     </div>
-    <div><label class="flabel">Grad Year</label><input class="finput" id="af_gradYear" placeholder="2026"/></div>
+    <div id="af_gradYearWrap"><label class="flabel">Grad Year</label><input class="finput" id="af_gradYear" placeholder="2026"/></div>
   </div>
   <div class="frow">
     <button class="btn-green" onclick="saveAthleteForm()">SAVE ATHLETE</button>
     <button class="btn-ghost" onclick="hideAthleteForm()">Cancel</button>
   </div>
+  </div>
+</div>
+
+<!-- Custom Fields Manager Modal -->
+<div id="customFieldsModal" class="overlay hidden">
+  <div class="mbox" style="max-width:600px">
+    <div style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:6px">⚙️ MANAGE EVAL FIELDS</div>
+    <div style="font-size:12px;color:#556677;margin-bottom:20px">Add custom measurables that appear in every evaluation form</div>
+
+    <div id="customFieldsList" class="fcol" style="gap:8px;margin-bottom:20px;max-height:300px;overflow-y:auto"></div>
+
+    <div class="inset" style="margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;color:#aabbcc;margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase">Add New Field</div>
+      <div class="g2" style="gap:10px">
+        <div><label class="flabel">Field Label</label><input class="finput" id="cf_label" placeholder="e.g. Broad Jump, Grip Strength"/></div>
+        <div>
+          <label class="flabel">Type</label>
+          <select class="finput" id="cf_type" onchange="toggleCfOptions()">
+            <option value="number">Number</option>
+            <option value="text">Text</option>
+            <option value="select">Dropdown</option>
+          </select>
+        </div>
+        <div><label class="flabel">Unit (optional)</label><input class="finput" id="cf_unit" placeholder="in, lbs, sec..."/></div>
+        <div>
+          <label class="flabel">Section</label>
+          <select class="finput" id="cf_section">
+            <option value="strength">💪 Strength & Speed</option>
+            <option value="rom">🔵 Range of Motion</option>
+            <option value="motor">⚡ Motor & Movement</option>
+            <option value="velo">🔥 Velocity</option>
+            <option value="other">📋 Other</option>
+          </select>
+        </div>
+        <div id="cf_optionsWrap" class="hidden" style="grid-column:1/-1">
+          <label class="flabel">Dropdown Options (comma separated)</label>
+          <input class="finput" id="cf_options" placeholder="Option A, Option B, Option C"/>
+        </div>
+      </div>
+      <div class="frow" style="margin-top:12px">
+        <button class="btn-green" onclick="saveCustomField()">+ Add Field</button>
+      </div>
+    </div>
+
+    <div class="frow">
+      <button class="btn-ghost" onclick="document.getElementById('customFieldsModal').classList.add('hidden')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- EVAL TEMPLATES MODAL -->
+<div id="evalTemplatesModal" class="overlay hidden">
+  <div class="mbox" style="max-width:560px">
+    <div style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:6px">📋 EVAL TEMPLATES</div>
+    <div style="font-size:12px;color:#556677;margin-bottom:20px">Save preset field values to load into any evaluation</div>
+    <div id="templatesList" class="fcol" style="gap:8px;margin-bottom:20px;max-height:300px;overflow-y:auto"></div>
+    <div class="frow">
+      <button class="btn-ghost" onclick="document.getElementById('evalTemplatesModal').classList.add('hidden')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAVE TEMPLATE MODAL -->
+<div id="saveTemplateModal" class="overlay hidden">
+  <div class="mbox" style="max-width:440px">
+    <div style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:18px">💾 SAVE AS TEMPLATE</div>
+    <div class="fcol" style="gap:12px;margin-bottom:20px">
+      <div><label class="flabel">Template Name</label><input class="finput" id="tmpl_name" placeholder="e.g. Standard Pitcher, Rehab Protocol..."/></div>
+      <div><label class="flabel">Description (optional)</label><input class="finput" id="tmpl_desc" placeholder="What this template is for..."/></div>
+    </div>
+    <div class="frow">
+      <button class="btn-green" onclick="confirmSaveTemplate()">Save Template</button>
+      <button class="btn-ghost" onclick="document.getElementById('saveTemplateModal').classList.add('hidden')">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -312,6 +489,8 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
       <div id="navMenu" class="hidden" style="position:absolute;right:0;top:calc(100% + 6px);background:#0d1117;border:1px solid #1e2730;border-radius:12px;min-width:190px;z-index:400;box-shadow:0 8px 24px #000a;padding:6px;">
         <div class="nav-section-label">Browse</div>
         <div class="nav-opt" id="navOpt-home"     onclick="setView('home')">🏠 Home</div>
+        <div class="nav-opt" id="navOpt-staff"    onclick="setView('staff')">👥 Staff</div>
+        <div class="nav-opt" id="navOpt-calendar" onclick="setView('calendar')">📅 Calendar</div>
         <div class="nav-opt" id="navOpt-teams"    onclick="setView('teams')">🏷 Teams</div>
         <div class="nav-opt" id="navOpt-athletes" onclick="setView('athletes')">👤 Athletes</div>
         <div class="nav-opt" id="navOpt-evals"    onclick="setView('evals')">📋 Evaluations</div>
@@ -334,12 +513,12 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
 <div id="evalFormPanel" class="overlay hidden" style="align-items:flex-start;padding:20px;overflow-y:auto">
   <div class="mbox" style="max-width:680px;width:100%;margin:auto">
 
-    <div id="evalFormTitle" style="font-size:14px;font-weight:700;color:#00ff88;margin-bottom:20px;letter-spacing:0.05em">🧪 NEW EVALUATION</div>
+    <div id="evalFormTitle" style="font-size:14px;font-weight:700;color:#00ff88;letter-spacing:0.05em;margin-bottom:20px">🧪 NEW EVALUATION</div>
     <div class="fcol" style="gap:20px">
       <div><label class="flabel">Evaluation Date</label><input type="date" class="finput" id="ef_date"/></div>
 
       <!-- MOTOR & MOVEMENT -->
-      <div class="inset">
+      <div class="inset" id="inset_motor">
         <div class="slabel" style="color:#00ff88">⚡ Motor & Movement</div>
         <div class="g2" style="margin-bottom:14px">
         <div>
@@ -373,7 +552,7 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
       </div>
 
       <!-- RANGE OF MOTION -->
-      <div class="inset">
+      <div class="inset" id="inset_rom">
         <div class="slabel" style="color:#4488ff">🔵 Range of Motion</div>
         <div class="g2">
         <div><label class="flabel">Shoulder ER (°)</label><input type="number" class="finput" id="ef_sER" placeholder="0" oninput="calcROM()"/></div>
@@ -387,7 +566,7 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
       </div>
 
       <!-- STRENGTH & SPEED -->
-      <div class="inset">
+      <div class="inset" id="inset_strength">
         <div class="slabel" style="color:#ffaa00">💪 Strength & Speed</div>
         <div class="g2">
         <div>
@@ -427,6 +606,9 @@ select option,select optgroup{background:#0d1117;color:#e8f0fe;}
 
   <!-- ── VIEW PANELS ── -->
   <div id="viewHome"     class="hidden no-print" style="margin-bottom:24px"></div>
+  <div id="viewStaff"    class="hidden no-print" style="margin-bottom:24px"></div>
+  <div id="viewCalendar" class="hidden no-print" style="margin-bottom:24px"></div>
+  <div id="viewTeamDash" class="hidden no-print" style="margin-bottom:24px"></div>
   <div id="viewTeams"    class="hidden no-print" style="margin-bottom:24px"></div>
   <div id="viewAthletes" class="hidden no-print" style="margin-bottom:24px"></div>
   <div id="viewEvals"    class="hidden no-print" style="margin-bottom:24px"></div>
@@ -540,6 +722,9 @@ let evals = {};
 let docs = {};
 let teams = ["Alabama","Auburn","Tennessee","Georgia","LSU"];
 let staffMembers = [];
+let customFields = []; // [{id, label, type:'number'|'text'|'select', unit, options, section}]
+let visits        = []; // [{id, date, team, location:'tinsley'|'onsite', staffId, notes, confirmed}]
+let evalTemplates = []; // [{id, name, description, athleteType, fields:{...}}]
 let currentUser = null;
 let selectedAthleteId = null;
 let selectedEvalIdx = null;
@@ -558,7 +743,7 @@ async function saveToStorage() {
   setSyncing();
   try {
     const workspaceRef = doc(db, "workspace", "main");
-    await setDoc(workspaceRef, { athletes, evals, teams, staffMembers, docs });
+    await setDoc(workspaceRef, { athletes, evals, teams, staffMembers, docs, customFields, visits, evalTemplates });
     showToast("✓ Saved & synced to all devices");
   } catch(e) {
     console.error(e);
@@ -580,6 +765,12 @@ function startRealtimeSync() {
         teams        = d.teams        || teams;
         staffMembers = d.staffMembers || [];
         docs         = d.docs         || {};
+        customFields = d.customFields  || [];
+        staffMembers = d.staffMembers || [];
+        docs         = d.docs         || {};
+        visits        = d.visits         || [];
+      evalTemplates = d.evalTemplates         || [];
+        evalTemplates = d.evalTemplates         || [];
       }
       setSynced();
       if (currentUser) {
@@ -596,9 +787,10 @@ function startRealtimeSync() {
             }
           }
           // Re-render home leaderboard if it's visible
-          if (!document.getElementById("viewHome").classList.contains("hidden")) {
-            renderViewHome();
-          }
+          if (!document.getElementById("viewHome").classList.contains("hidden")) { renderViewHome(); }
+          if (!document.getElementById("viewTeamDash").classList.contains("hidden")) { renderTeamDash(_currentTeam); }
+          if (!document.getElementById("viewStaff").classList.contains("hidden")) { renderViewStaff(); }
+          if (!document.getElementById("viewCalendar").classList.contains("hidden")) { renderViewCalendar(); }
         } else if (selectedAthleteId) {
           selectedAthleteId = null;
           document.getElementById("dashboard").classList.add("hidden");
@@ -632,6 +824,11 @@ async function init() {
       teams        = d.teams        || teams;
       staffMembers = d.staffMembers || [];
       docs         = d.docs         || {};
+      customFields = d.customFields  || [];
+      staffMembers = d.staffMembers || [];
+      docs         = d.docs         || {};
+      visits        = d.visits         || [];
+      evalTemplates = d.evalTemplates         || [];
     }
     loadingBanner.remove();
   } catch(e) {
@@ -645,6 +842,8 @@ async function init() {
   renderHomeScreen();
   // Start real-time listener (retries automatically)
   startRealtimeSync();
+  // Render any custom fields that were loaded
+  setTimeout(renderCustomEvalFields, 800);
 }
 
 /* ======== HOME SCREEN / STAFF ======== */
@@ -654,7 +853,9 @@ function renderHomeScreen() {
   document.getElementById("appMain").classList.add("hidden");
   const grid = document.getElementById("staffGrid");
   grid.innerHTML = staffMembers.map((s,i) => `
-    <div class="staff-card" onclick="loginAs(${i})">
+    <div class="staff-card" style="position:relative" onclick="loginAs(${i})">
+      <button onclick="event.stopPropagation();editStaffMember(${i})"
+        style="position:absolute;top:8px;right:8px;background:transparent;border:1px solid #1e2730;border-radius:6px;color:#556677;font-size:10px;padding:2px 6px;cursor:pointer;line-height:1.4">✏️</button>
       <div class="staff-avatar">${s.name.charAt(0).toUpperCase()}</div>
       <div class="staff-name">${s.name}</div>
       <div class="staff-role">${s.role||"Staff"}</div>
@@ -666,20 +867,6 @@ function renderHomeScreen() {
   renderHomeAthleteSelect();
 }
 
-function showAddStaffModal() {
-  document.getElementById("sm_name").value="";
-  document.getElementById("sm_role").value="";
-  document.getElementById("addStaffModal").classList.remove("hidden");
-  setTimeout(()=>document.getElementById("sm_name").focus(),100);
-}
-function saveStaffMember() {
-  const name=document.getElementById("sm_name").value.trim();
-  if(!name){alert("Name required.");return;}
-  staffMembers.push({name, role:document.getElementById("sm_role").value.trim()});
-  saveToStorage();
-  document.getElementById("addStaffModal").classList.add("hidden");
-  renderHomeScreen();
-}
 function loginAs(idx) {
   currentUser = staffMembers[idx];
   document.getElementById("homeScreen").classList.add("hidden");
@@ -688,6 +875,11 @@ function loginAs(idx) {
   document.getElementById("activeUserBadge").textContent = "👤 " + currentUser.name;
   renderRosterPanels();
   selectAthlete("");
+  // Pre-filter calendar to this staff member for when they visit it
+  _calFilterStaff = currentUser.id || currentUser.name;
+  _calFilterLocation = '';
+  _calFilterTeam = '';
+  _calFilterConfirmed = false;
   setView("home");
 }
 function goHome() {
@@ -958,18 +1150,26 @@ function renderProfile() {
 }
 
 /* ======== ATHLETE FORM ======== */
-function showAthleteForm(id) {
+function toggleGradYear(){
+  const level=document.getElementById("af_level").value;
+  const hide=level==="College"||level==="Pro";
+  document.getElementById("af_gradYearWrap").style.display=hide?"none":"";
+  if(hide) document.getElementById("af_gradYear").value="";
+}
+
+function showAthleteForm(id, defaultTeam) {
   editingAthleteId=id;
   document.getElementById("afTitle").textContent=id?"✏️ EDIT ATHLETE":"➕ NEW ATHLETE";
   // Always rebuild team dropdown fresh
   const teamSel=document.getElementById("af_team");
   teamSel.innerHTML='<option value="">— Select Team —</option>'+teams.map(t=>`<option value="${t}">${t}</option>`).join("");
-  const fields=["af_first","af_last","af_level","af_height","af_weight","af_age","af_gradYear"];
+  const fields=["af_first","af_last","af_height","af_weight","af_age","af_gradYear"];
   if(id){
     const a=getAthlete(id);
     document.getElementById("af_first").value=a.firstName||"";
     document.getElementById("af_last").value=a.lastName||"";
     document.getElementById("af_level").value=a.level||"";
+    toggleGradYear();
     document.getElementById("af_height").value=a.height||"";
     document.getElementById("af_weight").value=a.weight||"";
     document.getElementById("af_age").value=a.age||"";
@@ -983,7 +1183,8 @@ function showAthleteForm(id) {
     document.getElementById("af_throws").value="R";
     document.getElementById("af_bats").value="R";
     document.getElementById("af_type").value="position";
-    teamSel.value="";
+    teamSel.value=defaultTeam||"";
+    document.getElementById("af_gradYearWrap").style.display="";
   }
   // Show as overlay modal — works from any screen
   document.getElementById("athleteFormPanel").classList.remove("hidden");
@@ -1019,7 +1220,11 @@ function saveAthleteForm() {
   }
   if(data.team) openTeams.add(data.team);
   saveToStorage(); hideAthleteForm(); renderRosterPanels(); renderHomeAthleteSelect();
-  // Re-render profile tab if the dashboard is open
+  // Refresh whatever view is currently visible
+  if(!document.getElementById("viewTeams").classList.contains("hidden")) renderViewTeams();
+  if(!document.getElementById("viewTeamDash").classList.contains("hidden")) renderTeamDash(_currentTeam);
+  if(!document.getElementById("viewHome").classList.contains("hidden")) renderViewHome();
+  if(!document.getElementById("viewAthletes").classList.contains("hidden")) renderViewAthletes();
   if(document.getElementById("dashboard").classList.contains("hidden")===false){
     selectedAthleteId = id;
     renderProfileTabs();
@@ -1079,6 +1284,7 @@ function deleteEval(i){
   if(selectedEvalIdx===i)selectedEvalIdx=null;
   saveToStorage();renderEvalHistory();renderEvalDisplay();
   if(!document.getElementById("viewHome").classList.contains("hidden")) renderViewHome();
+  if(!document.getElementById("viewTeamDash").classList.contains("hidden")) renderTeamDash(_currentTeam);
   if(!document.getElementById("viewEvals").classList.contains("hidden")) renderViewEvals();
   if(document.getElementById("profileTabBar") && _profileTab==="profile") renderProfileTabs();
 }
@@ -1116,6 +1322,12 @@ function renderEvalDisplay(){
   }
 
   const notesHTML=ev.notes?`<div class="card"><div class="slabel" style="color:#556677">📝 Coach Notes</div><div style="font-size:14px;color:#aabbcc;line-height:1.7;white-space:pre-wrap">${ev.notes}</div></div>`:"";
+  // Custom fields display
+  const customHTML=(()=>{
+    const filled=customFields.filter(f=>ev["custom_"+f.id]&&ev["custom_"+f.id]!=="");
+    if(!filled.length) return "";
+    return `<div class="card"><div class="slabel" style="color:#aa88ff">📊 Additional Measurables</div><div class="g3" style="gap:10px">${filled.map(f=>`<div class="fcol" style="gap:3px"><span style="font-size:10px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.08em">${f.label}${f.unit?" ("+f.unit+")":""}</span><span style="font-size:15px;font-weight:700;color:#ccdde8">${ev["custom_"+f.id]}</span></div>`).join("")}</div></div>`;
+  })();
   const allEvs=getSortedEvals();
   let tableHTML="";
   if(allEvs.length>1){
@@ -1173,7 +1385,7 @@ function renderEvalDisplay(){
         ${ec("Sled Sprint",ev.sledSprint,"sec")}
       </div>
     </div>
-    ${veloHTML}${notesHTML}${tableHTML}`;
+    ${veloHTML}${customHTML}${notesHTML}${tableHTML}`;
 }
 
 /* ======== EVAL FORM ======== */
@@ -1182,14 +1394,30 @@ function showNewEval(){
   document.getElementById("ef_date").value=new Date().toISOString().split("T")[0];
   document.getElementById("evalFormTitle").textContent="🧪 NEW EVALUATION — "+getAthlete().firstName+" "+getAthlete().lastName;
   document.getElementById("veloSection").classList.toggle("hidden",getAthlete().type!=="pitcher");
+  // Pre-load motor preferences from last eval if they exist
+  const lastEvals=getSortedEvals();
+  const last=lastEvals[0];
+  if(last){
+    if(last.motorPref)     document.getElementById("ef_motorPref").value=last.motorPref;
+    if(last.assocDissoc)   document.getElementById("ef_assocDissoc").value=last.assocDissoc;
+    if(last.motorShoulder) document.getElementById("ef_motorShoulder").value=last.motorShoulder;
+    if(last.axialLarge)    document.getElementById("ef_axialLarge").value=last.axialLarge;
+    if(last.extLeg)        document.getElementById("ef_extLeg").value=last.extLeg;
+    if(last.moveDial)      initDialSelects(last.moveDial);
+    else                   initDialSelects([]);
+  } else {
+    initDialSelects([]);
+  }
   document.getElementById("evalFormPanel").classList.remove("hidden");
-  initDialSelects([]);
+  renderCustomEvalFields();
 }
 
 function editEval(i){
   editingEvalIdx=i;const ev=getSortedEvals()[i];
   document.getElementById("evalFormTitle").textContent="✏️ EDIT EVALUATION — "+getAthlete().firstName+" "+getAthlete().lastName;
   document.getElementById("veloSection").classList.toggle("hidden",getAthlete().type!=="pitcher");
+  renderCustomEvalFields();
+  populateTemplateSelect();
   document.getElementById("evalFormPanel").classList.remove("hidden");
   document.getElementById("ef_date").value=ev.date||"";
   document.getElementById("ef_motorPref").value=ev.motorPref||"";
@@ -1208,6 +1436,11 @@ function editEval(i){
   document.getElementById("ef_vPdTop").value=ev.topPulldownVelo||"";
   document.getElementById("ef_notes").value=ev.notes||"";
   initDialSelects(ev.moveDial||[]);calcROM();calcStr();
+  // Populate custom fields
+  customFields.forEach(f=>{
+    const el=document.getElementById("ef_custom_"+f.id);
+    if(el) el.value=ev["custom_"+f.id]||"";
+  });
 }
 
 function hideEvalForm(){document.getElementById("evalFormPanel").classList.add("hidden");editingEvalIdx=null;}
@@ -1215,6 +1448,11 @@ function clearEvalForm(){
   ["ef_date","ef_motorPref","ef_assocDissoc","ef_motorShoulder","ef_axialLarge","ef_extLeg","ef_sER","ef_sIR","ef_hER","ef_hIR","ef_str","ef_sled","ef_vEval","ef_vGame","ef_vPdTop","ef_notes"].forEach(id=>document.getElementById(id).value="");
   document.getElementById("romPrev").classList.add("hidden");
   document.getElementById("strPrev").innerHTML="";
+  // Clear custom fields
+  customFields.forEach(f=>{
+    const el=document.getElementById("ef_custom_"+f.id);
+    if(el) el.value="";
+  });
 }
 function initDialSelects(cur=[]){
   for(let i=0;i<4;i++){const s=document.getElementById(`ef_d${i}`);s.innerHTML='<option value="">—</option>'+DIAL_OPTS.map(o=>`<option${o===cur[i]?" selected":""}>${o}</option>`).join("");}
@@ -1235,6 +1473,12 @@ function calcStr(){
 }
 function saveEval(){
   const dial=[0,1,2,3].map(i=>document.getElementById(`ef_d${i}`).value);
+  // Collect custom field values
+  const customData={};
+  customFields.forEach(f=>{
+    const el=document.getElementById("ef_custom_"+f.id);
+    if(el) customData["custom_"+f.id]=el.value;
+  });
   const formData={
     date:document.getElementById("ef_date").value||new Date().toISOString().split("T")[0],
     motorPref:document.getElementById("ef_motorPref").value,
@@ -1250,6 +1494,7 @@ function saveEval(){
     gameVelo:document.getElementById("ef_vGame").value,
     topPulldownVelo:document.getElementById("ef_vPdTop").value,
     notes:document.getElementById("ef_notes").value,
+    ...customData,
   };
   const existing=evals[selectedAthleteId]||[];
   if(editingEvalIdx!==null){
@@ -1261,6 +1506,7 @@ function saveEval(){
   saveToStorage();hideEvalForm();renderEvalHistory();renderEvalDisplay();
   // Refresh home leaderboard and profile snapshot
   if(!document.getElementById("viewHome").classList.contains("hidden")) renderViewHome();
+  if(!document.getElementById("viewTeamDash").classList.contains("hidden")) renderTeamDash(_currentTeam);
   if(!document.getElementById("viewEvals").classList.contains("hidden")) renderViewEvals();
   if(document.getElementById("profileTabBar") && _profileTab==="profile") renderProfileTabs();
 }
@@ -1335,16 +1581,19 @@ function setView(view){
   closeNav();
   _currentView = view;
   // Update active state in menu
-  ["home","teams","athletes","evals"].forEach(v=>{
+  ["home","staff","calendar","teams","athletes","evals"].forEach(v=>{
     const el=document.getElementById("navOpt-"+v);
     if(el) el.classList.toggle("active", v===view);
   });
   document.getElementById("navLabel").textContent =
-    view==="home"?"🏠 Home":view==="teams"?"🏷 Teams":view==="athletes"?"👤 Athletes":view==="evals"?"📋 Evaluations":"☰ View";
+    view==="home"?"🏠 Home":view==="staff"?"👥 Staff":view==="calendar"?"📅 Calendar":view==="teams"?"🏷 Teams":view==="athletes"?"👤 Athletes":view==="evals"?"📋 Evaluations":"☰ View";
 
   // Hide all panels
   document.getElementById("teamRosterPanels").classList.add("hidden");
   document.getElementById("viewHome").classList.add("hidden");
+  document.getElementById("viewStaff").classList.add("hidden");
+  document.getElementById("viewCalendar").classList.add("hidden");
+  document.getElementById("viewTeamDash").classList.add("hidden");
   document.getElementById("viewTeams").classList.add("hidden");
   document.getElementById("viewAthletes").classList.add("hidden");
   document.getElementById("viewEvals").classList.add("hidden");
@@ -1354,6 +1603,8 @@ function setView(view){
   document.getElementById("evalFormPanel").classList.add("hidden");
 
   if(view==="home")     { renderViewHome();     document.getElementById("viewHome").classList.remove("hidden"); }
+  if(view==="staff")    { renderViewStaff();    document.getElementById("viewStaff").classList.remove("hidden"); }
+  if(view==="calendar") { renderViewCalendar(); document.getElementById("viewCalendar").classList.remove("hidden"); }
   if(view==="teams")    { renderViewTeams();    document.getElementById("viewTeams").classList.remove("hidden"); }
   if(view==="athletes") { renderViewAthletes(); document.getElementById("viewAthletes").classList.remove("hidden"); }
   if(view==="evals")    { renderViewEvals();    document.getElementById("viewEvals").classList.remove("hidden"); }
@@ -1362,10 +1613,13 @@ function setView(view){
 function resetToRoster(){
   _currentView="roster";
   document.getElementById("navLabel").textContent="☰ View";
-  ["home","teams","athletes","evals"].forEach(v=>{
+  ["home","staff","calendar","teams","athletes","evals"].forEach(v=>{
     document.getElementById("navOpt-"+v)?.classList.remove("active");
   });
   document.getElementById("viewHome").classList.add("hidden");
+  document.getElementById("viewStaff").classList.add("hidden");
+  document.getElementById("viewCalendar").classList.add("hidden");
+  document.getElementById("viewTeamDash").classList.add("hidden");
   document.getElementById("viewTeams").classList.add("hidden");
   document.getElementById("viewAthletes").classList.add("hidden");
   document.getElementById("viewEvals").classList.add("hidden");
@@ -1376,167 +1630,178 @@ function resetToRoster(){
 function renderViewHome(){
   const c = document.getElementById("viewHome");
 
-  // ── collect all evals across all athletes ──
   const allEntries = [];
-  athletes.forEach(a => {
-    (evals[a.id]||[]).forEach(ev => {
-      allEntries.push({ athlete: a, ev });
-    });
-  });
+  athletes.forEach(a=>{ (evals[a.id]||[]).forEach(ev=>allEntries.push({athlete:a,ev})); });
 
-  // ── top 5 velocity (evalVelo, pitchers only) ──
-  const veloRows = allEntries
-    .filter(e => e.ev.evalVelo && parseFloat(e.ev.evalVelo) > 0)
-    .sort((a,b) => parseFloat(b.ev.evalVelo) - parseFloat(a.ev.evalVelo))
-    .slice(0,5);
+  const veloRows = allEntries.filter(e=>e.ev.evalVelo&&parseFloat(e.ev.evalVelo)>0)
+    .sort((a,b)=>parseFloat(b.ev.evalVelo)-parseFloat(a.ev.evalVelo)).slice(0,5);
+  const sledRows = allEntries.filter(e=>e.ev.sledSprint&&parseFloat(e.ev.sledSprint)>0)
+    .sort((a,b)=>parseFloat(a.ev.sledSprint)-parseFloat(b.ev.sledSprint)).slice(0,5);
+  const recentRows = [...allEntries].sort((a,b)=>new Date(b.ev.date)-new Date(a.ev.date)).slice(0,5);
 
-  // ── top 5 sled sprint (lower = faster) ──
-  const sledRows = allEntries
-    .filter(e => e.ev.sledSprint && parseFloat(e.ev.sledSprint) > 0)
-    .sort((a,b) => parseFloat(a.ev.sledSprint) - parseFloat(b.ev.sledSprint))
-    .slice(0,5);
+  const totalAthletes=athletes.length, totalEvals=allEntries.length, totalTeams=teams.length;
+  const avgVelo=veloRows.length?(veloRows.reduce((s,e)=>s+parseFloat(e.ev.evalVelo),0)/veloRows.length).toFixed(1):null;
 
-  // ── recent evaluations (last 5) ──
-  const recentRows = allEntries
-    .sort((a,b) => new Date(b.ev.date) - new Date(a.ev.date))
-    .slice(0,5);
+  const medal=(i)=>i===0?'🥇':i===1?'🥈':i===2?'🥉':`<span style="font-size:13px;color:#556677;font-weight:700">#${i+1}</span>`;
 
-  // ── stat totals ──
-  const totalAthletes = athletes.length;
-  const totalEvals = allEntries.length;
-  const totalTeams = teams.length;
-  const avgVelo = veloRows.length
-    ? (veloRows.reduce((s,e)=>s+parseFloat(e.ev.evalVelo),0)/veloRows.length).toFixed(1)
-    : null;
-
-  const medal = (i) => i===0?'🥇':i===1?'🥈':i===2?'🥉':`<span style="font-size:13px;color:#556677;font-weight:700">#${i+1}</span>`;
-
-  const leaderRow = (rank, name, team, val, unit, barPct, color) => `
-    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #0d1117;">
+  const leaderRow=(rank,name,team,val,unit,barPct,color)=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #0d1117">
       <div style="width:28px;text-align:center;flex-shrink:0">${medal(rank)}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:13px;font-weight:700;color:#e8f0fe;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
         <div style="font-size:10px;color:#556677;margin-top:2px">${team}</div>
         <div style="height:3px;background:#1e2730;border-radius:2px;margin-top:6px">
-          <div style="height:3px;background:${color};border-radius:2px;width:${barPct}%;transition:width .4s"></div>
+          <div style="height:3px;background:${color};border-radius:2px;width:${barPct}%"></div>
         </div>
       </div>
       <div style="font-size:18px;font-weight:800;color:${color};flex-shrink:0">${val}<span style="font-size:11px;color:#556677;font-weight:400"> ${unit}</span></div>
     </div>`;
 
-  // velo bar: max is first entry
-  const maxVelo = veloRows[0] ? parseFloat(veloRows[0].ev.evalVelo) : 1;
-  const minSled = sledRows[0] ? parseFloat(sledRows[0].ev.sledSprint) : 1;
-  // sled bar: fastest (lowest) = 100%, slowest gets shorter bar
-  const maxSled = sledRows[sledRows.length-1] ? parseFloat(sledRows[sledRows.length-1].ev.sledSprint) : minSled+1;
+  const maxVelo=veloRows[0]?parseFloat(veloRows[0].ev.evalVelo):1;
+  const minSled=sledRows[0]?parseFloat(sledRows[0].ev.sledSprint):1;
+  const maxSled=sledRows[sledRows.length-1]?parseFloat(sledRows[sledRows.length-1].ev.sledSprint):minSled+1;
 
-  c.innerHTML = `
-    <!-- Hero header -->
-    <div style="margin-bottom:28px">
+  // Per-team summary cards
+  const sortedTeams=[...teams].sort((a,b)=>a.localeCompare(b));
+  const teamCards=sortedTeams.map(team=>{
+    const members=athletes.filter(a=>a.team===team);
+    const teamEntries=[];
+    members.forEach(a=>{(evals[a.id]||[]).forEach(ev=>teamEntries.push({athlete:a,ev}));});
+    const topVelo=teamEntries.filter(e=>e.ev.evalVelo&&parseFloat(e.ev.evalVelo)>0)
+      .sort((a,b)=>parseFloat(b.ev.evalVelo)-parseFloat(a.ev.evalVelo))[0];
+    const topSled=teamEntries.filter(e=>e.ev.sledSprint&&parseFloat(e.ev.sledSprint)>0)
+      .sort((a,b)=>parseFloat(a.ev.sledSprint)-parseFloat(b.ev.sledSprint))[0];
+    const recentEval=[...teamEntries].sort((a,b)=>new Date(b.ev.date)-new Date(a.ev.date))[0];
+    return `
+      <div class="card" style="cursor:pointer;transition:border-color .15s;border-color:#1e2730"
+        onmouseover="this.style.borderColor='#00ff8850'" onmouseout="this.style.borderColor='#1e2730'"
+        onclick="openTeamDash('${team}')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+          <div>
+            <div style="font-size:17px;font-weight:800;color:#fff">${team}</div>
+            <div style="font-size:11px;color:#556677;margin-top:3px">${members.length} athlete${members.length!==1?'s':''} · ${teamEntries.length} eval${teamEntries.length!==1?'s':''}</div>
+          </div>
+          <span style="font-size:11px;color:#00ff88;font-weight:700;background:#00ff8812;padding:4px 10px;border-radius:20px;border:1px solid #00ff8830">View Dashboard →</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div style="background:#080c10;border:1px solid #1e2730;border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:16px;font-weight:800;color:#ff6644">${topVelo?topVelo.ev.evalVelo:'—'}</div>
+            <div style="font-size:9px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Top Velo</div>
+          </div>
+          <div style="background:#080c10;border:1px solid #1e2730;border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:16px;font-weight:800;color:#4488ff">${topSled?topSled.ev.sledSprint:'—'}</div>
+            <div style="font-size:9px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Best Sled</div>
+          </div>
+          <div style="background:#080c10;border:1px solid #1e2730;border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:16px;font-weight:800;color:#00ff88">${recentEval?recentEval.ev.date.slice(5):'—'}</div>
+            <div style="font-size:9px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Last Eval</div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  c.innerHTML=`
+    <div style="margin-bottom:24px">
       <div style="font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#556677;margin-bottom:6px">Tinsley Performance</div>
-      <div style="font-size:28px;font-weight:800;color:#fff;line-height:1.1">Athlete Dashboard</div>
-      <div style="font-size:13px;color:#556677;margin-top:6px">Live leaderboards — updates every time an evaluation is saved</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div style="font-size:28px;font-weight:800;color:#fff">Athlete Dashboard</div>
+        <button class="btn-ghost" style="font-size:11px" onclick="showCustomFieldsModal()">⚙️ Manage Eval Fields</button>
+      </div>
+      <div style="font-size:13px;color:#556677;margin-top:4px">Updates live when evaluations are saved</div>
     </div>
 
     <!-- Stat strip -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:28px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:28px">
       ${[
-        ['Total Athletes', totalAthletes, '#00ff88'],
-        ['Teams',          totalTeams,   '#4488ff'],
-        ['Evaluations',    totalEvals,   '#ff7a00'],
-        ...(avgVelo ? [['Avg Top Velo', avgVelo+' mph', '#ff6644']] : []),
-      ].map(([label, val, color]) => `
-        <div class="card" style="padding:16px;text-align:center;border-color:${color}22">
-          <div style="font-size:26px;font-weight:800;color:${color}">${val}</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677;margin-top:4px">${label}</div>
+        ['Total Athletes',totalAthletes,'#00ff88'],
+        ['Teams',totalTeams,'#4488ff'],
+        ['Evaluations',totalEvals,'#ff7a00'],
+        ...(avgVelo?[['Avg Top Velo',avgVelo+' mph','#ff6644']]:[]),
+      ].map(([l,v,col])=>`
+        <div class="card" style="padding:16px;text-align:center;border-color:${col}22">
+          <div style="font-size:26px;font-weight:800;color:${col}">${v}</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677;margin-top:4px">${l}</div>
         </div>`).join('')}
     </div>
 
-    <!-- Two leaderboards side by side -->
+    <!-- All-teams leaderboards -->
+    <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#556677;margin-bottom:12px;border-bottom:1px solid #1e2730;padding-bottom:8px">All-Teams Leaderboards</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
-
-      <!-- Velocity leaderboard -->
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
           <div>
             <div class="slabel" style="color:#ff6644;margin-bottom:2px">🔥 Top Velocity</div>
             <div style="font-size:11px;color:#334455">Eval bullpen — all teams</div>
           </div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#334455">MPH</div>
         </div>
-        ${veloRows.length ? veloRows.map((e,i) =>
-          leaderRow(i,
-            `${e.athlete.lastName}, ${e.athlete.firstName}`,
-            e.athlete.team||'—',
-            e.ev.evalVelo, 'mph',
+        ${veloRows.length?veloRows.map((e,i)=>leaderRow(i,
+            e.athlete.lastName+", "+e.athlete.firstName,e.athlete.team||'—',
+            e.ev.evalVelo,'mph',
             Math.round((parseFloat(e.ev.evalVelo)/maxVelo)*100),
-            i===0?'#ff6644':i===1?'#ff8855':i===2?'#ffaa77':'#cc6644')
-        ).join('') : '<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No velocity data yet</div>'}
+            i===0?'#ff6644':i===1?'#ff8855':i===2?'#ffaa77':'#cc6644')).join('')
+          :'<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No velocity data yet</div>'}
       </div>
-
-      <!-- Sled sprint leaderboard -->
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
           <div>
             <div class="slabel" style="color:#4488ff;margin-bottom:2px">⚡ Sled Sprint</div>
             <div style="font-size:11px;color:#334455">Fastest times — all teams</div>
           </div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#334455">SEC</div>
         </div>
-        ${sledRows.length ? sledRows.map((e,i) =>
-          leaderRow(i,
-            `${e.athlete.lastName}, ${e.athlete.firstName}`,
-            e.athlete.team||'—',
-            e.ev.sledSprint, 'sec',
-            Math.round(((maxSled - parseFloat(e.ev.sledSprint)) / (maxSled - minSled + 0.001))*100 + 20),
-            i===0?'#4488ff':i===1?'#5599ff':i===2?'#66aaff':'#3377cc')
-        ).join('') : '<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No sled data yet</div>'}
+        ${sledRows.length?sledRows.map((e,i)=>leaderRow(i,
+            e.athlete.lastName+", "+e.athlete.firstName,e.athlete.team||'—',
+            e.ev.sledSprint,'sec',
+            Math.round(((maxSled-parseFloat(e.ev.sledSprint))/(maxSled-minSled+0.001))*100+20),
+            i===0?'#4488ff':i===1?'#5599ff':i===2?'#66aaff':'#3377cc')).join('')
+          :'<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No sled data yet</div>'}
       </div>
     </div>
 
-    <!-- Recent evaluations -->
+    <!-- Recent evals -->
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div class="slabel" style="color:#00ff88;margin-bottom:0">📋 Recent Evaluations</div>
         <div style="font-size:11px;color:#334455">Latest across all teams</div>
       </div>
-      ${recentRows.length ? `
+      ${recentRows.length?`
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead>
-            <tr style="border-bottom:1px solid #1e2730">
-              <th style="text-align:left;padding:8px 12px 8px 0;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Athlete</th>
-              <th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Team</th>
-              <th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Date</th>
-              <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Str Score</th>
-              <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Velo</th>
-              <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Sled</th>
-              <th style="padding:8px 0 8px 12px"></th>
-            </tr>
-          </thead>
+          <thead><tr style="border-bottom:1px solid #1e2730">
+            ${['Athlete','Team','Date','Str Score','Velo','Sled',''].map(h=>`<th style="text-align:${h?'left':'right'};padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">${h}</th>`).join('')}
+          </tr></thead>
           <tbody>
-            ${recentRows.map(({athlete:a, ev}) => {
-              const strVal = ev.shoulderStrength;
-              const strPass = strVal !== '' && strVal !== undefined ? parseFloat(strVal) >= 25 : null;
-              return `<tr style="border-bottom:1px solid #0d1117;cursor:pointer;transition:background .1s"
+            ${recentRows.map(({athlete:a,ev})=>{
+              const sp=ev.shoulderStrength;
+              const pass=sp!==undefined&&sp!==''?parseFloat(sp)>=25:null;
+              return `<tr style="border-bottom:1px solid #0d1117;cursor:pointer"
                 onmouseover="this.style.background='#0d1117'" onmouseout="this.style.background=''"
                 onclick="openAthleteProfile('${a.id}')">
-                <td style="padding:10px 12px 10px 0;font-weight:700;color:#e8f0fe">${a.lastName}, ${a.firstName}</td>
-                <td style="padding:10px 12px;color:#778899">${a.team||'—'}</td>
-                <td style="padding:10px 12px;color:#778899;font-family:'Space Mono',monospace">${ev.date}</td>
-                <td style="padding:10px 12px;text-align:right;font-weight:700;color:${strPass===true?'#00ff88':strPass===false?'#ff4455':'#556677'}">${strVal||'—'}</td>
-                <td style="padding:10px 12px;text-align:right;color:#ff6644;font-weight:700">${ev.evalVelo||'—'}</td>
-                <td style="padding:10px 12px;text-align:right;color:#4488ff;font-weight:700">${ev.sledSprint||'—'}</td>
-                <td style="padding:10px 0 10px 12px"><button class="btn-blue" style="font-size:11px;padding:4px 10px" onclick="event.stopPropagation();openAthleteProfile('${a.id}')">View</button></td>
+                <td style="padding:10px;font-weight:700;color:#e8f0fe">${a.lastName}, ${a.firstName}</td>
+                <td style="padding:10px;color:#778899">${a.team||'—'}</td>
+                <td style="padding:10px;color:#778899;font-family:'Space Mono',monospace">${ev.date}</td>
+                <td style="padding:10px;font-weight:700;color:${pass===true?'#00ff88':pass===false?'#ff4455':'#556677'}">${sp||'—'}</td>
+                <td style="padding:10px;color:#ff6644;font-weight:700">${ev.evalVelo||'—'}</td>
+                <td style="padding:10px;color:#4488ff;font-weight:700">${ev.sledSprint||'—'}</td>
+                <td style="padding:10px"><button class="btn-blue" style="font-size:11px;padding:4px 8px"
+                  onclick="event.stopPropagation();openAthleteProfile('${a.id}')">View</button></td>
               </tr>`;
             }).join('')}
           </tbody>
         </table>
-      </div>` : '<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No evaluations yet — add athletes and start evaluating</div>'}
-    </div>`;
+      </div>`
+      :'<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No evaluations yet</div>'}
+    </div>
+
+    <!-- Team cards -->
+    ${sortedTeams.length?`
+    <div style="font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#556677;margin-top:28px;margin-bottom:12px;border-bottom:1px solid #1e2730;padding-bottom:8px">Teams — click to open dashboard</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+      ${teamCards}
+    </div>`:''}
+    `;
 }
 
-/* ── TEAMS VIEW ── */
+/* ── TEAMS VIEW ── *//* ── TEAMS VIEW ── */
 function renderViewTeams(){
   const c=document.getElementById("viewTeams");
   if(!teams.length){c.innerHTML=`<div style="text-align:center;padding:60px 20px;color:#3a4550"><div style="font-size:40px">🏷</div><div style="margin-top:12px;font-size:15px;font-weight:700">No teams yet</div></div>`;return;}
@@ -1547,25 +1812,42 @@ function renderViewTeams(){
   [...teams].sort((a,b)=>a.localeCompare(b)).map(team=>{
     const members=athletes.filter(a=>a.team===team);
     const eCount=members.reduce((n,a)=>(evals[a.id]||[]).length+n,0);
-    return `<div class="team-view-card">
-      <div class="team-view-header">
-        <div>
+    const teamEntries=[];members.forEach(a=>{(evals[a.id]||[]).forEach(ev=>teamEntries.push({athlete:a,ev}));});
+    const topVelo=teamEntries.filter(e=>e.ev.evalVelo&&parseFloat(e.ev.evalVelo)>0).sort((a,b)=>parseFloat(b.ev.evalVelo)-parseFloat(a.ev.evalVelo))[0];
+    const topSled=teamEntries.filter(e=>e.ev.sledSprint&&parseFloat(e.ev.sledSprint)>0).sort((a,b)=>parseFloat(a.ev.sledSprint)-parseFloat(b.ev.sledSprint))[0];
+    return `<div class="team-view-card" style="cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='#00ff8850'" onmouseout="this.style.borderColor=''"
+      onclick="openTeamDash('${team}')">
+      <div class="team-view-header" onclick="event.stopPropagation()">
+        <div onclick="openTeamDash('${team}')" style="cursor:pointer;flex:1">
           <div style="font-size:16px;font-weight:800;color:#e8f0fe">${team}</div>
           <div style="font-size:12px;color:#556677;margin-top:3px">${members.length} athlete${members.length!==1?"s":""} · ${eCount} eval${eCount!==1?"s":""}</div>
         </div>
         <div class="frow" style="gap:6px">
-          <button class="btn-blue" onclick="showEditTeamModal('${team}')">✏️ Edit</button>
+          <button class="btn-add" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();showAthleteForm(null,'${team}')">+ Athlete</button>
+          <button class="btn-blue" onclick="event.stopPropagation();showEditTeamModal('${team}')">✏️ Edit</button>
+          <button class="btn-green" style="font-size:11px;padding:5px 12px" onclick="event.stopPropagation();openTeamDash('${team}')">Dashboard →</button>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:10px">
         ${members.sort((a,b)=>a.lastName.localeCompare(b.lastName)).map(a=>`
           <div style="padding:10px 12px;background:#080c10;border:1px solid #1e2730;border-radius:8px;cursor:pointer;transition:border-color .12s"
-               onmouseover="this.style.borderColor='#00ff8840'" onmouseout="this.style.borderColor='#1e2730'"
-               onclick="openAthleteProfile('${a.id}')">
+               onmouseover="this.style.borderColor='#4488ff50'" onmouseout="this.style.borderColor='#1e2730'"
+               onclick="event.stopPropagation();openAthleteProfile('${a.id}')">
             <div style="font-size:13px;font-weight:700;color:#e8f0fe">${a.lastName}, ${a.firstName}</div>
             <div style="font-size:11px;color:#556677;margin-top:2px">${a.type==="pitcher"?"⚾ Pitcher":"🏃 Position"} · ${a.throws}HP</div>
           </div>`).join("")}
         ${!members.length?`<div style="font-size:12px;color:#334455;padding:8px">No athletes on this team yet</div>`:""}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid #0d1117;padding-top:10px">
+        <div style="background:#080c10;border:1px solid #1e2730;border-radius:8px;padding:8px 12px;text-align:center">
+          <div style="font-size:15px;font-weight:800;color:#ff6644">${topVelo?topVelo.ev.evalVelo+" mph":"—"}</div>
+          <div style="font-size:9px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Top Velo</div>
+        </div>
+        <div style="background:#080c10;border:1px solid #1e2730;border-radius:8px;padding:8px 12px;text-align:center">
+          <div style="font-size:15px;font-weight:800;color:#4488ff">${topSled?topSled.ev.sledSprint+"s":"—"}</div>
+          <div style="font-size:9px;color:#556677;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Best Sled</div>
+        </div>
       </div>
     </div>`;
   }).join("");
@@ -1689,6 +1971,9 @@ function openAthleteProfile(id){
   _profileTab = "profile";
   // Switch to profile view
   document.getElementById("viewHome").classList.add("hidden");
+  document.getElementById("viewStaff").classList.add("hidden");
+  document.getElementById("viewCalendar").classList.add("hidden");
+  document.getElementById("viewTeamDash").classList.add("hidden");
   document.getElementById("viewTeams").classList.add("hidden");
   document.getElementById("viewAthletes").classList.add("hidden");
   document.getElementById("viewEvals").classList.add("hidden");
@@ -1716,9 +2001,11 @@ function renderProfileTabs(){
     document.getElementById("dashboard").insertBefore(tabBar, document.getElementById("dashboard").firstChild);
   }
   tabBar.innerHTML=`
-    <button class="ptab${_profileTab==="profile"?" active":""}" onclick="switchProfileTab('profile')">📋 Profile</button>
-    <button class="ptab${_profileTab==="evals"?" active":""}"   onclick="switchProfileTab('evals')">📅 Evaluations</button>
-    <button class="ptab${_profileTab==="docs"?" active":""}"    onclick="switchProfileTab('docs')">📄 Documents</button>
+    <button class="ptab${_profileTab==="profile"?" active":""}"  onclick="switchProfileTab('profile')">📋 Profile</button>
+    <button class="ptab${_profileTab==="evals"?" active":""}"    onclick="switchProfileTab('evals')">📅 Evaluations</button>
+    <button class="ptab${_profileTab==="progress"?" active":""}" onclick="switchProfileTab('progress')">📈 Progress</button>
+    <button class="ptab${_profileTab==="docs"?" active":""}"     onclick="switchProfileTab('docs')">📄 Documents</button>
+    <button class="ptab" onclick="printAthleteReport()" style="color:#4488ff">🖨 Report</button>
     <button class="ptab" onclick="goBackToView()" style="margin-left:auto;color:#556677">← Back</button>`;
 
   // ── Always hide all original dashboard sections first ──
@@ -1749,7 +2036,7 @@ function renderProfileTabs(){
       ["Height",    a.height||"—"],
       ["Weight",    a.weight?a.weight+" lbs":"—"],
       ["Age",       a.age||"—"],
-      ["Grad Year", a.gradYear||"—"],
+      ...(a.level!=="College"&&a.level!=="Pro"?[["Grad Year",a.gradYear||"—"]]:[]),
     ];
     const evalSnap = last ? [
       ["Last Eval",    last.date],
@@ -1804,6 +2091,10 @@ function renderProfileTabs(){
     renderEvalHistory();
     renderEvalDisplay();
 
+  } else if(_profileTab==="progress"){
+    profileArea.style.display="";
+    profileArea.innerHTML=buildProgressTab(a);
+
   } else if(_profileTab==="docs"){
     profileArea.innerHTML="";
     profileArea.style.display="none";
@@ -1827,16 +2118,1381 @@ function goBackToView(){
   const docsCard=document.getElementById("docsCard");if(docsCard)docsCard.style.display="";
   const evalDisplay=document.getElementById("evalDisplay");if(evalDisplay)evalDisplay.style.display="";
   document.getElementById("dashboard").classList.add("hidden");
-  if(_currentView==="home")          { renderViewHome(); document.getElementById("viewHome").classList.remove("hidden"); }
+  document.getElementById("viewTeamDash").classList.add("hidden");
+  document.getElementById("viewStaff").classList.add("hidden");
+  document.getElementById("viewCalendar").classList.add("hidden");
+  if(_currentView==="teamDash")  { renderTeamDash(_currentTeam); document.getElementById("viewTeamDash").classList.remove("hidden"); }
+  else if(_currentView==="home")          { renderViewHome(); document.getElementById("viewHome").classList.remove("hidden"); }
   else if(_currentView==="teams")    document.getElementById("viewTeams").classList.remove("hidden");
   else if(_currentView==="athletes") document.getElementById("viewAthletes").classList.remove("hidden");
   else if(_currentView==="evals")    document.getElementById("viewEvals").classList.remove("hidden");
   else { resetToRoster(); document.getElementById("teamRosterPanels").classList.remove("hidden"); }
 }
 
+/* ======== CUSTOM FIELDS ======== */
+function toggleCfOptions(){
+  const t=document.getElementById("cf_type").value;
+  document.getElementById("cf_optionsWrap").classList.toggle("hidden", t!=="select");
+}
+
+function renderCustomFieldsList(){
+  const c=document.getElementById("customFieldsList");
+  if(!customFields.length){
+    c.innerHTML='<div style="font-size:13px;color:#334455;padding:12px;text-align:center">No custom fields yet</div>';
+    return;
+  }
+  c.innerHTML=customFields.map((f,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#080c10;border:1px solid #1e2730;border-radius:8px">
+      <div style="flex:1">
+        <span style="font-size:13px;font-weight:700;color:#e8f0fe">${f.label}</span>
+        <span style="font-size:11px;color:#556677;margin-left:8px">${f.type}${f.unit?' · '+f.unit:''} · ${f.section}</span>
+      </div>
+      <button class="btn-xs-red" onclick="deleteCustomField(${i})">✕</button>
+    </div>`).join('');
+}
+
+function saveCustomField(){
+  const label=document.getElementById("cf_label").value.trim();
+  if(!label){alert("Field label required.");return;}
+  const type=document.getElementById("cf_type").value;
+  const unit=document.getElementById("cf_unit").value.trim();
+  const section=document.getElementById("cf_section").value;
+  const optRaw=document.getElementById("cf_options").value;
+  const options=type==="select"?optRaw.split(",").map(s=>s.trim()).filter(Boolean):[];
+  const id="cf_"+Date.now();
+  customFields.push({id,label,type,unit,section,options});
+  saveToStorage();
+  renderCustomFieldsList();
+  renderCustomEvalFields();
+  // Clear form
+  ["cf_label","cf_unit","cf_options"].forEach(i=>document.getElementById(i).value="");
+  document.getElementById("cf_type").value="number";
+  document.getElementById("cf_optionsWrap").classList.add("hidden");
+}
+
+function deleteCustomField(i){
+  customFields.splice(i,1);
+  saveToStorage();
+  renderCustomFieldsList();
+  renderCustomEvalFields();
+}
+
+function showCustomFieldsModal(){
+  renderCustomFieldsList();
+  document.getElementById("customFieldsModal").classList.remove("hidden");
+}
+
+/* Render custom field inputs inside eval form */
+function renderCustomEvalFields(){
+  // Group by section
+  const sections={motor:[],rom:[],strength:[],velo:[],other:[]};
+  customFields.forEach(f=>{ (sections[f.section]||sections.other).push(f); });
+
+  // Inject into each inset section or create "Other" block
+  ["motor","rom","strength","velo","other"].forEach(sec=>{
+    const fields=sections[sec];
+    const containerId="cf_section_"+sec;
+    let container=document.getElementById(containerId);
+    if(!container){
+      // Create a container div inside the appropriate inset
+      container=document.createElement("div");
+      container.id=containerId;
+      container.className="g2";
+      container.style.marginTop="10px";
+      const insetMap={
+        motor:    document.getElementById("inset_motor"),
+        rom:      document.getElementById("inset_rom"),
+        strength: document.getElementById("inset_strength"),
+        velo:     document.getElementById("veloSection"),
+        other:    null
+      };
+      if(sec==="other"){
+        // Build a whole new inset section before the notes
+        const notesDiv=document.getElementById("ef_notes").closest("div");
+        const otherInset=document.createElement("div");
+        otherInset.className="inset";
+        otherInset.id="cf_otherInset";
+        otherInset.innerHTML='<div class="slabel" style="color:#aa88ff">📋 Additional Measurables</div>';
+        container=document.createElement("div");
+        container.id=containerId;
+        container.className="g2";
+        otherInset.appendChild(container);
+        notesDiv.parentElement.insertBefore(otherInset, notesDiv);
+      } else if(insetMap[sec]){
+        insetMap[sec].appendChild(container);
+      }
+    }
+    if(!container) return;
+    if(!fields.length){ container.innerHTML=""; return; }
+    container.innerHTML=fields.map(f=>{
+      const fid="ef_custom_"+f.id;
+      if(f.type==="select"){
+        return `<div><label class="flabel">${f.label}${f.unit?' ('+f.unit+')':''}</label>
+          <select class="finput" id="${fid}">
+            <option value="">Select...</option>
+            ${f.options.map(o=>`<option>${o}</option>`).join('')}
+          </select></div>`;
+      } else {
+        return `<div><label class="flabel">${f.label}${f.unit?' ('+f.unit+')':''}</label>
+          <input class="finput" id="${fid}" type="${f.type==='number'?'number':'text'}" placeholder="${f.unit||''}"/></div>`;
+      }
+    }).join('');
+  });
+  // Show/hide other inset
+  const otherInset=document.getElementById("cf_otherInset");
+  if(otherInset) otherInset.style.display=sections.other.length?"":"none";
+}
+
+/* ======== TEAM DASHBOARD ======== */
+let _currentTeam = null;
+
+function openTeamDash(team){
+  _currentTeam = team;
+  _currentView = "teamDash";
+  // Hide all panels
+  ["viewHome","viewTeams","viewAthletes","viewEvals","teamRosterPanels","dashboard","emptyState"].forEach(id=>{
+    document.getElementById(id)?.classList.add("hidden");
+  });
+  document.getElementById("viewTeamDash").classList.remove("hidden");
+  renderTeamDash(team);
+  document.getElementById("viewTeamDash").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderTeamDash(team){
+  const c = document.getElementById("viewTeamDash");
+  const members = athletes.filter(a=>a.team===team);
+  const teamEntries = [];
+  members.forEach(a=>{ (evals[a.id]||[]).forEach(ev=>teamEntries.push({athlete:a,ev})); });
+
+  const veloRows = teamEntries
+    .filter(e=>e.ev.evalVelo&&parseFloat(e.ev.evalVelo)>0)
+    .sort((a,b)=>parseFloat(b.ev.evalVelo)-parseFloat(a.ev.evalVelo))
+    .slice(0,5);
+
+  const sledRows = teamEntries
+    .filter(e=>e.ev.sledSprint&&parseFloat(e.ev.sledSprint)>0)
+    .sort((a,b)=>parseFloat(a.ev.sledSprint)-parseFloat(b.ev.sledSprint))
+    .slice(0,5);
+
+  const recentRows = [...teamEntries]
+    .sort((a,b)=>new Date(b.ev.date)-new Date(a.ev.date))
+    .slice(0,5);
+
+  // Custom field leaderboards (numeric only, top 5)
+  const numericCustom = customFields.filter(f=>f.type==="number");
+
+  const medal=(i)=>i===0?'🥇':i===1?'🥈':i===2?'🥉':`<span style="font-size:13px;color:#556677;font-weight:700">#${i+1}</span>`;
+
+  const leaderRow=(rank,name,val,unit,barPct,color)=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #0d1117">
+      <div style="width:28px;text-align:center;flex-shrink:0">${medal(rank)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:#e8f0fe;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
+        <div style="height:3px;background:#1e2730;border-radius:2px;margin-top:6px">
+          <div style="height:3px;background:${color};border-radius:2px;width:${barPct}%"></div>
+        </div>
+      </div>
+      <div style="font-size:18px;font-weight:800;color:${color};flex-shrink:0">${val}<span style="font-size:11px;color:#556677;font-weight:400"> ${unit}</span></div>
+    </div>`;
+
+  const maxVelo = veloRows[0]?parseFloat(veloRows[0].ev.evalVelo):1;
+  const minSled = sledRows[0]?parseFloat(sledRows[0].ev.sledSprint):1;
+  const maxSled = sledRows[sledRows.length-1]?parseFloat(sledRows[sledRows.length-1].ev.sledSprint):minSled+1;
+
+  // Build custom leaderboard cards
+  const customLeaderCards = numericCustom.map(f=>{
+    const rows = teamEntries
+      .filter(e=>e.ev["custom_"+f.id]&&parseFloat(e.ev["custom_"+f.id])>0)
+      .sort((a,b)=>parseFloat(b.ev["custom_"+f.id])-parseFloat(a.ev["custom_"+f.id]))
+      .slice(0,5);
+    if(!rows.length) return '';
+    const maxVal = parseFloat(rows[0].ev["custom_"+f.id]);
+    return `<div class="card">
+      <div style="margin-bottom:16px">
+        <div class="slabel" style="color:#aa88ff;margin-bottom:2px">📊 ${f.label}</div>
+        <div style="font-size:11px;color:#334455">Top performers — ${team}</div>
+      </div>
+      ${rows.map((e,i)=>leaderRow(i,
+        e.athlete.lastName+", "+e.athlete.firstName,
+        e.ev["custom_"+f.id], f.unit||'',
+        Math.round((parseFloat(e.ev["custom_"+f.id])/maxVal)*100),
+        '#aa88ff')).join('')}
+    </div>`;
+  }).join('');
+
+  // Stat strip
+  const avgStr = members.length ? (() => {
+    const scores = teamEntries.map(e=>parseFloat(e.ev.shoulderStrength)).filter(v=>!isNaN(v)&&v>0);
+    return scores.length?(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1):null;
+  })() : null;
+
+  c.innerHTML = `
+    <!-- Back + header -->
+    <div class="frow" style="margin-bottom:20px;gap:12px">
+      <button class="btn-ghost" style="font-size:12px" onclick="setView('home')">← All Teams</button>
+      <div style="flex:1">
+        <div style="font-size:24px;font-weight:800;color:#fff">${team}</div>
+        <div style="font-size:12px;color:#556677;margin-top:2px">${members.length} athlete${members.length!==1?'s':''} · ${teamEntries.length} eval${teamEntries.length!==1?'s':''}</div>
+      </div>
+      <div class="frow" style="gap:8px">
+        <button class="btn-add" onclick="showAthleteForm(null,'${team}')">+ Add Athlete</button>
+        <button class="btn-green" style="font-size:12px;padding:6px 14px" onclick="showNewEvalForTeam('${team}')">+ New Eval</button>
+      </div>
+    </div>
+
+    <!-- Stat strip -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:24px">
+      ${[
+        ['Athletes',  members.length,        '#00ff88'],
+        ['Evals',     teamEntries.length,     '#4488ff'],
+        ['Avg Str',   avgStr||'—',            '#ffaa00'],
+        ...(veloRows[0]?[['Top Velo', veloRows[0].ev.evalVelo+' mph', '#ff6644']]:
+            [['Top Velo','—','#ff6644']]),
+        ...(sledRows[0]?[['Best Sled', sledRows[0].ev.sledSprint+'s', '#00ccff']]:
+            [['Best Sled','—','#00ccff']]),
+      ].map(([l,v,col])=>`
+        <div class="card" style="padding:14px;text-align:center;border-color:${col}22">
+          <div style="font-size:22px;font-weight:800;color:${col}">${v}</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677;margin-top:3px">${l}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- Main leaderboards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+      <div class="card">
+        <div style="margin-bottom:16px">
+          <div class="slabel" style="color:#ff6644;margin-bottom:2px">🔥 Top Velocity</div>
+          <div style="font-size:11px;color:#334455">Eval bullpen — ${team}</div>
+        </div>
+        ${veloRows.length?veloRows.map((e,i)=>leaderRow(i,
+            e.athlete.lastName+", "+e.athlete.firstName,
+            e.ev.evalVelo,'mph',
+            Math.round((parseFloat(e.ev.evalVelo)/maxVelo)*100),
+            i===0?'#ff6644':i===1?'#ff8855':'#cc6644')).join('')
+          :'<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No velocity data yet</div>'}
+      </div>
+      <div class="card">
+        <div style="margin-bottom:16px">
+          <div class="slabel" style="color:#4488ff;margin-bottom:2px">⚡ Sled Sprint</div>
+          <div style="font-size:11px;color:#334455">Fastest times — ${team}</div>
+        </div>
+        ${sledRows.length?sledRows.map((e,i)=>leaderRow(i,
+            e.athlete.lastName+", "+e.athlete.firstName,
+            e.ev.sledSprint,'sec',
+            Math.round(((maxSled-parseFloat(e.ev.sledSprint))/(maxSled-minSled+0.001))*100+20),
+            i===0?'#4488ff':i===1?'#5599ff':'#3377cc')).join('')
+          :'<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No sled data yet</div>'}
+      </div>
+    </div>
+
+    <!-- Custom field leaderboards -->
+    ${customLeaderCards?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px">${customLeaderCards}</div>`:''}
+
+    <!-- Recent evals -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div class="slabel" style="color:#00ff88;margin-bottom:0">📋 Recent Evaluations</div>
+        <div style="font-size:11px;color:#334455">${team}</div>
+      </div>
+      ${recentRows.length?`
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead><tr style="border-bottom:1px solid #1e2730">
+            <th style="text-align:left;padding:8px 10px 8px 0;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Athlete</th>
+            <th style="text-align:left;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Date</th>
+            <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Str</th>
+            <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Velo</th>
+            <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#556677">Sled</th>
+            <th style="padding:8px 0 8px 10px"></th>
+          </tr></thead>
+          <tbody>
+            ${recentRows.map(({athlete:a,ev})=>{
+              const sp=ev.shoulderStrength;
+              const pass=sp!==undefined&&sp!==''?parseFloat(sp)>=25:null;
+              return `<tr style="border-bottom:1px solid #0d1117;cursor:pointer"
+                onmouseover="this.style.background='#0d1117'" onmouseout="this.style.background=''"
+                onclick="openAthleteProfile('${a.id}')">
+                <td style="padding:10px 10px 10px 0;font-weight:700;color:#e8f0fe">${a.lastName}, ${a.firstName}</td>
+                <td style="padding:10px;color:#778899;font-family:'Space Mono',monospace">${ev.date}</td>
+                <td style="padding:10px;text-align:right;font-weight:700;color:${pass===true?'#00ff88':pass===false?'#ff4455':'#556677'}">${sp||'—'}</td>
+                <td style="padding:10px;text-align:right;color:#ff6644;font-weight:700">${ev.evalVelo||'—'}</td>
+                <td style="padding:10px;text-align:right;color:#4488ff;font-weight:700">${ev.sledSprint||'—'}</td>
+                <td style="padding:10px 0 10px 10px"><button class="btn-blue" style="font-size:11px;padding:4px 8px"
+                  onclick="event.stopPropagation();openAthleteProfile('${a.id}')">View</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`
+      :'<div style="padding:30px;text-align:center;color:#334455;font-size:13px">No evaluations yet for this team</div>'}
+    </div>
+
+    <!-- Roster -->
+    <div class="card" style="margin-top:16px">
+      <div class="slabel" style="color:#556677">👥 Roster</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+        ${members.sort((a,b)=>a.lastName.localeCompare(b.lastName)).map(a=>`
+          <div style="padding:10px 12px;background:#080c10;border:1px solid #1e2730;border-radius:8px;cursor:pointer;transition:border-color .12s"
+            onmouseover="this.style.borderColor='#00ff8840'" onmouseout="this.style.borderColor='#1e2730'"
+            onclick="openAthleteProfile('${a.id}')">
+            <div style="font-size:13px;font-weight:700;color:#e8f0fe">${a.lastName}, ${a.firstName}</div>
+            <div style="font-size:11px;color:#556677;margin-top:2px">${a.type==="pitcher"?"⚾ Pitcher":"🏃 Position"} · ${a.throws}HP</div>
+          </div>`).join('')}
+        ${!members.length?'<div style="font-size:12px;color:#334455;padding:8px">No athletes on this team yet</div>':''}
+      </div>
+    </div>`;
+}
+
+function showNewEvalForTeam(team){
+  const members=athletes.filter(a=>a.team===team).sort((a,b)=>a.lastName.localeCompare(b.lastName));
+  if(!members.length){alert("No athletes on this team yet.");return;}
+  const names=members.map(a=>`<option value="${a.id}">${a.lastName}, ${a.firstName}</option>`).join('');
+  const sel=document.createElement('div');
+  sel.id='quickEvalSel';
+  sel.style.cssText='position:fixed;inset:0;background:#000c;z-index:300;display:flex;align-items:center;justify-content:center;padding:20px';
+  sel.innerHTML=`<div class="mbox" style="max-width:400px">
+    <div style="font-size:15px;font-weight:800;color:#00ff88;margin-bottom:16px">Select Athlete — ${team}</div>
+    <select class="finput" id="quickEvalSelInput" style="width:100%;margin-bottom:16px">
+      <option value="">— Choose athlete —</option>${names}
+    </select>
+    <div class="frow">
+      <button class="btn-green" onclick="confirmQuickEval()">Start Eval →</button>
+      <button class="btn-ghost" onclick="cancelQuickEval()">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(sel);
+}
+
+function confirmQuickEval(){
+  const id=document.getElementById('quickEvalSelInput').value;
+  if(!id){alert('Select an athlete first');return;}
+  cancelQuickEval();
+  selectedAthleteId=id;
+  selectedEvalIdx=null;
+  editingEvalIdx=null;
+  showNewEval();
+}
+
+function cancelQuickEval(){
+  document.getElementById('quickEvalSel')?.remove();
+}
+
+
+/* ======== STAFF MANAGEMENT ======== */
+function showAddStaffModal(){
+  document.getElementById("staffModalTitle").textContent = "ADD STAFF MEMBER";
+  document.getElementById("sm_name").value="";
+  document.getElementById("sm_role").value="";
+  document.getElementById("sm_phone").value="";
+  document.getElementById("sm_email").value="";
+  document.getElementById("sm_editIdx").value="";
+  document.getElementById("sm_deleteBtn").classList.add("hidden");
+  // Build team checkboxes
+  const wrap=document.getElementById("sm_teamsWrap");
+  wrap.innerHTML=teams.map(t=>`
+    <label style="display:flex;align-items:center;gap:6px;padding:6px 8px;background:#080c10;border:1px solid #1e2730;border-radius:6px;cursor:pointer;font-size:12px;color:#aabbcc">
+      <input type="checkbox" value="${t}" style="cursor:pointer"/> ${t}
+    </label>`).join("");
+  document.getElementById("addStaffModal").classList.remove("hidden");
+  setTimeout(()=>document.getElementById("sm_name").focus(),100);
+}
+
+function editStaffMember(idx){
+  const s=staffMembers[idx];
+  document.getElementById("staffModalTitle").textContent = "✏️ EDIT STAFF MEMBER";
+  document.getElementById("sm_name").value=s.name||"";
+  document.getElementById("sm_role").value=s.role||"";
+  document.getElementById("sm_phone").value=s.phone||"";
+  document.getElementById("sm_email").value=s.email||"";
+  document.getElementById("sm_editIdx").value=idx;
+  document.getElementById("sm_deleteBtn").classList.remove("hidden");
+  const wrap=document.getElementById("sm_teamsWrap");
+  const assigned=s.teams||[];
+  wrap.innerHTML=teams.map(t=>`
+    <label style="display:flex;align-items:center;gap:6px;padding:6px 8px;background:#080c10;border:1px solid #1e2730;border-radius:6px;cursor:pointer;font-size:12px;color:#aabbcc">
+      <input type="checkbox" value="${t}" ${assigned.includes(t)?"checked":""} style="cursor:pointer"/> ${t}
+    </label>`).join("");
+  document.getElementById("addStaffModal").classList.remove("hidden");
+}
+
+function saveStaffMember(){
+  const name=document.getElementById("sm_name").value.trim();
+  if(!name){alert("Name required.");return;}
+  const role=document.getElementById("sm_role").value.trim();
+  const phone=document.getElementById("sm_phone").value.trim();
+  const email=document.getElementById("sm_email").value.trim();
+  const assignedTeams=[...document.querySelectorAll("#sm_teamsWrap input:checked")].map(cb=>cb.value);
+  const idx=document.getElementById("sm_editIdx").value;
+  const data={name,role,phone,email,teams:assignedTeams};
+  if(idx!==""){
+    staffMembers[parseInt(idx)]={...staffMembers[parseInt(idx)],...data};
+  } else {
+    staffMembers.push({id:"sm_"+Date.now(),...data});
+  }
+  saveToStorage();
+  document.getElementById("addStaffModal").classList.add("hidden");
+  renderHomeScreen();
+  if(!document.getElementById("viewStaff").classList.contains("hidden")) renderViewStaff();
+}
+
+function deleteStaffMember(){
+  const idx=parseInt(document.getElementById("sm_editIdx").value);
+  if(isNaN(idx)) return;
+  if(!confirm("Remove this staff member?")) return;
+  staffMembers.splice(idx,1);
+  saveToStorage();
+  document.getElementById("addStaffModal").classList.add("hidden");
+  renderHomeScreen();
+  if(!document.getElementById("viewStaff").classList.contains("hidden")) renderViewStaff();
+}
+
+function showStaffManage(){
+  // Login as first staff if needed, go to staff view
+  if(!currentUser && staffMembers.length){
+    currentUser=staffMembers[0];
+    document.getElementById("homeScreen").classList.add("hidden");
+    document.getElementById("appHeader").classList.remove("hidden");
+    document.getElementById("appMain").classList.remove("hidden");
+    document.getElementById("activeUserBadge").textContent="👤 "+currentUser.name;
+    renderRosterPanels();
+    selectAthlete("");
+  }
+  setView("staff");
+}
+
+function renderViewStaff(){
+  const c=document.getElementById("viewStaff");
+  const avatarColors=["#00ff88","#4488ff","#ff6644","#ffaa00","#aa88ff","#00ccff","#ff4488"];
+
+  c.innerHTML=`
+    <div class="frow" style="justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div class="slabel" style="color:#556677;margin-bottom:4px">👥 STAFF MANAGEMENT</div>
+        <div style="font-size:11px;color:#334455">${staffMembers.length} staff member${staffMembers.length!==1?"s":""}</div>
+      </div>
+      <button class="btn-add" onclick="showAddStaffModal()">+ Add Staff</button>
+    </div>
+
+    ${staffMembers.length===0?`
+      <div style="text-align:center;padding:60px 20px;color:#3a4550">
+        <div style="font-size:40px">👥</div>
+        <div style="margin-top:12px;font-size:15px;font-weight:700">No staff members yet</div>
+        <button class="btn-green" style="margin-top:16px" onclick="showAddStaffModal()">+ Add First Staff Member</button>
+      </div>`:
+
+    `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+      ${staffMembers.map((s,i)=>{
+        const color=avatarColors[i%avatarColors.length];
+        const assignedTeams=s.teams||[];
+        const myVisits=visits.filter(v=>v.staffId===s.id||v.staffName===s.name);
+        const upcoming=myVisits.filter(v=>v.date>=new Date().toISOString().split("T")[0]).sort((a,b)=>a.date.localeCompare(b.date));
+        return `<div class="card" style="border-color:${color}22">
+          <div class="frow" style="justify-content:space-between;margin-bottom:14px">
+            <div class="frow" style="gap:12px">
+              <div style="width:44px;height:44px;border-radius:50%;background:${color}18;border:2px solid ${color}50;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:${color};flex-shrink:0">${s.name.charAt(0).toUpperCase()}</div>
+              <div>
+                <div style="font-size:15px;font-weight:800;color:#fff">${s.name}</div>
+                <div style="font-size:11px;color:#556677;margin-top:2px">${s.role||"Staff"}</div>
+              </div>
+            </div>
+            <button class="btn-blue" style="font-size:11px;padding:4px 10px" onclick="editStaffMember(${i})">✏️ Edit</button>
+          </div>
+          ${s.phone||s.email?`
+          <div class="fcol" style="gap:4px;margin-bottom:12px;padding:8px 10px;background:#080c10;border-radius:8px;border:1px solid #1e2730">
+            ${s.phone?`<div style="font-size:12px;color:#778899">📞 ${s.phone}</div>`:""}
+            ${s.email?`<div style="font-size:12px;color:#778899">✉️ ${s.email}</div>`:""}
+          </div>`:""}
+          <div style="margin-bottom:12px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#556677;margin-bottom:6px">Assigned Teams</div>
+            ${assignedTeams.length
+              ? `<div style="display:flex;flex-wrap:wrap;gap:4px">${assignedTeams.map(t=>`<span style="font-size:11px;padding:3px 8px;background:${color}15;border:1px solid ${color}40;border-radius:12px;color:${color}">${t}</span>`).join("")}</div>`
+              : `<span style="font-size:12px;color:#334455">No teams assigned</span>`}
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#556677;margin-bottom:6px">Upcoming Visits (${upcoming.length})</div>
+            ${upcoming.slice(0,3).map(v=>`
+              <div style="font-size:12px;padding:6px 8px;background:#080c10;border:1px solid #1e2730;border-radius:6px;margin-bottom:4px;cursor:pointer"
+                onclick="editVisit('${v.id}')">
+                <span style="color:#00ff88;font-weight:700;font-family:'Space Mono',monospace">${v.date}</span>
+                ${v.time?`<span style="color:#ffaa00;font-weight:700;margin-left:4px">⏰ ${v.time}</span>`:""}
+                <span style="color:#556677;margin-left:6px">${v.team||"—"}</span>
+                <span style="margin-left:6px;font-size:10px;padding:2px 6px;border-radius:10px;${v.location==="tinsley"?"background:#00ff8815;color:#00ff88;border:1px solid #00ff8830":"background:#4488ff15;color:#4488ff;border:1px solid #4488ff30"}">${v.location==="tinsley"?"🏢 Tinsley":"📍 On-Site"}</span>
+              </div>`).join("")}
+            ${!upcoming.length?`<div style="font-size:12px;color:#334455">No upcoming visits</div>`:""}
+          </div>
+        </div>`;
+      }).join("")}
+    </div>`}`;
+}
+
+/* ======== VISIT SCHEDULING ======== */
+function showAddVisitModal(defaultTeam, defaultStaff){
+  document.getElementById("visitModalTitle").textContent="📅 SCHEDULE VISIT";
+  const _now=new Date();
+  document.getElementById("av_date_m").value=String(_now.getMonth()+1).padStart(2,"0");
+  document.getElementById("av_date_d").value=String(_now.getDate()).padStart(2,"0");
+  document.getElementById("av_date_y").value=String(_now.getFullYear());
+  document.getElementById("av_time_hr").value="";
+  document.getElementById("av_time_min").value="";
+  document.getElementById("av_time_ampm").value="AM";
+  document.getElementById("av_notes").value="";
+  document.getElementById("av_confirmed").checked=false;
+  document.getElementById("av_editId").value="";
+  document.getElementById("av_deleteBtn").classList.add("hidden");
+  // Populate selects
+  const teamSel=document.getElementById("av_team");
+  teamSel.innerHTML='<option value="">— Select Team —</option>'+[...teams].sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${t}"${t===defaultTeam?" selected":""}>${t}</option>`).join("");
+  const staffSel=document.getElementById("av_staff");
+  staffSel.innerHTML='<option value="">— Select Staff —</option>'+staffMembers.map((s,i)=>`<option value="${s.id||s.name}"${(s.name===defaultStaff||s.id===defaultStaff)?" selected":""}>${s.name} — ${s.role||"Staff"}</option>`).join("");
+  document.getElementById("addVisitModal").classList.remove("hidden");
+  setTimeout(()=>document.getElementById("av_date_m").focus(),100);
+}
+
+function editVisit(id){
+  const v=visits.find(x=>x.id===id);
+  if(!v) return;
+  document.getElementById("visitModalTitle").textContent="✏️ EDIT VISIT";
+  if(v.date){ const _dp=v.date.split("-");
+    document.getElementById("av_date_y").value=_dp[0];
+    document.getElementById("av_date_m").value=_dp[1];
+    document.getElementById("av_date_d").value=_dp[2];
+  } else {
+    document.getElementById("av_date_m").value="";
+    document.getElementById("av_date_d").value="";
+    document.getElementById("av_date_y").value=String(new Date().getFullYear());
+  }
+  // Parse stored time e.g. "2:30 PM" back into dropdowns
+  if(v.time){
+    const m=v.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if(m){ document.getElementById("av_time_hr").value=m[1].padStart(2,"0"); document.getElementById("av_time_min").value=m[2]; document.getElementById("av_time_ampm").value=m[3].toUpperCase(); }
+  } else {
+    document.getElementById("av_time_hr").value=""; document.getElementById("av_time_min").value=""; document.getElementById("av_time_ampm").value="AM";
+  }
+  document.getElementById("av_location").value=v.location||"tinsley";
+  document.getElementById("av_notes").value=v.notes||"";
+  document.getElementById("av_confirmed").checked=!!v.confirmed;
+  document.getElementById("av_editId").value=id;
+  document.getElementById("av_deleteBtn").classList.remove("hidden");
+  const teamSel=document.getElementById("av_team");
+  teamSel.innerHTML='<option value="">— Select Team —</option>'+[...teams].sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${t}"${t===v.team?" selected":""}>${t}</option>`).join("");
+  const staffSel=document.getElementById("av_staff");
+  staffSel.innerHTML='<option value="">— Select Staff —</option>'+staffMembers.map((s,i)=>`<option value="${s.id||s.name}"${(s.id===v.staffId||s.name===v.staffName)?" selected":""}>${s.name} — ${s.role||"Staff"}</option>`).join("");
+  document.getElementById("addVisitModal").classList.remove("hidden");
+}
+
+function saveVisit(){
+  const _dm=document.getElementById("av_date_m").value, _dd=document.getElementById("av_date_d").value, _dy=document.getElementById("av_date_y").value;
+  if(!_dm||!_dd||!_dy){alert("Please select a complete date.");return;}
+  const date=`${_dy}-${_dm}-${_dd}`;
+  const _thr=document.getElementById("av_time_hr").value, _tmin=document.getElementById("av_time_min").value, _tampm=document.getElementById("av_time_ampm").value;
+  const time=(_thr&&_tmin)?`${parseInt(_thr)}:${_tmin} ${_tampm}`:'' ;
+  const team=document.getElementById("av_team").value;
+  const location=document.getElementById("av_location").value;
+  const notes=document.getElementById("av_notes").value.trim();
+  const confirmed=document.getElementById("av_confirmed").checked;
+  const staffVal=document.getElementById("av_staff").value;
+  const staffMember=staffMembers.find(s=>(s.id||s.name)===staffVal);
+  const editId=document.getElementById("av_editId").value;
+  const data={date,time,team,location,notes,confirmed,staffId:staffMember?.id||staffVal,staffName:staffMember?.name||""};
+  if(editId){
+    const idx=visits.findIndex(v=>v.id===editId);
+    if(idx>=0) visits[idx]={...visits[idx],...data};
+  } else {
+    visits.push({id:"v_"+Date.now(),...data});
+  }
+  saveToStorage();
+  document.getElementById("addVisitModal").classList.add("hidden");
+  if(!document.getElementById("viewCalendar").classList.contains("hidden")) renderViewCalendar();
+  if(!document.getElementById("viewStaff").classList.contains("hidden")) renderViewStaff();
+}
+
+function deleteVisit(){
+  const id=document.getElementById("av_editId").value;
+  if(!id) return;
+  if(!confirm("Delete this visit?")) return;
+  visits=visits.filter(v=>v.id!==id);
+  saveToStorage();
+  document.getElementById("addVisitModal").classList.add("hidden");
+  if(!document.getElementById("viewCalendar").classList.contains("hidden")) renderViewCalendar();
+  if(!document.getElementById("viewStaff").classList.contains("hidden")) renderViewStaff();
+}
+
+/* ======== CALENDAR VIEW ======== */
+let _calYear   = new Date().getFullYear();
+let _calMonth  = new Date().getMonth(); // 0-indexed
+let _calFilterStaff    = ''; // staffId or '' for all
+let _calFilterLocation = ''; // 'tinsley' | 'onsite' | ''
+let _calFilterTeam     = ''; // team name or ''
+let _calFilterConfirmed = false;
+let _calView = 'month'; // 'month' | 'week' | 'day'
+let _calDay  = new Date().getDate();
+
+function renderViewCalendar(){
+  const c=document.getElementById("viewCalendar");
+  const today=new Date().toISOString().split("T")[0];
+  const monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const dow=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const dowShort=["S","M","T","W","T","F","S"];
+  const avatarColors=["#00ff88","#4488ff","#ff6644","#ffaa00","#aa88ff","#00ccff","#ff4488"];
+
+  // Apply filters
+  let filtered=[...visits];
+  if(_calFilterStaff)     filtered=filtered.filter(v=>v.staffId===_calFilterStaff||v.staffName===_calFilterStaff);
+  if(_calFilterLocation)  filtered=filtered.filter(v=>v.location===_calFilterLocation);
+  if(_calFilterTeam)      filtered=filtered.filter(v=>v.team===_calFilterTeam);
+  if(_calFilterConfirmed) filtered=filtered.filter(v=>v.confirmed);
+  const anyFilter=_calFilterStaff||_calFilterLocation||_calFilterTeam||_calFilterConfirmed;
+
+  // Visit lookup
+  const visitsByDate={};
+  filtered.forEach(v=>{ if(!visitsByDate[v.date]) visitsByDate[v.date]=[]; visitsByDate[v.date].push(v); });
+
+  const upcoming=[...filtered].filter(v=>v.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,8);
+  const activeStaff=_calFilterStaff?staffMembers.find(s=>(s.id||s.name)===_calFilterStaff):null;
+  const viewLabel=activeStaff?`Showing <span style="color:#fff;font-weight:700">${activeStaff.name}'s Schedule</span>`:`All Staff · <span style="color:#aabbcc">${filtered.length} visit${filtered.length!==1?'s':''}</span>`;
+
+  // ── Filter bar ──
+  const staffPills=staffMembers.map((s,i)=>{
+    const id=s.id||s.name; const active=_calFilterStaff===id; const color=avatarColors[i%avatarColors.length];
+    return `<button onclick="calSetFilter('staff','${id}')" style="padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid ${active?color+'90':color+'30'};background:${active?color+'20':'transparent'};color:${active?color:'#556677'}">${s.name}</button>`;
+  }).join('');
+  const locPills=[{val:'tinsley',label:'🏢 Tinsley',color:'#00ff88'},{val:'onsite',label:'📍 On-Site',color:'#4488ff'}].map(({val,label,color})=>{
+    const active=_calFilterLocation===val;
+    return `<button onclick="calSetFilter('location','${val}')" style="padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid ${active?color+'90':color+'30'};background:${active?color+'20':'transparent'};color:${active?color:'#556677'}">${label}</button>`;
+  }).join('');
+  const teamPills=[...teams].sort((a,b)=>a.localeCompare(b)).map(team=>{
+    const active=_calFilterTeam===team;
+    return `<button onclick="calSetFilter('team','${team}')" style="padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid ${active?'#ffaa0090':'#ffaa0030'};background:${active?'#ffaa0020':'transparent'};color:${active?'#ffaa00':'#556677'}">${team}</button>`;
+  }).join('');
+  const confirmedPill=`<button onclick="calSetFilter('confirmed','')" style="padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid ${_calFilterConfirmed?'#aa88ff90':'#aa88ff30'};background:${_calFilterConfirmed?'#aa88ff20':'transparent'};color:${_calFilterConfirmed?'#aa88ff':'#556677'}">✓ Confirmed Only</button>`;
+
+  // ── Visit card helper ──
+  const visitCard=(v,compact=false)=>{
+    const staff=staffMembers.find(s=>s.id===v.staffId||s.name===v.staffName);
+    const si=staffMembers.indexOf(staff);
+    const color=si>=0?avatarColors[si%avatarColors.length]:(v.location==='tinsley'?'#00ff88':'#4488ff');
+    return `<div style="padding:${compact?'6px 8px':'10px 12px'};background:#080c10;border:1px solid ${v.confirmed?'#00ff8830':'#1e2730'};border-radius:8px;margin-bottom:6px;cursor:pointer" onclick="editVisit('${v.id}')">
+      <div class="frow" style="justify-content:space-between;margin-bottom:${compact?2:4}px">
+        <span style="font-size:${compact?11:12}px;font-weight:700;color:#00ff88;font-family:'Space Mono',monospace">${v.date}${v.time?' · <span style="color:#ffaa00">'+v.time+'</span>':''}</span>
+        <span style="font-size:9px;padding:2px 6px;border-radius:8px;${v.confirmed?'background:#00ff8815;color:#00ff88;border:1px solid #00ff8830':'background:#1e2730;color:#556677'}">${v.confirmed?'✓':'?'}</span>
+      </div>
+      <div style="font-size:${compact?12:13}px;font-weight:700;color:#e8f0fe">${v.team||'—'}</div>
+      <div class="frow" style="gap:6px;margin-top:3px;flex-wrap:wrap">
+        <span style="font-size:10px;color:${v.location==='tinsley'?'#00ff88':'#4488ff'}">${v.location==='tinsley'?'🏢 Tinsley':'📍 On-Site'}</span>
+        ${staff?`<span style="font-size:10px;color:${color}">· ${staff.name}</span>`:''}
+      </div>
+    </div>`;
+  };
+
+  // ── View toggle pills ──
+  const viewPills=['month','week','day'].map(v=>`<button onclick="calSetView('${v}')" style="padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid ${_calView===v?'#00ff8890':'#1e2730'};background:${_calView===v?'#00ff8820':'transparent'};color:${_calView===v?'#00ff88':'#556677'}">${v.charAt(0).toUpperCase()+v.slice(1)}</button>`).join('');
+
+  // ══════════ MONTH VIEW ══════════
+  let calHTML = '';
+  if(_calView==='month'){
+    const firstDay=new Date(_calYear,_calMonth,1).getDay();
+    const daysInMonth=new Date(_calYear,_calMonth+1,0).getDate();
+    const cells=[];
+    for(let i=0;i<firstDay;i++) cells.push(null);
+    for(let d=1;d<=daysInMonth;d++) cells.push(d);
+    while(cells.length%7!==0) cells.push(null);
+    const navLabel=`${monthNames[_calMonth]} ${_calYear}`;
+
+    calHTML=`<div class="card" style="padding:0;overflow:hidden">
+      <div class="frow" style="justify-content:space-between;padding:14px 20px;border-bottom:1px solid #1e2730">
+        <button class="btn-ghost" style="font-size:12px;padding:5px 14px" onclick="calNav(-1)">◀</button>
+        <div style="font-size:17px;font-weight:800;color:#fff">${navLabel}</div>
+        <button class="btn-ghost" style="font-size:12px;padding:5px 14px" onclick="calNav(1)">▶</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid #1e2730">
+        ${dow.map(d=>`<div style="text-align:center;padding:10px 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#556677">${d}</div>`).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr)">
+        ${cells.map(d=>{
+          if(!d) return `<div style="min-height:90px;border:1px solid #0d1117;background:#050810"></div>`;
+          const dateStr=`${_calYear}-${String(_calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+          const dayVisits=visitsByDate[dateStr]||[];
+          const isToday=dateStr===today;
+          const isPast=dateStr<today;
+          const bg=isToday?'#00ff8808':isPast?'#050810':'#080c10';
+          return `<div style="min-height:90px;border:1px solid #0d1117;padding:5px;background:${bg};cursor:${dayVisits.length?'pointer':'default'}"
+            onmouseover="if(${dayVisits.length})this.style.background='#111820'" onmouseout="this.style.background='${bg}'"
+            onclick="if(${dayVisits.length})showDayVisits('${dateStr}','filtered')">
+            <div style="font-size:13px;font-weight:${isToday?800:500};color:${isToday?'#00ff88':isPast?'#334455':'#aabbcc'};margin-bottom:4px${isToday?';background:#00ff8820;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center':''}">${d}</div>
+            ${dayVisits.slice(0,3).map(v=>{
+              const sv=staffMembers.find(s=>s.id===v.staffId||s.name===v.staffName);
+              const si=staffMembers.indexOf(sv);
+              const dotColor=si>=0?avatarColors[si%avatarColors.length]:(v.location==='tinsley'?'#00ff88':'#4488ff');
+              return `<div style="font-size:9px;padding:2px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;background:${dotColor}15;color:${dotColor};border:1px solid ${dotColor}30;cursor:pointer"
+                onclick="event.stopPropagation();editVisit('${v.id}')">${v.time?v.time+' ':''} ${v.team||'Visit'}</div>`;
+            }).join('')}
+            ${dayVisits.length>3?`<div style="font-size:9px;color:#556677">+${dayVisits.length-3} more</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="frow" style="padding:10px 16px;border-top:1px solid #1e2730;gap:14px;flex-wrap:wrap">
+        ${staffMembers.slice(0,5).map((s,i)=>`<div class="frow" style="gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:${avatarColors[i%avatarColors.length]}"></div><span style="font-size:10px;color:#556677">${s.name}</span></div>`).join('')}
+      </div>
+    </div>`;
+
+  // ══════════ WEEK VIEW ══════════
+  } else if(_calView==='week'){
+    // Find start of week containing _calYear/_calMonth/current focus day
+    const focusDate=new Date(_calYear,_calMonth,_calDay||1);
+    const dayOfWeek=focusDate.getDay();
+    const weekStart=new Date(focusDate); weekStart.setDate(focusDate.getDate()-dayOfWeek);
+    const weekDays=[];
+    for(let i=0;i<7;i++){ const d=new Date(weekStart); d.setDate(weekStart.getDate()+i); weekDays.push(d); }
+    const fmt=d=>`${_calYear}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const navLabel=`Week of ${monthNames[weekStart.getMonth()]} ${weekStart.getDate()}, ${weekStart.getFullYear()}`;
+
+    calHTML=`<div class="card" style="padding:0;overflow:hidden">
+      <div class="frow" style="justify-content:space-between;padding:14px 20px;border-bottom:1px solid #1e2730">
+        <button class="btn-ghost" style="font-size:12px;padding:5px 14px" onclick="calNav(-1)">◀ Prev Week</button>
+        <div style="font-size:15px;font-weight:800;color:#fff">${navLabel}</div>
+        <button class="btn-ghost" style="font-size:12px;padding:5px 14px" onclick="calNav(1)">Next Week ▶</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr)">
+        ${weekDays.map(d=>{
+          const dateStr=fmt(d);
+          const dayVisits=visitsByDate[dateStr]||[];
+          const isToday=dateStr===today;
+          const isPast=dateStr<today;
+          const bg=isToday?'#00ff8808':isPast?'#050810':'#080c10';
+          return `<div style="border:1px solid #0d1117;padding:8px 6px;background:${bg};min-height:160px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#556677;margin-bottom:2px">${dow[d.getDay()]}</div>
+            <div style="font-size:16px;font-weight:800;color:${isToday?'#00ff88':isPast?'#334455':'#aabbcc'};margin-bottom:8px">${d.getDate()}</div>
+            ${dayVisits.map(v=>{
+              const sv=staffMembers.find(s=>s.id===v.staffId||s.name===v.staffName);
+              const si=staffMembers.indexOf(sv);
+              const dotColor=si>=0?avatarColors[si%avatarColors.length]:'#4488ff';
+              return `<div style="font-size:10px;padding:4px 6px;border-radius:5px;margin-bottom:4px;background:${dotColor}15;color:${dotColor};border:1px solid ${dotColor}30;cursor:pointer;line-height:1.4" onclick="editVisit('${v.id}')">
+                ${v.time?`<div style="font-size:9px;color:#ffaa00;font-weight:700">${v.time}</div>`:''}
+                <div style="font-weight:700">${v.team||'Visit'}</div>
+                <div style="font-size:9px;color:#556677">${v.location==='tinsley'?'🏢':'📍'} ${sv?sv.name:''}</div>
+              </div>`;
+            }).join('')}
+            ${!dayVisits.length?`<div style="font-size:9px;color:#1e2730;text-align:center;padding-top:20px">—</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  // ══════════ DAY VIEW ══════════
+  } else if(_calView==='day'){
+    const focusDay=_calDay||1;
+    const dateStr=`${_calYear}-${String(_calMonth+1).padStart(2,'0')}-${String(focusDay).padStart(2,'0')}`;
+    const dayVisits=visitsByDate[dateStr]||[];
+    const focusDateObj=new Date(_calYear,_calMonth,focusDay);
+    const navLabel=`${dow[focusDateObj.getDay()]}, ${monthNames[_calMonth]} ${focusDay}, ${_calYear}`;
+    const isToday=dateStr===today;
+
+    calHTML=`<div class="card" style="padding:0;overflow:hidden">
+      <div class="frow" style="justify-content:space-between;padding:14px 20px;border-bottom:1px solid #1e2730">
+        <button class="btn-ghost" style="font-size:12px;padding:5px 14px" onclick="calNav(-1)">◀ Prev Day</button>
+        <div style="font-size:15px;font-weight:800;color:${isToday?'#00ff88':'#fff'}">${navLabel}${isToday?' · Today':''}</div>
+        <button class="btn-ghost" style="font-size:12px;padding:5px 14px" onclick="calNav(1)">Next Day ▶</button>
+      </div>
+      <div style="padding:20px;min-height:200px">
+        ${dayVisits.length
+          ? dayVisits.sort((a,b)=>(a.time||'').localeCompare(b.time||'')).map(v=>visitCard(v)).join('')
+          : `<div style="text-align:center;padding:40px;color:#334455"><div style="font-size:28px">📅</div><div style="margin-top:8px;font-size:13px">No visits scheduled</div><button class="btn-add" style="margin-top:12px" onclick="showAddVisitModal()">+ Schedule Visit</button></div>`}
+      </div>
+    </div>`;
+  }
+
+  c.innerHTML=`
+    <div class="frow" style="justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+      <div>
+        <div class="slabel" style="color:#556677;margin-bottom:4px">📅 SCHEDULE & CALENDAR</div>
+        <div style="font-size:12px;color:#556677">${viewLabel}</div>
+      </div>
+      <div class="frow" style="gap:8px">
+        <div class="frow" style="gap:6px;background:#0d1117;border:1px solid #1e2730;border-radius:24px;padding:4px">${viewPills}</div>
+        <button class="btn-add" onclick="showAddVisitModal()">+ Schedule Visit</button>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px;margin-bottom:16px">
+      <div class="frow" style="gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#556677;margin-right:4px">Staff</span>
+        ${staffPills||'<span style="font-size:11px;color:#334455">No staff yet</span>'}
+      </div>
+      <div class="frow" style="gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:${teams.length?'10px':'0'}">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#556677;margin-right:4px">Location</span>
+        ${locPills} ${confirmedPill}
+      </div>
+      ${teams.length?`<div class="frow" style="gap:6px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#556677;margin-right:4px">Team</span>${teamPills}
+      </div>`:''}
+      ${anyFilter?`<div style="margin-top:10px;border-top:1px solid #1e2730;padding-top:10px"><button onclick="calClearFilters()" style="font-size:11px;color:#ff6644;background:transparent;border:none;cursor:pointer;font-weight:700">✕ Clear all filters</button></div>`:''}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start">
+      ${calHTML}
+
+      <div class="fcol" style="gap:12px">
+        <div class="card" style="padding:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="slabel" style="color:#00ff88;margin:0">Upcoming${activeStaff?' — '+activeStaff.name:''}</div>
+            <button class="btn-add" style="font-size:10px;padding:3px 8px" onclick="showAddVisitModal()">+</button>
+          </div>
+          ${upcoming.length?upcoming.map(v=>visitCard(v,true)).join('')
+            :`<div style="padding:20px;text-align:center;color:#334455;font-size:12px">${anyFilter?'No visits match filters':'No upcoming visits'}</div>`}
+        </div>
+        <div class="card" style="padding:14px">
+          <div class="slabel" style="color:#4488ff;margin-bottom:10px">By Team</div>
+          ${[...teams].sort((a,b)=>a.localeCompare(b)).map(team=>{
+            const tv=visits.filter(v=>v.team===team&&v.date>=today).length;
+            const last=visits.filter(v=>v.team===team).sort((a,b)=>b.date.localeCompare(a.date))[0];
+            return `<div class="frow" style="justify-content:space-between;padding:7px 0;border-bottom:1px solid #0d1117;cursor:pointer" onclick="showAddVisitModal('${team}')">
+              <div>
+                <div style="font-size:12px;font-weight:600;color:#e8f0fe">${team}</div>
+                ${last?`<div style="font-size:10px;color:#556677">Last: ${last.date}</div>`:''}
+              </div>
+              <div class="frow" style="gap:6px">
+                ${tv>0?`<span style="font-size:10px;padding:2px 7px;background:#00ff8815;color:#00ff88;border:1px solid #00ff8830;border-radius:10px">${tv}</span>`:''}
+                <span style="font-size:11px;color:#00ff88">+</span>
+              </div>
+            </div>`;
+          }).join('')}
+          ${!teams.length?`<div style="font-size:12px;color:#334455">No teams yet</div>`:''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function calNav(dir){
+  if(_calView==='day'){
+    const d=new Date(_calYear,_calMonth,_calDay+dir);
+    _calYear=d.getFullYear(); _calMonth=d.getMonth(); _calDay=d.getDate();
+  } else if(_calView==='week'){
+    const d=new Date(_calYear,_calMonth,_calDay+(dir*7));
+    _calYear=d.getFullYear(); _calMonth=d.getMonth(); _calDay=d.getDate();
+  } else {
+    _calMonth+=dir;
+    if(_calMonth>11){_calMonth=0;_calYear++;}
+    if(_calMonth<0){_calMonth=11;_calYear--;}
+  }
+  renderViewCalendar();
+}
+function calSetView(view){
+  _calView=view;
+  // Reset day to today when switching views
+  const now=new Date();
+  _calDay=now.getDate(); _calMonth=now.getMonth(); _calYear=now.getFullYear();
+  renderViewCalendar();
+}
+function calSetFilter(type, val){
+  if(type==='staff')     _calFilterStaff    = _calFilterStaff===val    ? '' : val;
+  if(type==='location')  _calFilterLocation = _calFilterLocation===val  ? '' : val;
+  if(type==='team')      _calFilterTeam     = _calFilterTeam===val      ? '' : val;
+  if(type==='confirmed') _calFilterConfirmed= !_calFilterConfirmed;
+  renderViewCalendar();
+}
+function calClearFilters(){
+  _calFilterStaff=''; _calFilterLocation=''; _calFilterTeam=''; _calFilterConfirmed=false;
+  renderViewCalendar();
+}
+
+function showDayVisits(dateStr, mode){
+  let dayVisits=visits.filter(v=>v.date===dateStr);
+  // Apply active filters if in filtered mode
+  if(mode==='filtered'){
+    if(_calFilterStaff)    dayVisits=dayVisits.filter(v=>v.staffId===_calFilterStaff||v.staffName===_calFilterStaff);
+    if(_calFilterLocation) dayVisits=dayVisits.filter(v=>v.location===_calFilterLocation);
+    if(_calFilterTeam)     dayVisits=dayVisits.filter(v=>v.team===_calFilterTeam);
+    if(_calFilterConfirmed) dayVisits=dayVisits.filter(v=>v.confirmed);
+  }
+  if(!dayVisits.length) return;
+  if(dayVisits.length===1){ editVisit(dayVisits[0].id); return; }
+  editVisit(dayVisits[0].id);
+}
+
+
+/* ======================================================
+   PROGRESS CHARTS (pure SVG, no library needed)
+   ====================================================== */
+
+function sparkline(data, width, height, color, filled){
+  if(!data||data.length<2) return `<text x="${width/2}" y="${height/2}" text-anchor="middle" fill="#334455" font-size="11">Not enough data</text>`;
+  const min=Math.min(...data), max=Math.max(...data);
+  const range=max-min||1;
+  const pad=8;
+  const xs=data.map((_,i)=>pad+(i/(data.length-1))*(width-pad*2));
+  const ys=data.map(v=>height-pad-(((v-min)/range)*(height-pad*2)));
+  const pts=xs.map((x,i)=>`${x},${ys[i]}`).join(" ");
+  const polyline=`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const area=filled?`<polygon points="${xs[0]},${height-pad} ${pts} ${xs[xs.length-1]},${height-pad}" fill="${color}" fill-opacity="0.12"/>`:'' ;
+  const dots=xs.map((x,i)=>`<circle cx="${x}" cy="${ys[i]}" r="3" fill="${color}"/>`).join('');
+  const labels=[0,data.length-1].map(i=>`<text x="${xs[i]}" y="${ys[i]-6}" text-anchor="middle" fill="${color}" font-size="9" font-weight="700">${data[i]}</text>`).join('');
+  return area+polyline+dots+labels;
+}
+
+function buildProgressTab(a){
+  const evList=(evals[a.id]||[]).slice().sort((x,y)=>new Date(x.date)-new Date(y.date)); // oldest first
+  if(evList.length<1) return `<div style="text-align:center;padding:60px;color:#334455"><div style="font-size:32px">📈</div><div style="margin-top:12px;font-size:14px">No evaluations yet</div></div>`;
+
+  const dates=evList.map(e=>e.date);
+  const shortDates=dates.map(d=>{ const p=d.split('-'); return p[1]+'/'+p[2]; });
+
+  // Metric extractors
+  const metric=(key)=>evList.map(e=>parseFloat(e[key])||null);
+  const veloData   =metric('evalVelo').filter(v=>v);
+  const sledData   =metric('sledSprint').filter(v=>v);
+  const strData    =metric('shoulderStrength').filter(v=>v);
+  const erData     =metric('shoulderER').filter(v=>v);
+  const irData     =metric('shoulderIR').filter(v=>v);
+  const romData    =evList.map(e=>(parseFloat(e.shoulderER)||0)+(parseFloat(e.shoulderIR)||0)||null).filter(v=>v);
+
+  // Custom numeric fields
+  const numCustom=customFields.filter(f=>f.type==='number');
+
+  function chartCard(title, data, color, unit='', note='', invert=false){
+    if(!data||!data.filter(v=>v).length) return '';
+    const clean=data.filter(v=>v);
+    const latest=clean[clean.length-1];
+    const first=clean[0];
+    const delta=latest-first;
+    const deltaSign=invert?(delta<0?'▲':delta>0?'▼':'—'):(delta>0?'▲':delta<0?'▼':'—');
+    const deltaColor=invert?(delta<0?'#00ff88':delta>0?'#ff4455':'#556677'):(delta>0?'#00ff88':delta<0?'#ff4455':'#556677');
+    const w=320, h=90;
+    return `<div class="card" style="padding:16px">
+      <div class="frow" style="justify-content:space-between;margin-bottom:10px">
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#556677">${title}</div>
+          <div style="font-size:22px;font-weight:800;color:${color};margin-top:2px">${latest}${unit}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;font-weight:700;color:${deltaColor}">${deltaSign} ${Math.abs(delta).toFixed(1)}${unit}</div>
+          <div style="font-size:10px;color:#556677;margin-top:2px">vs first eval</div>
+          ${note?`<div style="font-size:10px;color:#556677;margin-top:2px">${note}</div>`:''}
+        </div>
+      </div>
+      <svg width="100%" viewBox="0 0 ${w} ${h}" style="overflow:visible">
+        ${sparkline(clean, w, h, color, true)}
+      </svg>
+      <div class="frow" style="justify-content:space-between;margin-top:4px">
+        ${shortDates.filter((_,i)=>evList[i][Object.keys(evList[i]).find(k=>evList[i][k]&&!isNaN(parseFloat(evList[i][k])))||'date']!==null).slice(0,1).map(d=>`<span style="font-size:9px;color:#334455">${shortDates[0]}</span>`).join('')}
+        <span style="font-size:9px;color:#334455">${shortDates[shortDates.length-1]}</span>
+      </div>
+    </div>`;
+  }
+
+  const isPitcher=a.type==='pitcher';
+
+  // Summary stats
+  const best=arr=>arr.length?Math.max(...arr):null;
+  const bestVelo=best(veloData);
+  const bestSled=sledData.length?Math.min(...sledData):null;
+  const bestStr=best(strData);
+
+  const statBadge=(label,val,unit,color)=>val!=null?`
+    <div style="background:#080c10;border:1px solid #1e2730;border-radius:10px;padding:12px 16px;text-align:center">
+      <div style="font-size:20px;font-weight:800;color:${color}">${val}${unit}</div>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#556677;margin-top:3px">${label}</div>
+    </div>`:'' ;
+
+  const customCharts=numCustom.map(f=>{
+    const d=evList.map(e=>parseFloat(e['custom_'+f.id])||null).filter(v=>v);
+    return chartCard(f.label, d, '#aa88ff', f.unit?' '+f.unit:'');
+  }).join('');
+
+  return `
+    <div class="card" style="margin-bottom:16px">
+      <div class="slabel" style="color:#556677;margin-bottom:12px">Career Bests · ${evList.length} Eval${evList.length!==1?'s':''}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px">
+        ${isPitcher?statBadge('Top Velo',bestVelo,' mph','#ff6644'):''}
+        ${statBadge('Best Sled',bestSled,'s','#4488ff')}
+        ${statBadge('Best Strength',bestStr,'','#ffaa00')}
+        ${statBadge('Evals',evList.length,'','#00ff88')}
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
+      ${isPitcher?chartCard('Eval Bullpen Velocity',veloData,'#ff6644',' mph'):''}
+      ${chartCard('Sled Sprint',sledData,'#4488ff',' sec','lower = faster',true)}
+      ${chartCard('Shoulder Strength',strData,'#ffaa00','')}
+      ${chartCard('Total Shoulder ROM',romData,'#00ccff','°')}
+      ${chartCard('Shoulder ER',erData,'#4488ff','°')}
+      ${chartCard('Shoulder IR',irData,'#aa88ff','°')}
+      ${customCharts}
+    </div>`;
+}
+
+/* ======================================================
+   PRINTABLE ATHLETE REPORT
+   ====================================================== */
+
+function printAthleteReport(){
+  const a=getAthlete();
+  if(!a){alert('No athlete selected.');return;}
+  const evList=(evals[a.id]||[]).slice().sort((x,y)=>new Date(y.date)-new Date(x.date));
+  const last=evList[0];
+  const oldest=[...evList].reverse()[0];
+
+  const trend=(key,invert=false)=>{
+    const vals=evList.map(e=>parseFloat(e[key])).filter(v=>!isNaN(v)&&v>0);
+    if(vals.length<2) return '';
+    const delta=vals[0]-vals[vals.length-1];
+    const up=invert?delta<0:delta>0;
+    return `<span style="color:${up?'#16a34a':'#dc2626'};font-size:11px;margin-left:6px">${up?'▲':'▼'} ${Math.abs(delta).toFixed(1)}</span>`;
+  };
+
+  const strPass=last&&last.shoulderStrength!==''?parseFloat(last.shoulderStrength)>=25:null;
+  const totalROM=last?(parseFloat(last.shoulderER)||0)+(parseFloat(last.shoulderIR)||0):0;
+
+  const customRows=customFields.map(f=>{
+    const val=last?last['custom_'+f.id]:'';
+    if(!val) return '';
+    return `<tr><td class="lbl">${f.label}</td><td class="val">${val}${f.unit?' '+f.unit:''}</td><td>${trend('custom_'+f.id)}</td></tr>`;
+  }).join('');
+
+  // Mini inline sparkline SVG
+  function inlineSpark(key,color,invert=false){
+    const vals=[...evList].reverse().map(e=>parseFloat(e[key])).filter(v=>!isNaN(v)&&v>0);
+    if(vals.length<2) return '';
+    const min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
+    const w=80,h=22,pad=2;
+    const xs=vals.map((_,i)=>pad+(i/(vals.length-1))*(w-pad*2));
+    const ys=vals.map(v=>h-pad-(((v-min)/range)*(h-pad*2)));
+    const pts=xs.map((x,i)=>`${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="vertical-align:middle;margin-left:8px"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${xs[xs.length-1].toFixed(1)}" cy="${ys[ys.length-1].toFixed(1)}" r="2.5" fill="${color}"/></svg>`;
+  }
+
+  const LOGO="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCADhAOEDASIAAhEBAxEB/8QAHAABAAMBAAMBAAAAAAAAAAAAAAYICQUBBAcC/8QAQxAAAQMDAgAJCQUGBgMBAAAAAAECAwQFBgcRCBITFyExV2GVCRQVGCJBUdHSVoGRkpMWUnFygtMjMjNCc4MlU2Nk/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAbEQEAAgMBAQAAAAAAAAAAAAAAARESIVFBMf/aAAwDAQACEQMRAD8ApkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB7Fuoqu419Pb6CmmqquplbFBBExXPke5dmtaidKqqqibAeuCeczWrHZzlPhkvyHM1qx2c5T4ZL8iWuM8QME85mtWOznKfDJfkOZrVjs5ynwyX5CzGeIGCeczWrHZzlPhkvyHM1qx2c5T4ZL8hZjPEDBPOZrVjs5ynwyX5BNGdWVXbm4ynwyX5CzGeIGCfcy+rfZxlHhsnyHMvq12cZR4bJ8hZjPEBBPuZfVrs4yjw2T5DmX1a7OMo8Nk+QsxniAgn3Mvq12cZR4bJ8hzL6tdnGUeGyfIWYzxAQT7mX1b7OMo8Nk+Q5l9W+zjKPDZPkWzGUBBPuZfVrs4yjw2T5DmX1a7OMo8Nk+RLMZ4gIJ9zL6tdnGUeGyfIcy+rfZxlHhsnyFmM8QEErvmm2oVjp31F3wfI6GBjeM+aa2ytY1PiruLsn4kUKTEwAAIAAAAABZDyf+D/tFq3PlFVDx6LHKflWqvUtTLuyNPuakju5WtK3ml3AuwdMM0Ntc08SsuF8X0nU7p0okiJyTe7aNGrt8VULHX2oABAAAAAAAAAAAAAAAAAAAAAAAAAr3woeDtYM7x+uyHFrXBb8vp43TM82YjGXFUTdY5GpsnHXqa/oXfZFXbqsIAsTTGmRjo3uY9qte1VRzVTZUVPcp+SVawxxw6uZjDE1Gxsv1c1jU6kRKh6IhFQkgAAAADt4HQ2m5ZrZqG/V0VBaZq2JtdUyuVrY4OMnKLunTvxd9u/Y0tg160WghZDDn9kjjjajGNa5yI1ETZET2TLcBbal8/wDo12hWb87vpHP/AKNdoVm/O76TLQA01L5/9Gu0Kzfnd9JKsGznEs4p6moxO+0l3ipXtZO+nVVRjnIqoi7onuQyKNQOCZgi4DohZaCpg5K5XBvpKvRW7OSWVEVrVT3K2NGMXvavxBp9YAAQOFmuY4xhVsjuWVXujtFJLKkMctQ/ZHvVFXip71XZFX7jumeHDzz9+UaurjNJMrrZjcfm/FRfZfUuRHSu+72WdysX4hYhcLn/ANGu0Kzfnd9I5/8ARrtCs353fSZaAGmpfP8A6NdoVm/O76TwvCA0aTr1Cs/5nfSZagGmpXrA6M9oNo/F/wBI9YHRntBtH4v+ky1ANNSvWB0Z7QbR+L/pHrA6M9oNo/F/0mWoBpqV6wOjPaDZ/wAz/pJ9jt8s2R2mK7WC6Ud0oJt+TqaWZskblRdlTdF23RehU9xjuXo8m3abjBg2UXmeon8wrLhFBTU7lXk0fFGqySNTq3dyjGqqf+vb3dAWwAAQONnWQUuKYZeclrf9C2UUtU9P3uI1VRqd6qiInep2Sr/lD829D6a27C6WXapv9TylQn/5oVRyp3byLHt8Ua4LCiF0rqm53OquVbKstVVzPnmevW573K5y/eqqesAEAAAAAAAAAAB9L4MmC84Ws9isU8HLW6KXz24oqIrfN4tnOa5F9z3cWP8ArNTSqvk7MF9F4LdM8q4dqm9TebUblROimhVUcqL1pxpOMip/8mlqgs8AAER3U3KaXCdP75ldXssdso3ztYq7co9E2Yz+LnK1v3mSV1rqq6XOquVdM6arq5nzzyO63ve5XOcv8VVVLqeUWz/zOx2jTmhlTla9UuFxRF6UhY7aJq9zno53/WnxKRBZ+AL/AHBq4OuDLpBZ7lnOLUtzvd0Z59I6pV+8McmyxRoiKm2zOKqoqbo5zkPpPq9aMdn9q/GT6iLUMuAaj+r1ox2f2r8ZPqHq9aMdn9q/GT6htNMuAaj+r1ox2f2r8ZPqHq9aMdn9q/GT6hs0y4BqP6vWjHZ/avxk+o/UfB90ZY9HJp9aFVP3keqfgrgaZlYrj95ym/0lhsFvnr7jVyJHDDExVVVVetfg1OtXL0Im6r0Gq+j2FUmnmm1lxCke2XzCnRJ5mpsk0zlV0j/4K9zlRPcmye46OJ4dimJQvhxjHLVZ2Sf6nmdKyJX/AMytTdfvO4UvgAAgZgcLTOv291vvVfTy8pbrc70bQqnUscSqiuT4o56yOTuchfDhR55zeaL3q8U9QkNzqWeY25UXZ3LyoqI5vexvHf8A0GWwXwAAQAAAAAAAAOnilkrslya2Y/bWcesuVVHSwpsqpxnuRqKvcm+69yHMLQ+TzwVbzqNX5tVw8aksMHJUyub0LUyoqbp/LHx/ztCwvDhtgocVxS1Y3bGq2jttJHSw79aoxqJuveu2696nWACB+JpY4YXzTPbHHG1XPe5dkaidKqqn7Ph3DbzpcN0Pr6Oll4lxyB3oyDbrSNyKszv4cmjm7+5XtCwodrlm0uoeqt+ypz3rT1VSraNrt/Yp2exEmy9S8VEVU+KqvvPc4OmCu1E1gsWOSRLJQLOlTcOjoSmj9p6L8ONsjEX4vQ+el6PJ1YGluxG7ag1kKJUXaRaKhcqJulPG721Rfg6RNl/4kBH21r2NaxqNa1GtRNkRE2REPIAQAAAAAAAAAAAEVznUbBsIpnz5VlNstitarkhkmR070T92Ju73fcilOOEVwsLhlVHU4zp3HU2m0TI6OpuMvs1VQ3qVGIi/4TFT3/5lRf8Ab0opacfh26pUebZ7S4vYqtKi0Y9x2Syxu3jnq3bI9U/eRiIjUX48fboXda4AAmQABAAAAAAAAA1H4LOCpp/orZLTPT8jcquPz+4oqbO5eVEXiu72t4jP6ChXBXwb9v8AW2x2maLlLfRyekK9FTdORhVF4q9znqxi/wA5qMF8AAEDOnh4Z1+1Ws77FSzK+343D5mxEVFatQ7Z0zk79+Ixf+MvfqtltLgmnV8yyrczi26kfJG1y7JJKvsxs/qerW/eZLXGsqrjcKm4Vszp6qpldNPK7re9yq5zl71VVUL49jHLRXZBkFvsVsi5WtuFTHTQM+L3uRqb926mt2C47Q4jh1oxm2tRtLbKSOmYvvdxU2Vy96ruq96qUa8nzgvp7VCrzCriV1HjsH+Cqp0OqZkc1vcvFYki9yq1S/4PAABHh7msarnORrUTdVVdkRDMvXfW/L8s1SvNzsGV3q22Vky09ugoq6SGPkI14rX7NVOl/S9d919rbfZELo8MfOf2I0NuzqedYrleP/F0fFVUciyIvKORU6U2jR6ovuXi/FDMsLdQlXORqJ9vcq8XqPrHORqJ9vcq8XqPrIqBRlKVc5Gon29yrxeo+sc5Gon29yrxeo+sioFGUpVzkaifb3KvF6j6z163Os3rY1jrcxyKpYvW2W5zPRfuVxHQKLl5Vd13U8ABAAAAAAAAAAAADq4jYa/KMpteO2uPj1tyqo6WFNlVEc9yJuu3uTfdV9yIqgXg8nhgvofTy45vWRbVV+n5GlVetKaFVTdPhxpOPv3MaWjOZidjocZxe147bGcSittJHSwIvXxWNRqKvxVdt1X3qp0wsgB+JpY4YXzSvayNjVc9zl2RqJ0qqhFQPKN52sFusenlFMiOqXekbgjXdPEaqtiaqfBXcd39DSlJNdcs0k1B1Vv+VK5y09XVK2ka7f2KdnsRJsvUvEair3qp0ODhg66hax2HHpYeVoEnSquG6bp5vF7T0X+bZGfxegX2l9+CJgy4LodZqWoh5O43NvpKtRW7OR8qIrWr3tjRjV70U+uBEREREREROpEAJADjZzkdDiOHXbJ7k7altlJJUyJv0u4qbo1O9y7IneqBFGPKEZul91Uo8RpZuPSY9TbTInV5zMiPd3LsxIk7l4yfErOdHJbzX5FkNxv10l5auuFTJU1D/cr3uVy7fBOnoT3Ic4LIAAgAAAAAAAAAAAAAAAAAABaLyeOC+mNRLhm9XCjqSwwclTK5OupmRU3T+WPj7/ztUq6Wx4OnCP030r0wo8YlxzIqi4LLJU3Cogig4ksz1603kRdkYjG9KJ/lCwvOCr3rsadfZjKv0qf+6PXY06+zGVfpU/8AdBS0J8R4a+cfsbobcqamlRlwvzvRlOnvRj0VZnfpo5N/crmkM9djTr7MZV+lT/3St3Cu1lptYMrtdVaaStorPbKRY4IKtGpJyr3byvXiqqbKjY06/wDZ3gjW3xkvJ5OfBUocWvOoNZBtUXOXzChc5E3SCNUWRyL8HSbIvfEUbLs6c8LDSzC8EsuK0GM5WsFso46fj8hTpyjkT23r/i9bncZy96qCFvwVf9djTf7M5Z+jT/3R67Gm/wBmcs/Rp/7oKWgKk+UVz5tFjdp06op9qi4yJX3BrV6oGKqRtVPg6RFd/wBXedb12NN/szln6NP/AHSnOtOdVWo+pl5y6pbJHHWTbUsL13WGnanFjZ1qiKjURV26Fcrl94PiGgAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/2Q==";
+
+  const evalorName = currentUser ? currentUser.name : 'Tinsley Performance';
+  const evalorRole = currentUser ? (currentUser.role||'Staff') : '';
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Athlete Evaluation Report — ${a.firstName} ${a.lastName}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#fff;color:#0f172a;font-size:13px;line-height:1.5}
+    .page{max-width:820px;margin:auto;padding:36px 40px}
+
+    /* Header band */
+    .report-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;margin-bottom:24px;border-bottom:3px solid #0f172a}
+    .report-header-left img{height:52px;width:auto}
+    .report-header-right{text-align:right}
+    .report-header-right .doc-title{font-size:18px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:0.05em}
+    .report-header-right .doc-meta{font-size:11px;color:#64748b;margin-top:3px}
+
+    /* Athlete name banner */
+    .athlete-banner{background:#0f172a;color:#fff;padding:18px 24px;border-radius:10px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
+    .athlete-banner .name{font-size:26px;font-weight:900;letter-spacing:-0.01em}
+    .athlete-banner .meta{font-size:12px;color:#94a3b8;margin-top:4px}
+    .athlete-banner .badge-group{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .badge{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em}
+    .badge-green{background:#dcfce7;color:#15803d}
+    .badge-red{background:#fee2e2;color:#dc2626}
+    .badge-blue{background:#dbeafe;color:#1d4ed8}
+    .badge-gray{background:#f1f5f9;color:#475569}
+
+    /* Sections */
+    .section{margin-bottom:24px}
+    .section-header{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#64748b;border-bottom:1px solid #e2e8f0;padding-bottom:7px;margin-bottom:14px}
+
+    /* Stats grid */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px}
+    .stat-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;text-align:center}
+    .stat-box.highlight{background:#0f172a;border-color:#0f172a}
+    .stat-val{font-size:22px;font-weight:900;color:#0f172a;line-height:1}
+    .stat-box.highlight .stat-val{color:#fff}
+    .stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-top:5px}
+    .stat-box.highlight .stat-lbl{color:#94a3b8}
+
+    /* Bio grid */
+    .bio-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .bio-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px}
+    .bio-item .bio-val{font-size:14px;font-weight:700;color:#0f172a}
+    .bio-item .bio-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-top:2px}
+
+    /* Eval table */
+    table{width:100%;border-collapse:collapse}
+    td,th{padding:8px 12px;text-align:left;border-bottom:1px solid #f1f5f9}
+    th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;background:#f8fafc;border-bottom:2px solid #e2e8f0}
+    td.lbl{color:#64748b;font-weight:600;font-size:12px;width:170px}
+    td.val{font-weight:700;color:#0f172a;font-size:13px}
+    tr:last-child td{border-bottom:none}
+
+    /* History table */
+    .history-row td{font-size:12px}
+    .history-row:hover td{background:#f8fafc}
+
+    /* Two-col layout */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+    /* Footer */
+    .report-footer{margin-top:32px;padding-top:16px;border-top:2px solid #0f172a;display:flex;justify-content:space-between;align-items:center}
+    .report-footer .footer-brand{font-size:11px;font-weight:700;color:#0f172a;text-transform:uppercase;letter-spacing:0.1em}
+    .report-footer .footer-meta{font-size:10px;color:#94a3b8;text-align:right}
+
+    /* Signature line */
+    .sig-block{margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:40px}
+    .sig-line{border-top:1px solid #cbd5e1;padding-top:6px;font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:0.08em}
+
+    @media print{
+      body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .page{padding:20px 24px}
+    }
+  </style></head><body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="report-header">
+      <div class="report-header-left">
+        <img src="${LOGO}" alt="Tinsley Performance"/>
+      </div>
+      <div class="report-header-right">
+        <div class="doc-title">Athlete Evaluation Report</div>
+        <div class="doc-meta">Generated ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</div>
+        <div class="doc-meta">Tinsley Performance · Confidential</div>
+      </div>
+    </div>
+
+    <!-- Athlete banner -->
+    <div class="athlete-banner">
+      <div>
+        <div class="name">${a.firstName} ${a.lastName}</div>
+        <div class="meta">${a.type==='pitcher'?'⚾ Pitcher':'🏃 Position Player'} &nbsp;·&nbsp; ${a.team||'—'} &nbsp;·&nbsp; ${a.level||'—'}${a.gradYear&&a.level!=='College'&&a.level!=='Pro'?' &nbsp;·&nbsp; Class of '+a.gradYear:''}</div>
+      </div>
+      <div class="badge-group">
+        <span class="badge badge-blue">${a.throws}HP / ${a.bats}B</span>
+        ${evList.length?`<span class="badge badge-gray">${evList.length} Eval${evList.length!==1?'s':''}</span>`:''}
+        ${evList.length>1?`<span class="badge badge-gray">${oldest.date} → ${evList[0].date}</span>`:''}
+      </div>
+    </div>
+
+    <!-- Bio -->
+    <div class="section">
+      <div class="section-header">Athlete Info</div>
+      <div class="bio-grid">
+        ${[['Height',a.height],['Weight',a.weight?a.weight+' lbs':''],['Age',a.age],...(a.level!=='College'&&a.level!=='Pro'?[['Grad Year',a.gradYear]]:[])].map(([l,v])=>`
+          <div class="bio-item"><div class="bio-val">${v||'—'}</div><div class="bio-lbl">${l}</div></div>`).join('')}
+      </div>
+    </div>
+
+    ${evList.length?`
+    <!-- Career bests -->
+    <div class="section">
+      <div class="section-header">Career Bests</div>
+      <div class="stats-grid">
+        ${a.type==='pitcher'?`<div class="stat-box highlight"><div class="stat-val">${Math.max(...evList.map(e=>parseFloat(e.evalVelo)||0).filter(v=>v>0))||'—'} <span style="font-size:13px">mph</span></div><div class="stat-lbl">Top Velo</div></div>`:'<div></div>'}
+        <div class="stat-box"><div class="stat-val">${evList.map(e=>parseFloat(e.sledSprint)).filter(v=>!isNaN(v)&&v>0).length?Math.min(...evList.map(e=>parseFloat(e.sledSprint)).filter(v=>!isNaN(v)&&v>0)).toFixed(2)+' <span style="font-size:13px">s</span>':'—'}</div><div class="stat-lbl">Best Sled Sprint</div></div>
+        <div class="stat-box"><div class="stat-val">${Math.max(...evList.map(e=>parseFloat(e.shoulderStrength)||0).filter(v=>v>0))||'—'}</div><div class="stat-lbl">Best Strength</div></div>
+        <div class="stat-box"><div class="stat-val">${Math.max(...evList.map(e=>(parseFloat(e.shoulderER)||0)+(parseFloat(e.shoulderIR)||0)).filter(v=>v>0))||'—'} <span style="font-size:13px">°</span></div><div class="stat-lbl">Best Sh. ROM</div></div>
+      </div>
+    </div>
+
+    <!-- Latest eval -->
+    <div class="section">
+      <div class="section-header">Latest Evaluation &nbsp;—&nbsp; ${last.date}${last.evalVelo&&a.type==='pitcher'?` &nbsp;·&nbsp; <span style="color:#dc2626;font-weight:800">${last.evalVelo} mph</span>`:''}</div>
+      <div class="two-col">
+        <div>
+          <table>
+            ${a.type==='pitcher'?`
+            <tr><td class="lbl">Eval Bullpen Velo</td><td class="val" style="color:#dc2626">${last.evalVelo?last.evalVelo+' mph':'—'}${inlineSpark('evalVelo','#dc2626')}</td><td>${trend('evalVelo')}</td></tr>
+            <tr><td class="lbl">Game Velo</td><td class="val">${last.gameVelo?last.gameVelo+' mph':'—'}${inlineSpark('gameVelo','#f97316')}</td><td>${trend('gameVelo')}</td></tr>
+            <tr><td class="lbl">Top Pulldown Velo</td><td class="val">${last.topPulldownVelo?last.topPulldownVelo+' mph':'—'}</td><td></td></tr>`:''}
+            <tr><td class="lbl">Shoulder Strength</td>
+              <td class="val">${last.shoulderStrength||'—'}${strPass!==null?` <span class="badge ${strPass?'badge-green':'badge-red'}">${strPass?'PASS':'FAIL'}</span>`:''}${inlineSpark('shoulderStrength','#d97706')}</td>
+              <td>${trend('shoulderStrength')}</td></tr>
+            <tr><td class="lbl">Sled Sprint</td><td class="val">${last.sledSprint?last.sledSprint+'s':'—'}${inlineSpark('sledSprint','#2563eb',true)}</td><td>${trend('sledSprint',true)}</td></tr>
+          </table>
+        </div>
+        <div>
+          <table>
+            <tr><td class="lbl">Shoulder ER</td><td class="val">${last.shoulderER?last.shoulderER+'°':'—'}</td><td>${trend('shoulderER')}</td></tr>
+            <tr><td class="lbl">Shoulder IR</td><td class="val">${last.shoulderIR?last.shoulderIR+'°':'—'}</td><td>${trend('shoulderIR')}</td></tr>
+            <tr><td class="lbl">Total Shoulder ROM</td><td class="val">${totalROM?totalROM+'°':'—'}</td><td></td></tr>
+            <tr><td class="lbl">Hip ER</td><td class="val">${last.hipER?last.hipER+'°':'—'}</td><td></td></tr>
+            <tr><td class="lbl">Hip IR</td><td class="val">${last.hipIR?last.hipIR+'°':'—'}</td><td></td></tr>
+            <tr><td class="lbl">Motor Preference</td><td class="val">${last.motorPref||'—'}</td><td></td></tr>
+            <tr><td class="lbl">Assoc / Dissoc</td><td class="val">${last.assocDissoc||'—'}</td><td></td></tr>
+          </table>
+        </div>
+      </div>
+      ${customRows?`<div style="margin-top:12px"><table>${customRows}</table></div>`:''}
+      ${last.notes?`<div style="margin-top:14px;padding:12px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;border-left:3px solid #0f172a"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:4px">Coach Notes</div><div style="font-size:13px;color:#334155;font-style:italic">${last.notes}</div></div>`:''}
+    </div>
+
+    ${evList.length>1?`
+    <!-- History table -->
+    <div class="section">
+      <div class="section-header">Evaluation History</div>
+      <table>
+        <thead><tr>
+          <th>Date</th>
+          ${a.type==='pitcher'?'<th>Velo</th>':''}
+          <th>Strength</th>
+          <th>Sled</th>
+          <th>Sh. ROM</th>
+          <th>Motor</th>
+          <th>Evaluator</th>
+        </tr></thead>
+        <tbody>
+          ${evList.map(e=>{
+            const rom=(parseFloat(e.shoulderER)||0)+(parseFloat(e.shoulderIR)||0);
+            const sp=parseFloat(e.shoulderStrength);
+            const pass=!isNaN(sp)?sp>=25:null;
+            return `<tr class="history-row">
+              <td style="font-family:monospace;font-size:11px;color:#475569">${e.date}</td>
+              ${a.type==='pitcher'?`<td style="font-weight:700;color:#dc2626">${e.evalVelo?e.evalVelo+' mph':'—'}</td>`:''}
+              <td>${e.shoulderStrength||'—'}${pass!==null?` <span class="badge ${pass?'badge-green':'badge-red'}" style="font-size:9px;padding:2px 6px">${pass?'P':'F'}</span>`:''}</td>
+              <td>${e.sledSprint?e.sledSprint+'s':'—'}</td>
+              <td>${rom?rom+'°':'—'}</td>
+              <td>${e.motorPref||'—'}</td>
+              <td style="color:#64748b;font-size:11px">${e.evaluator||''}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`:''}
+
+    <!-- Signature block -->
+    <div class="sig-block">
+      <div><div class="sig-line">Evaluator Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></div>
+      <div><div class="sig-line">Athlete / Guardian Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></div>
+    </div>
+    `:'<div style="padding:40px;text-align:center;color:#94a3b8;font-size:15px">No evaluations recorded yet</div>'}
+
+    <!-- Footer -->
+    <div class="report-footer">
+      <div>
+        <div class="footer-brand">Tinsley Performance</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:2px">tinsleyperf.com &nbsp;·&nbsp; Athlete Evaluation System</div>
+      </div>
+      <div class="footer-meta">
+        ${evalorName?`<div style="font-weight:700;color:#0f172a">${evalorName}${evalorRole?' · '+evalorRole:''}</div>`:''}
+        <div>Report Date: ${new Date().toLocaleDateString()}</div>
+        <div>Confidential — For Athlete & Coaching Staff Use Only</div>
+      </div>
+    </div>
+
+  </div>
+  </body></html>`;
+
+  const w=window.open('','_blank','width=940,height=800');
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>w.print(),500);
+}
+
+
+/* ======================================================
+   EVAL TEMPLATES
+   ====================================================== */
+
+const TEMPLATE_FIELDS=['motorPref','assocDissoc','motorShoulder','axialLarge','extLeg',
+  'shoulderER','shoulderIR','hipER','hipIR','shoulderStrength','sledSprint',
+  'evalVelo','gameVelo','topPulldownVelo','notes'];
+const FIELD_ID_MAP={
+  motorPref:'ef_motorPref', assocDissoc:'ef_assocDissoc', motorShoulder:'ef_motorShoulder',
+  axialLarge:'ef_axialLarge', extLeg:'ef_extLeg', shoulderER:'ef_sER', shoulderIR:'ef_sIR',
+  hipER:'ef_hER', hipIR:'ef_hIR', shoulderStrength:'ef_str', sledSprint:'ef_sled',
+  evalVelo:'ef_vEval', gameVelo:'ef_vGame', topPulldownVelo:'ef_vPdTop', notes:'ef_notes'
+};
+
+function populateTemplateSelect(){
+  const sel=document.getElementById('ef_templateSel');
+  if(!sel) return;
+  sel.innerHTML='<option value="">📋 Load Template...</option>'+
+    evalTemplates.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+}
+
+function applyEvalTemplate(){
+  const sel=document.getElementById('ef_templateSel');
+  const id=sel.value;
+  if(!id) return;
+  const tmpl=evalTemplates.find(t=>t.id===id);
+  if(!tmpl) return;
+  if(!confirm(`Load template "${tmpl.name}"? This will overwrite current form values.`)) { sel.value=''; return; }
+  const fields=tmpl.fields||{};
+  Object.entries(FIELD_ID_MAP).forEach(([key,elId])=>{
+    const el=document.getElementById(elId);
+    if(el&&fields[key]!==undefined) el.value=fields[key];
+  });
+  // Custom fields
+  customFields.forEach(f=>{
+    const el=document.getElementById('ef_custom_'+f.id);
+    if(el&&fields['custom_'+f.id]!==undefined) el.value=fields['custom_'+f.id];
+  });
+  sel.value='';
+  calcROM(); calcStr();
+}
+
+function saveAsTemplate(){
+  populateTemplateSelect();
+  document.getElementById('tmpl_name').value='';
+  document.getElementById('tmpl_desc').value='';
+  document.getElementById('saveTemplateModal').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('tmpl_name').focus(),100);
+}
+
+function confirmSaveTemplate(){
+  const name=document.getElementById('tmpl_name').value.trim();
+  if(!name){alert('Template name required.');return;}
+  const desc=document.getElementById('tmpl_desc').value.trim();
+  // Capture current form values
+  const fields={};
+  Object.entries(FIELD_ID_MAP).forEach(([key,elId])=>{
+    const el=document.getElementById(elId);
+    if(el&&el.value) fields[key]=el.value;
+  });
+  // Custom fields
+  customFields.forEach(f=>{
+    const el=document.getElementById('ef_custom_'+f.id);
+    if(el&&el.value) fields['custom_'+f.id]=el.value;
+  });
+  evalTemplates.push({id:'tmpl_'+Date.now(), name, desc, fields});
+  saveToStorage();
+  document.getElementById('saveTemplateModal').classList.add('hidden');
+  populateTemplateSelect();
+  // Show templates manager
+  renderTemplatesList();
+  document.getElementById('evalTemplatesModal').classList.remove('hidden');
+}
+
+function renderTemplatesList(){
+  const c=document.getElementById('templatesList');
+  if(!c) return;
+  if(!evalTemplates.length){
+    c.innerHTML='<div style="font-size:13px;color:#334455;padding:12px;text-align:center">No templates saved yet. Fill out an eval form and click 💾 Save as Template.</div>';
+    return;
+  }
+  c.innerHTML=evalTemplates.map((t,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#080c10;border:1px solid #1e2730;border-radius:8px">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:#e8f0fe">${t.name}</div>
+        ${t.desc?`<div style="font-size:11px;color:#556677;margin-top:2px">${t.desc}</div>`:''}
+        <div style="font-size:10px;color:#334455;margin-top:3px">${Object.keys(t.fields||{}).length} fields saved</div>
+      </div>
+      <button class="btn-xs-red" onclick="deleteTemplate(${i})">✕</button>
+    </div>`).join('');
+}
+
+function deleteTemplate(i){
+  if(!confirm('Delete this template?')) return;
+  evalTemplates.splice(i,1);
+  saveToStorage();
+  renderTemplatesList();
+  populateTemplateSelect();
+}
+
+function showTemplatesManager(){
+  renderTemplatesList();
+  document.getElementById('evalTemplatesModal').classList.remove('hidden');
+}
+
+
 Object.assign(window, {
-  showAddStaffModal, saveStaffMember, loginAs, goHome,
-  showAthleteForm, hideAthleteForm, saveAthleteForm, promptDeleteAthlete, confirmDeleteAthlete,
+  showAddStaffModal, saveStaffMember, editStaffMember, deleteStaffMember, showStaffManage,
+  showAddVisitModal, saveVisit, deleteVisit, editVisit, calNav, showDayVisits, calSetFilter, calClearFilters, calSetView,
+  loginAs, goHome,
+  showAthleteForm, hideAthleteForm, saveAthleteForm, toggleGradYear, promptDeleteAthlete, confirmDeleteAthlete,
   addTeamFromInput, promptNewTeam, toggleTeamPanel, selectAthleteFromRoster, selectAthlete,
   showEditTeamModal, saveEditTeam, deleteTeam, homeSelectAthlete,
   showNewEval, editEval, deleteEval, pickEval, saveEval, hideEvalForm, syncDial, calcROM, calcStr,
@@ -1844,7 +3500,11 @@ Object.assign(window, {
   renderRosterPanels, renderHomeAthleteSelect,
   toggleNav, closeNav, setView, openAthleteProfile, switchProfileTab, goBackToView,
   renderViewTeams, renderViewAthletes, renderViewEvals,
-  showNewEvalFromView, startEvalFromView
+  showNewEvalFromView, startEvalFromView,
+  openTeamDash, renderTeamDash, showNewEvalForTeam, confirmQuickEval, cancelQuickEval,
+  showCustomFieldsModal, saveCustomField, deleteCustomField, toggleCfOptions,
+  printAthleteReport, applyEvalTemplate, saveAsTemplate, confirmSaveTemplate,
+  deleteTemplate, showTemplatesManager, populateTemplateSelect
 });
 
 /* ======== INIT ======== */
